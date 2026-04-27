@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>에일리언 — 우주 생존 게임</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#050a0f; --surface:#0a1520; --surface2:#0f1e30; --border:#1a3550;
+    --accent:#00d4ff; --accent2:#ff3d6e; --alien-color:#7fff00;
+    --text:#c8e8ff; --text-muted:#4a7a9b; --gold:#ffc107;
+    --glow:0 0 20px rgba(0,212,255,0.4);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body::before{
+    content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%,#fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 25% 75%,#ccc 0%,transparent 100%),
+      radial-gradient(1px 1px at 50% 10%,#fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 65% 55%,#aaa 0%,transparent 100%),
+      radial-gradient(1px 1px at 80% 30%,#fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 90% 85%,#ccc 0%,transparent 100%),
+      radial-gradient(1px 1px at 35% 45%,#fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 70% 70%,#bbb 0%,transparent 100%),
+      radial-gradient(1.5px 1.5px at 15% 60%,#fff 0%,transparent 100%),
+      radial-gradient(1px 1px at 55% 35%,#ddd 0%,transparent 100%);
+  }
+
+  /* ── LOBBY ── */
+  #lobby{
+    position:fixed;inset:0;background:var(--bg);z-index:200;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;
+  }
+  .lobby-title{font-family:'Orbitron',monospace;font-size:clamp(36px,8vw,72px);font-weight:900;color:#fff;text-shadow:0 0 40px rgba(0,212,255,0.6);letter-spacing:4px;margin-bottom:6px;}
+  .lobby-title span{color:var(--accent2);}
+  .lobby-sub{font-size:13px;color:var(--text-muted);letter-spacing:2px;margin-bottom:48px;}
+  .lobby-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 40px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px;}
+  .lobby-section-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:4px;color:var(--text-muted);margin-bottom:12px;}
+  .lobby-input{background:var(--bg);border:1.5px solid var(--border);color:var(--text);font-family:'Orbitron',monospace;font-size:28px;font-weight:700;letter-spacing:8px;width:100%;padding:14px 16px;border-radius:10px;text-align:center;outline:none;text-transform:uppercase;}
+  .lobby-input:focus{border-color:var(--accent);box-shadow:var(--glow);}
+  .lobby-input::placeholder{color:var(--border);letter-spacing:4px;font-size:20px;}
+  .lobby-divider{display:flex;align-items:center;gap:12px;color:var(--text-muted);font-size:12px;}
+  .lobby-divider::before,.lobby-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+  .lobby-error{font-size:13px;color:var(--accent2);text-align:center;min-height:20px;}
+
+  /* ── SYNC BAR ── */
+  #syncBar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:var(--surface2);border-bottom:1px solid var(--border);
+    padding:8px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .sync-room{display:flex;align-items:center;gap:10px;}
+  .sync-label{font-size:10px;color:var(--text-muted);letter-spacing:2px;}
+  .sync-code{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:var(--accent);letter-spacing:5px;cursor:pointer;}
+  .sync-code:hover{opacity:0.7;}
+  .sync-status{display:flex;align-items:center;gap:8px;font-size:12px;}
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:var(--text-muted);transition:background 0.4s;flex-shrink:0;}
+  .sync-dot.connected{background:#00c853;box-shadow:0 0 6px #00c853;}
+  .sync-dot.syncing{background:var(--gold);box-shadow:0 0 6px var(--gold);animation:pulse 0.8s infinite;}
+  .sync-dot.error{background:var(--accent2);}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  .sync-text{color:var(--text-muted);}
+
+  /* ── MAIN ── */
+  .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:52px 20px 60px;}
+  header{text-align:center;padding:36px 20px 28px;position:relative;}
+  header::after{content:'';display:block;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin-top:28px;}
+  .header-sub{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:6px;color:var(--accent);margin-bottom:12px;opacity:0.8;}
+  h1{font-family:'Orbitron',monospace;font-size:clamp(34px,7vw,68px);font-weight:900;color:#fff;line-height:1;text-shadow:0 0 40px rgba(0,212,255,0.6);letter-spacing:4px;}
+  h1 span{color:var(--accent2);}
+  .header-desc{font-size:13px;color:var(--text-muted);margin-top:10px;letter-spacing:1px;}
+
+  /* ── TABS ── */
+  .tabs{display:flex;margin-bottom:28px;border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .tab-btn{flex:1;padding:13px;background:var(--surface);border:none;color:var(--text-muted);font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.3s;border-right:1px solid var(--border);}
+  .tab-btn:last-child{border-right:none;}
+  .tab-btn.active{background:var(--surface2);color:var(--accent);}
+  .tab-btn:hover:not(.active){background:var(--surface2);color:var(--text);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  .section-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:5px;color:var(--accent);margin-bottom:18px;display:flex;align-items:center;gap:12px;}
+  .section-title::before{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--accent));}
+  .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--accent),transparent);}
+
+  /* ── BUTTONS ── */
+  .btn{padding:12px 26px;border:none;border-radius:8px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.25s;letter-spacing:1px;}
+  .btn-primary{background:linear-gradient(135deg,#005f73,#00a8c8);color:#fff;box-shadow:0 4px 20px rgba(0,168,200,0.3);}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(0,168,200,0.5);}
+  .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:9px 18px;font-size:13px;}
+  .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-wide{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+  /* ── PICKER ── */
+  .player-setup{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px;}
+  .player-setup label{display:block;font-size:11px;letter-spacing:2px;color:var(--text-muted);margin-bottom:10px;}
+  .setup-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;}
+  .num-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Orbitron',monospace;font-size:20px;width:70px;padding:9px;border-radius:6px;text-align:center;outline:none;}
+  .num-input:focus{border-color:var(--accent);}
+  .role-info-box{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:9px 14px;font-size:12px;color:var(--text-muted);flex:1;min-width:180px;}
+  .role-info-box span{color:var(--accent);font-weight:700;}
+  .roles-pool{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+  .role-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;border:1.5px solid;cursor:default;}
+  .role-chip.team-explorer{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.08);}
+  .role-chip.team-alien{border-color:var(--alien-color);color:var(--alien-color);background:rgba(127,255,0,0.08);}
+  .role-chip.team-neutral{border-color:var(--gold);color:var(--gold);background:rgba(255,193,7,0.08);}
+  .chip-count{background:rgba(255,255,255,0.1);border-radius:10px;padding:1px 6px;font-size:11px;}
+  .draw-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:24px;}
+  .players-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:18px;}
+  .player-slot{background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:all 0.3s;min-height:84px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;position:relative;overflow:hidden;}
+  .player-slot::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(0,212,255,0.05));pointer-events:none;}
+  .player-slot:hover:not(.revealed):not(.taken){border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--glow);}
+  .player-slot.revealed{cursor:pointer;}
+  .player-slot.revealed.team-explorer{border-color:var(--accent);background:rgba(0,212,255,0.06);}
+  .player-slot.revealed.team-alien{border-color:var(--alien-color);background:rgba(127,255,0,0.06);}
+  .player-slot.revealed.team-neutral{border-color:var(--gold);background:rgba(255,193,7,0.06);}
+  .player-slot.taken{opacity:0;pointer-events:none;transform:scale(0.85);transition:opacity 0.35s,transform 0.35s;}
+  .player-slot.taking{animation:takeAnim 0.35s ease forwards;}
+  @keyframes takeAnim{0%{opacity:1;transform:scale(1);}40%{opacity:1;transform:scale(1.08);}100%{opacity:0;transform:scale(0.75);}}
+  .flip-anim{animation:cardFlip 0.5s ease forwards;}
+  @keyframes cardFlip{0%{transform:scale(1);}30%{transform:scale(0.8) rotateY(90deg);}60%{transform:scale(1.05) rotateY(0deg);}100%{transform:scale(1);}}
+  .player-num{font-family:'Orbitron',monospace;font-size:10px;color:var(--text-muted);letter-spacing:2px;}
+  .player-role-emoji{font-size:20px;}
+  .player-role-name{font-size:13px;font-weight:900;line-height:1.2;}
+  .slot-hint{font-size:10px;color:var(--text-muted);}
+  .draw-controls{display:flex;gap:10px;flex-wrap:wrap;}
+
+  /* ── BOARD ── */
+  .role-lookup{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:22px;overflow:hidden;}
+  .role-lookup-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;user-select:none;transition:background 0.2s;}
+  .role-lookup-header:hover{background:var(--surface2);}
+  .role-lookup-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);display:flex;align-items:center;gap:10px;}
+  .role-lookup-badge{background:rgba(0,212,255,0.15);border:1px solid var(--accent);border-radius:20px;padding:2px 10px;font-size:10px;color:var(--accent);}
+  .role-lookup-toggle{font-size:14px;color:var(--text-muted);transition:transform 0.3s;}
+  .role-lookup-toggle.open{transform:rotate(180deg);}
+  .role-lookup-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+  .role-lookup-body.open{display:block;}
+  .lookup-empty{padding:18px;text-align:center;color:var(--text-muted);font-size:13px;}
+  .lookup-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:14px;}
+  .lookup-item{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;display:flex;align-items:center;gap:9px;}
+  .lookup-item.team-explorer{border-color:rgba(0,212,255,0.3);}
+  .lookup-item.team-alien{border-color:rgba(127,255,0,0.3);}
+  .lookup-item.team-neutral{border-color:rgba(255,193,7,0.3);}
+  .lookup-num{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-muted);min-width:50px;}
+  .lookup-emoji{font-size:17px;}
+  .lookup-role{font-size:12px;font-weight:700;flex:1;}
+  .lookup-role.explorer{color:var(--accent);}
+  .lookup-role.alien{color:var(--alien-color);}
+  .lookup-role.neutral{color:var(--gold);}
+
+  .day-indicator{display:flex;gap:8px;align-items:center;margin-bottom:18px;}
+  .day-btn{width:38px;height:38px;border-radius:8px;background:var(--surface);border:1.5px solid var(--border);color:var(--text-muted);font-family:'Orbitron',monospace;font-size:12px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+  .day-btn.current{border-color:var(--accent);color:var(--accent);background:rgba(0,212,255,0.1);box-shadow:var(--glow);}
+  .day-btn:hover:not(.current){border-color:var(--text-muted);color:var(--text);}
+  .day-label{font-size:11px;color:var(--text-muted);letter-spacing:2px;margin-right:4px;}
+  .legend{display:flex;gap:16px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);}
+  .legend-dot{width:11px;height:11px;border-radius:50%;}
+  .legend-alive{background:#00c853;} .legend-dead{background:var(--accent2);} .legend-unknown{background:var(--border);}
+  .status-board{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:22px;}
+  .board-header{background:var(--surface2);display:grid;grid-template-columns:155px repeat(4,1fr) 76px;border-bottom:1px solid var(--border);}
+  .board-header-cell{padding:11px 8px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:var(--accent);text-align:center;border-right:1px solid var(--border);}
+  .board-header-cell:last-child{border-right:none;}
+  .board-header-cell:first-child{text-align:left;padding-left:14px;}
+  .board-row{display:grid;grid-template-columns:155px repeat(4,1fr) 76px;border-bottom:1px solid rgba(26,53,80,0.5);transition:background 0.2s;}
+  .board-row:last-child{border-bottom:none;}
+  .board-row:hover{background:rgba(0,212,255,0.03);}
+  .board-cell{padding:9px 6px;text-align:center;border-right:1px solid rgba(26,53,80,0.5);display:flex;align-items:center;justify-content:center;}
+  .board-cell:last-child{border-right:none;}
+  .board-cell:first-child{text-align:left;justify-content:flex-start;padding-left:14px;gap:7px;}
+  .board-role-name{font-size:11px;font-weight:700;}
+  .board-role-name.explorer{color:var(--accent);}
+  .board-role-name.alien{color:var(--alien-color);}
+  .board-role-name.neutral{color:var(--gold);}
+  .team-separator{background:var(--surface2);padding:6px 14px;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:var(--text-muted);border-bottom:1px solid var(--border);}
+  .status-dot{width:25px;height:25px;border-radius:50%;border:2px solid var(--border);background:var(--bg);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;font-size:11px;}
+  .status-dot:hover{transform:scale(1.15);}
+  .status-dot.alive{border-color:#00c853;background:rgba(0,200,83,0.15);box-shadow:0 0 8px rgba(0,200,83,0.3);}
+  .status-dot.dead{border-color:var(--accent2);background:rgba(255,61,110,0.15);box-shadow:0 0 8px rgba(255,61,110,0.3);}
+  .status-dot.unknown{border-color:var(--border);background:var(--bg);}
+  .notes-area{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+  .notes-title{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:3px;color:var(--text-muted);margin-bottom:10px;}
+  textarea.notes{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:11px;border-radius:8px;resize:vertical;min-height:100px;outline:none;line-height:1.8;}
+  textarea.notes:focus{border-color:var(--accent);}
+  textarea.notes::placeholder{color:var(--text-muted);}
+  .board-footer{display:flex;justify-content:flex-end;padding-top:12px;}
+
+  /* ── ROLES TAB ── */
+  .roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;}
+  .role-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;transition:border-color 0.2s;}
+  .role-card:hover{border-color:var(--accent);}
+  .role-card.alien-card:hover{border-color:var(--alien-color);}
+  .role-card-header{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+  .role-card-emoji{font-size:22px;}
+  .role-card-title{font-weight:900;font-size:14px;flex:1;}
+  .role-card-title.explorer{color:var(--accent);}
+  .role-card-title.alien{color:var(--alien-color);}
+  .role-card-title.neutral{color:var(--gold);}
+  .role-card-count{font-family:'Orbitron',monospace;font-size:9px;color:var(--text-muted);border:1px solid var(--border);padding:2px 7px;border-radius:10px;}
+  .role-card-ability{font-size:11px;color:var(--accent2);font-weight:700;margin-bottom:4px;}
+  .role-card-desc{font-size:12px;color:var(--text-muted);line-height:1.7;}
+
+  /* ── TOAST ── */
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface2);border:1px solid var(--accent);color:var(--accent);padding:10px 20px;border-radius:8px;font-size:13px;font-weight:700;transition:transform 0.3s;z-index:300;box-shadow:var(--glow);white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:var(--bg);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+  @media(max-width:600px){
+    .board-header,.board-row{grid-template-columns:120px repeat(4,1fr) 56px;}
+    .board-header-cell:first-child,.board-cell:first-child{padding-left:8px;}
+    .board-role-name{font-size:10px;}
+    .players-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));}
+    .lobby-card{padding:22px 16px;}
+    .sync-code{font-size:13px;letter-spacing:3px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ───── LOBBY ───── -->
+<div id="lobby">
+  <div class="lobby-title">에일<span>리언</span></div>
+  <div class="lobby-sub">☄ SPACE SURVIVAL GAME</div>
+  <div class="lobby-card">
+    <div>
+      <div class="lobby-section-title">새 게임 방 만들기</div>
+      <button class="btn btn-primary btn-wide" onclick="createRoom()">🚀 새 방 만들기</button>
+    </div>
+    <div class="lobby-divider">또는</div>
+    <div>
+      <div class="lobby-section-title">방 코드로 참여하기</div>
+      <input class="lobby-input" id="joinCodeInput" maxlength="4" placeholder="XXXX"
+             oninput="this.value=this.value.toUpperCase()"
+             onkeydown="if(event.key==='Enter')joinRoom()">
+      <div style="height:10px"></div>
+      <button class="btn btn-primary btn-wide" onclick="joinRoom()">🔗 참여하기</button>
+    </div>
+    <div class="lobby-error" id="lobbyError"></div>
+  </div>
+</div>
+
+<!-- ───── SYNC BAR ───── -->
+<div id="syncBar" style="display:none">
+  <div class="sync-room">
+    <span class="sync-label">ROOM</span>
+    <span class="sync-code" id="syncCode" title="클릭하여 복사">────</span>
+  </div>
+  <div class="sync-status">
+    <div class="sync-dot syncing" id="syncDot"></div>
+    <span class="sync-text" id="syncText">연결 중…</span>
+    <button class="btn btn-ghost" style="padding:4px 11px;font-size:11px;margin-left:8px;" onclick="leaveRoom()">나가기</button>
+  </div>
+</div>
+
+<!-- ───── MAIN ───── -->
+<div class="wrap" id="mainWrap" style="display:none">
+  <header>
+    <div class="header-sub">☄ Survival Game · Space Exploration</div>
+    <h1>에일<span>리언</span></h1>
+    <p class="header-desc">우주 탐사대 vs 에일리언 — 4일간의 생존 대결</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('picker',this)">🎲 역할 뽑기</button>
+    <button class="tab-btn" onclick="switchTab('board',this)">📋 상황판</button>
+    <button class="tab-btn" onclick="switchTab('rules',this)">📖 역할 설명</button>
+  </div>
+
+  <!-- TAB 1: PICKER -->
+  <div id="tab-picker" class="tab-panel active">
+    <div class="section-title">게임 설정</div>
+    <div class="player-setup">
+      <label>참가 학생 수</label>
+      <div class="setup-row">
+        <input type="number" class="num-input" id="playerCount" value="12" min="6" max="40" oninput="updateRoleInfo()">
+        <div class="role-info-box">역할 구성: <span id="roleInfoText">-</span></div>
+        <button class="btn btn-primary" onclick="generateSlots()">🚀 뽑기 시작</button>
+      </div>
+    </div>
+    <div class="section-title">역할 구성</div>
+    <div class="roles-pool" id="rolesPool"></div>
+    <div class="draw-area" id="drawArea" style="display:none">
+      <div class="section-title">역할 카드 뽑기</div>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">각 번호를 클릭하면 역할이 공개됩니다. 확인 후 다시 클릭하면 카드가 사라집니다.</p>
+      <div class="players-grid" id="playersGrid"></div>
+      <div class="draw-controls">
+        <button class="btn btn-primary" onclick="revealAll()">👁 전체 공개</button>
+        <button class="btn btn-ghost" onclick="resetDraw()">🔄 다시 섞기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: BOARD -->
+  <div id="tab-board" class="tab-panel">
+    <div class="role-lookup">
+      <div class="role-lookup-header" onclick="toggleLookup()">
+        <div class="role-lookup-title">
+          🔍 역할 배정 확인 (교사 전용)
+          <span class="role-lookup-badge" id="lookupBadge">뽑기 미진행</span>
+        </div>
+        <div class="role-lookup-toggle" id="lookupToggle">▼</div>
+      </div>
+      <div class="role-lookup-body" id="lookupBody">
+        <div class="lookup-empty" id="lookupEmpty">아직 역할 뽑기를 진행하지 않았습니다.</div>
+        <div class="lookup-list" id="lookupList" style="display:none"></div>
+      </div>
+    </div>
+
+    <div class="section-title">현재 날짜</div>
+    <div class="day-indicator">
+      <span class="day-label">DAY</span>
+      <button class="day-btn current" id="day1" onclick="setDay(1)">1</button>
+      <button class="day-btn" id="day2" onclick="setDay(2)">2</button>
+      <button class="day-btn" id="day3" onclick="setDay(3)">3</button>
+      <button class="day-btn" id="day4" onclick="setDay(4)">4</button>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot legend-alive"></div>생존</div>
+      <div class="legend-item"><div class="legend-dot legend-dead"></div>사망/탈락</div>
+      <div class="legend-item"><div class="legend-dot legend-unknown"></div>미확인</div>
+      <span style="font-size:11px;color:var(--text-muted);margin-left:auto;">● 클릭하면 상태 변경</span>
+    </div>
+    <div class="section-title">생존자 상황판</div>
+    <div class="status-board">
+      <div class="board-header">
+        <div class="board-header-cell">역할</div>
+        <div class="board-header-cell">1일차</div>
+        <div class="board-header-cell">2일차</div>
+        <div class="board-header-cell">3일차</div>
+        <div class="board-header-cell">4일차</div>
+        <div class="board-header-cell">상태</div>
+      </div>
+      <div id="boardBody"></div>
+    </div>
+    <div class="notes-area">
+      <div class="notes-title">📝 메모 (사회자 전용)</div>
+      <textarea class="notes" id="gameNotes" placeholder="게임 진행 메모를 작성하세요…"></textarea>
+    </div>
+    <div class="board-footer">
+      <button class="btn btn-ghost" onclick="resetBoard()">🔄 상황판 초기화</button>
+    </div>
+  </div>
+
+  <!-- TAB 3: RULES -->
+  <div id="tab-rules" class="tab-panel">
+    <div class="section-title">탐사대 역할</div>
+    <div class="roles-grid">
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🫡</div><div class="role-card-title explorer">함장</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 즉결처분권</div><div class="role-card-desc">총알 2발 보유. 즉결처분권 발동 시 남은 총알 수만큼 의심 참가자 처분 가능.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🔧</div><div class="role-card-title explorer">엔지니어</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 비상탈출버튼</div><div class="role-card-desc">함장 사망 시 비상탈출버튼 가동 선택권 부여. 가동 시 4인 탑승자 선정. 미가동 시 여왕이 4명 사냥.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">💉</div><div class="role-card-title explorer">의사</div><div class="role-card-count">×4</div></div><div class="role-card-ability">⚡ 생화학무기 개발</div><div class="role-card-desc">4일 동안 모든 의사가 생존하면 생화학무기 개발 → 탐사대 승리. 캡슐 미탑승 시 위기.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🔮</div><div class="role-card-title explorer">초능력자</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 꿰뚫어보기 (1회)</div><div class="role-card-desc">룰렛 성공: 4명 정체 공개. 실패: 초능력 폭주로 본인+양 옆 사람 사망.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🗣️</div><div class="role-card-title explorer">수다쟁이</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 폭로하기</div><div class="role-card-desc">매일 원하는 1명의 정체를 드러냅니다. 자신의 정체는 노출되지 않습니다.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🍔</div><div class="role-card-title neutral">뚱이</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 호로록!</div><div class="role-card-desc">탐사대의 빌런! 비상탈출캡슐에 뚱이가 탑승하면 식량 부족으로 전원 사망 → 에일리언 승리.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🙏</div><div class="role-card-title explorer">신의 사도</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 구원</div><div class="role-card-desc">4일 동안 같은 모둠에서 기도(모둠 이동 불가). 4일 기도 성공 시 탐사대 승리!</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">🎯</div><div class="role-card-title explorer">군인</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 저격 (1회)</div><div class="role-card-desc">단 한 번 사용. 의심 참가자를 저격하여 탈락시킵니다. 캡슐 미탑승 시 위기.</div></div>
+      <div class="role-card"><div class="role-card-header"><div class="role-card-emoji">👤</div><div class="role-card-title explorer">일반 승객</div><div class="role-card-count">나머지</div></div><div class="role-card-ability">⚡ 숨겨진 잠재력?</div><div class="role-card-desc">특별한 능력은 없지만, 히든 엔딩에 도달하는 열쇠가 될 수도 있습니다.</div></div>
+    </div>
+    <div class="section-title" style="margin-top:26px;">에일리언 역할</div>
+    <div class="roles-grid">
+      <div class="role-card alien-card"><div class="role-card-header"><div class="role-card-emoji">👑</div><div class="role-card-title alien">에일리언 여왕</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 사냥 (1회)</div><div class="role-card-desc">단 한 번 사용. 탐사대원 2명을 먹어치웁니다. 함장+엔지니어 모두 제거 시 에일리언 승리!</div></div>
+      <div class="role-card alien-card"><div class="role-card-header"><div class="role-card-emoji">👾</div><div class="role-card-title alien">에일리언</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 포식</div><div class="role-card-desc">하루에 한 번 원하는 탐사대원 1명을 먹어치울 수 있습니다.</div></div>
+      <div class="role-card alien-card"><div class="role-card-header"><div class="role-card-emoji">🥚</div><div class="role-card-title alien">에일리언 알</div><div class="role-card-count">×1</div></div><div class="role-card-ability">⚡ 오염 or 부화 (룰렛)</div><div class="role-card-desc">3일차부터 활동. [오염]: 모둠원 전체 탈락. [부화]: 일반 에일리언으로 활동.</div></div>
+    </div>
+    <div class="notes-area" style="margin-top:24px;">
+      <div class="notes-title">🏆 승리 조건</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+        <div style="background:rgba(0,212,255,0.06);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="color:var(--accent);font-weight:900;font-size:12px;margin-bottom:7px;">🚀 탐사대 승리</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:2;">① 에일리언 여왕 제거<br>② 4일 모든 의사 생존<br>③ 신의 사도 4일 기도 성공<br>④ 비상탈출캡슐 4명 귀환</div>
+        </div>
+        <div style="background:rgba(127,255,0,0.06);border:1px solid var(--border);border-radius:8px;padding:12px;">
+          <div style="color:var(--alien-color);font-weight:900;font-size:12px;margin-bottom:7px;">👾 에일리언 승리</div>
+          <div style="font-size:11px;color:var(--text-muted);line-height:2;">① 함장+엔지니어 모두 제거<br>② 탈출 생존자 귀환 실패<br>(뚱이 탑승 / 필수 멤버 미탑승)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+// ══════════════════════════════════════════════════════
+//  Firebase Realtime Database — 실시간 동기화
+// ══════════════════════════════════════════════════════
+import { initializeApp }    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, onValue, off }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAyCKv6g2o8r6uch11QKdqb13KTDNRC55k",
+  authDomain: "alien-9d8d4.firebaseapp.com",
+  databaseURL: "https://alien-9d8d4-default-rtdb.firebaseio.com",
+  projectId: "alien-9d8d4",
+  storageBucket: "alien-9d8d4.firebasestorage.app",
+  messagingSenderId: "1027641326544",
+  appId: "1:1027641326544:web:68f10850f4701e13b457d5",
+  measurementId: "G-5FMR4QEN9Q"
+};
+
+// ──────────── State ────────────
+let db           = null;
+let roomRef      = null;
+let roomCode     = null;
+let remoteWrite  = false;   // remote update → don't echo-push
+let pushTimer    = null;
+
+let currentSlots = [];
+let boardState   = {};
+let currentDay   = 1;
+
+// ──────────── Firebase init ────────────
+async function initDB() {
+  try {
+    const app = initializeApp(FIREBASE_CONFIG);
+    db = getDatabase(app);
+    return true;
+  } catch (e) {
+    console.warn('Firebase 초기화 실패 — 오프라인 모드:', e);
+    return false;
+  }
+}
+
+// ──────────── Room code generator ────────────
+function genCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+// ──────────── Enter game ────────────
+async function enterRoom(code, isNew) {
+  setSyncStatus('syncing', '연결 중…');
+  roomCode = code;
+
+  document.getElementById('lobby').style.display   = 'none';
+  document.getElementById('syncBar').style.display = 'flex';
+  document.getElementById('mainWrap').style.display = 'block';
+  document.getElementById('syncCode').textContent  = code;
+  document.getElementById('syncCode').onclick = () => {
+    navigator.clipboard.writeText(code).catch(() => {});
+    showToast('방 코드 복사됨: ' + code);
+  };
+
+  const ok = await initDB();
+  if (!ok || !db) {
+    setSyncStatus('error', '오프라인 모드');
+    localInit(); return;
+  }
+
+  roomRef = ref(db, `rooms/${code}`);
+
+  if (isNew) {
+    await set(roomRef, makeInitState()).catch(e => console.warn(e));
+  } else {
+    const snap = await get(roomRef).catch(() => null);
+    if (!snap || !snap.exists()) {
+      showLobbyError('방을 찾을 수 없습니다. 코드를 확인해주세요.');
+      resetToLobby(); return;
+    }
+  }
+
+  // Real-time listener
+  onValue(roomRef, snap => {
+    const data = snap.val();
+    if (!data) return;
+    remoteWrite = true;
+    applyState(data);
+    remoteWrite = false;
+    setSyncStatus('connected', '실시간 동기화 중');
+  }, err => {
+    setSyncStatus('error', '연결 오류');
+  });
+
+  updateRoleInfo();
+  initBoard();
+}
+
+// ──────────── Initial state ────────────
+function makeInitState() {
+  const bs = {};
+  BOARD_ROLES.forEach(r => { bs[r.id] = ['unknown','unknown','unknown','unknown']; });
+  return { slots:[], boardState:bs, currentDay:1, notes:'', ts: Date.now() };
+}
+
+function getFullState() {
+  return {
+    slots: currentSlots,
+    boardState,
+    currentDay,
+    notes: document.getElementById('gameNotes').value,
+    ts: Date.now()
+  };
+}
+
+// ──────────── Apply remote state ────────────
+function applyState(data) {
+  if (data.slots !== undefined) {
+    currentSlots = data.slots || [];
+    if (currentSlots.length > 0) {
+      document.getElementById('drawArea').style.display = 'block';
+      renderSlots();
+      renderLookup();
+      syncRoleInfoFromSlots();
+    } else {
+      document.getElementById('drawArea').style.display = 'none';
+    }
+  }
+  if (data.boardState) {
+    boardState = data.boardState;
+    renderBoard();
+  }
+  if (data.currentDay !== undefined && data.currentDay !== currentDay) {
+    currentDay = data.currentDay;
+    [1,2,3,4].forEach(i => document.getElementById(`day${i}`).classList.toggle('current', i === currentDay));
+  }
+  if (data.notes !== undefined) {
+    const ta = document.getElementById('gameNotes');
+    if (document.activeElement !== ta) ta.value = data.notes;
+  }
+}
+
+// ──────────── Push to Firebase (debounced) ────────────
+function push(partial) {
+  if (!roomRef || remoteWrite) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(() => {
+    set(roomRef, { ...getFullState(), ...partial }).catch(e => console.warn('push err', e));
+  }, 250);
+}
+
+function localInit() { updateRoleInfo(); initBoard(); }
+
+function resetToLobby() {
+  document.getElementById('lobby').style.display    = 'flex';
+  document.getElementById('syncBar').style.display  = 'none';
+  document.getElementById('mainWrap').style.display = 'none';
+}
+
+// ──────────── Exposed globals ────────────
+window.createRoom = async () => await enterRoom(genCode(), true);
+window.joinRoom   = async () => {
+  const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
+  if (code.length !== 4) { showLobbyError('방 코드는 4자리입니다.'); return; }
+  showLobbyError('');
+  await enterRoom(code, false);
+};
+window.leaveRoom = () => {
+  if (roomRef) off(roomRef);
+  roomRef = null; roomCode = null;
+  currentSlots = []; boardState = {}; currentDay = 1;
+  resetToLobby();
+  document.getElementById('drawArea').style.display = 'none';
+  document.getElementById('joinCodeInput').value = '';
+};
+
+// ══════════════════════════════════════════════════════
+//  GAME DATA
+// ══════════════════════════════════════════════════════
+const ROLES = [
+  {id:'captain',  name:'함장',         emoji:'🫡', team:'explorer', count:1},
+  {id:'engineer', name:'엔지니어',     emoji:'🔧', team:'explorer', count:1},
+  {id:'doctor',   name:'의사',         emoji:'💉', team:'explorer', count:4},
+  {id:'psychic',  name:'초능력자',     emoji:'🔮', team:'explorer', count:1},
+  {id:'talker',   name:'수다쟁이',     emoji:'🗣️', team:'explorer', count:1},
+  {id:'fatty',    name:'뚱이',         emoji:'🍔', team:'neutral',  count:1},
+  {id:'apostle',  name:'신의 사도',    emoji:'🙏', team:'explorer', count:1},
+  {id:'soldier',  name:'군인',         emoji:'🎯', team:'explorer', count:1},
+  {id:'queen',    name:'에일리언 여왕',emoji:'👑', team:'alien',    count:1},
+  {id:'alien',    name:'에일리언',     emoji:'👾', team:'alien',    count:1},
+  {id:'egg',      name:'에일리언 알',  emoji:'🥚', team:'alien',    count:1},
+  {id:'passenger',name:'일반 승객',    emoji:'👤', team:'explorer', count:0},
+];
+const BOARD_ROLES = [
+  {id:'captain',  name:'함장',          emoji:'🫡', team:'explorer'},
+  {id:'engineer', name:'엔지니어',      emoji:'🔧', team:'explorer'},
+  {id:'doctor1',  name:'의사 ①',        emoji:'💉', team:'explorer'},
+  {id:'doctor2',  name:'의사 ②',        emoji:'💉', team:'explorer'},
+  {id:'doctor3',  name:'의사 ③',        emoji:'💉', team:'explorer'},
+  {id:'doctor4',  name:'의사 ④',        emoji:'💉', team:'explorer'},
+  {id:'psychic',  name:'초능력자',      emoji:'🔮', team:'explorer'},
+  {id:'talker',   name:'수다쟁이',      emoji:'🗣️', team:'explorer'},
+  {id:'apostle',  name:'신의 사도',     emoji:'🙏', team:'explorer'},
+  {id:'soldier',  name:'군인',          emoji:'🎯', team:'explorer'},
+  {id:'fatty',    name:'뚱이',          emoji:'🍔', team:'neutral'},
+  {id:'passenger',name:'일반 승객',     emoji:'👤', team:'explorer'},
+  {id:'queen',    name:'에일리언 여왕', emoji:'👑', team:'alien'},
+  {id:'alien',    name:'에일리언',      emoji:'👾', team:'alien'},
+  {id:'egg',      name:'에일리언 알',   emoji:'🥚', team:'alien'},
+];
+
+// ══════════════════════════════════════════════════════
+//  UI LOGIC
+// ══════════════════════════════════════════════════════
+window.switchTab = (tab, btn) => {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  btn.classList.add('active');
+};
+
+// ── Role pool ──
+function getRolePool(n) {
+  const pool = [];
+  ROLES.filter(r => r.id !== 'passenger').forEach(r => {
+    for (let i = 0; i < r.count; i++) pool.push({...r});
+  });
+  const rem = n - pool.length;
+  const p = ROLES.find(r => r.id === 'passenger');
+  for (let i = 0; i < Math.max(0, rem); i++) pool.push({...p});
+  return pool;
+}
+
+window.updateRoleInfo = () => {
+  const n = parseInt(document.getElementById('playerCount').value) || 0;
+  if (n < 6) { document.getElementById('roleInfoText').textContent = '최소 6명 이상'; return; }
+  renderPoolInfo(getRolePool(n));
+};
+
+function syncRoleInfoFromSlots() {
+  if (!currentSlots.length) return;
+  document.getElementById('playerCount').value = currentSlots.length;
+  renderPoolInfo(currentSlots);
+}
+
+function renderPoolInfo(pool) {
+  const eC = pool.filter(r => r.team === 'explorer').length;
+  const aC = pool.filter(r => r.team === 'alien').length;
+  const nC = pool.filter(r => r.team === 'neutral').length;
+  const pC = pool.filter(r => r.id === 'passenger').length;
+  document.getElementById('roleInfoText').innerHTML =
+    `탐사대 <span>${eC}</span>명 (일반승객 ${pC}명 포함) · 에일리언 <span>${aC}</span>명 · 중립 <span>${nC}</span>명`;
+  const el = document.getElementById('rolesPool');
+  el.innerHTML = '';
+  const counts = {};
+  pool.forEach(r => { counts[r.name] = (counts[r.name]||0)+1; });
+  pool.filter((r,i,a) => a.findIndex(x=>x.name===r.name)===i).forEach(r => {
+    const c = document.createElement('div');
+    c.className = `role-chip team-${r.team}`;
+    c.innerHTML = `${r.emoji} ${r.name} <span class="chip-count">${counts[r.name]}</span>`;
+    el.appendChild(c);
+  });
+}
+
+// ── Generate slots ──
+window.generateSlots = () => {
+  const n = parseInt(document.getElementById('playerCount').value)||0;
+  if (n < 6) { showToast('최소 6명 이상 입력해주세요!'); return; }
+  const pool = getRolePool(n);
+  for (let i = pool.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [pool[i],pool[j]] = [pool[j],pool[i]];
+  }
+  currentSlots = pool.map((r,i) => ({...r, index:i, revealed:false, taken:false}));
+  document.getElementById('drawArea').style.display = 'block';
+  renderSlots();
+  renderLookup();
+  push({ slots: currentSlots });
+  document.getElementById('drawArea').scrollIntoView({behavior:'smooth', block:'start'});
+};
+
+// ── Render slots ──
+function renderSlots() {
+  const grid = document.getElementById('playersGrid');
+  grid.innerHTML = '';
+  currentSlots.forEach((slot, i) => {
+    const div = document.createElement('div');
+    div.id = `slot-${i}`;
+    if (slot.taken) {
+      div.className = 'player-slot taken';
+    } else if (slot.revealed) {
+      const col = slot.team==='alien' ? 'var(--alien-color)' : slot.team==='neutral' ? 'var(--gold)' : 'var(--accent)';
+      div.className = `player-slot revealed team-${slot.team}`;
+      div.innerHTML = `<div class="player-num">PLAYER ${i+1}</div><div class="player-role-emoji">${slot.emoji}</div><div class="player-role-name" style="color:${col}">${slot.name}</div><div class="slot-hint">다시 누르면 확인 완료</div>`;
+      div.onclick = () => takeSlot(i);
+    } else {
+      div.className = 'player-slot';
+      div.innerHTML = `<div class="player-num">PLAYER ${i+1}</div><div class="player-role-emoji">❓</div><div class="slot-hint">클릭하여 공개</div>`;
+      div.onclick = () => revealSlot(i);
+    }
+    grid.appendChild(div);
+  });
+}
+
+function revealSlot(i) {
+  currentSlots[i].revealed = true;
+  const slot = currentSlots[i];
+  const div = document.getElementById(`slot-${i}`);
+  const col = slot.team==='alien' ? 'var(--alien-color)' : slot.team==='neutral' ? 'var(--gold)' : 'var(--accent)';
+  div.className = `player-slot revealed team-${slot.team} flip-anim`;
+  div.innerHTML = `<div class="player-num">PLAYER ${i+1}</div><div class="player-role-emoji">${slot.emoji}</div><div class="player-role-name" style="color:${col}">${slot.name}</div><div class="slot-hint">다시 누르면 확인 완료</div>`;
+  div.onclick = () => takeSlot(i);
+  push({ slots: currentSlots });
+}
+
+function takeSlot(i) {
+  currentSlots[i].taken = true;
+  const div = document.getElementById(`slot-${i}`);
+  div.classList.add('taking');
+  div.onclick = null;
+  setTimeout(() => {
+    div.classList.remove('taking');
+    div.classList.add('taken');
+    renderLookup();
+    push({ slots: currentSlots });
+  }, 350);
+}
+
+window.revealAll = () => {
+  currentSlots.forEach((_,i) => { if (!currentSlots[i].revealed && !currentSlots[i].taken) {
+    currentSlots[i].revealed = true;
+    const s = currentSlots[i];
+    const d = document.getElementById(`slot-${i}`);
+    if (!d) return;
+    const col = s.team==='alien'?'var(--alien-color)':s.team==='neutral'?'var(--gold)':'var(--accent)';
+    d.className = `player-slot revealed team-${s.team} flip-anim`;
+    d.innerHTML = `<div class="player-num">PLAYER ${i+1}</div><div class="player-role-emoji">${s.emoji}</div><div class="player-role-name" style="color:${col}">${s.name}</div><div class="slot-hint">다시 누르면 확인 완료</div>`;
+    d.onclick = () => takeSlot(i);
+  }});
+  push({ slots: currentSlots });
+};
+
+window.resetDraw = () => { window.generateSlots(); showToast('역할을 다시 섞었습니다!'); };
+
+// ── Lookup ──
+window.toggleLookup = () => {
+  document.getElementById('lookupBody').classList.toggle('open');
+  document.getElementById('lookupToggle').classList.toggle('open');
+};
+function renderLookup() {
+  const taken = currentSlots.filter(s => s.taken);
+  document.getElementById('lookupBadge').textContent =
+    currentSlots.length ? `${taken.length} / ${currentSlots.length}명 확인 완료` : '뽑기 미진행';
+  const empty = document.getElementById('lookupEmpty');
+  const list  = document.getElementById('lookupList');
+  if (!taken.length) {
+    empty.textContent = currentSlots.length ? '아직 역할을 가져간 학생이 없습니다.' : '아직 역할 뽑기를 진행하지 않았습니다.';
+    empty.style.display = 'block'; list.style.display = 'none'; return;
+  }
+  empty.style.display = 'none'; list.style.display = 'grid'; list.innerHTML = '';
+  taken.forEach(slot => {
+    const item = document.createElement('div');
+    item.className = `lookup-item team-${slot.team}`;
+    item.innerHTML = `<span class="lookup-num">PLAYER ${slot.index+1}</span><span class="lookup-emoji">${slot.emoji}</span><span class="lookup-role ${slot.team}">${slot.name}</span>`;
+    list.appendChild(item);
+  });
+}
+
+// ── Board ──
+function initBoard() {
+  BOARD_ROLES.forEach(r => { if (!boardState[r.id]) boardState[r.id] = ['unknown','unknown','unknown','unknown']; });
+  renderBoard();
+}
+function renderBoard() {
+  const body = document.getElementById('boardBody');
+  body.innerHTML = '';
+  let lastTeam = null;
+  BOARD_ROLES.forEach(role => {
+    if (lastTeam !== role.team) {
+      const sep = document.createElement('div');
+      sep.className = 'team-separator';
+      sep.textContent = role.team==='explorer'?'⚡ 탐사대':role.team==='alien'?'👾 에일리언':'⚠ 중립';
+      body.appendChild(sep);
+      lastTeam = role.team;
+    }
+    const row = document.createElement('div');
+    row.className = 'board-row';
+    const nc = document.createElement('div');
+    nc.className = 'board-cell';
+    nc.innerHTML = `<span style="font-size:15px">${role.emoji}</span><span class="board-role-name ${role.team}">${role.name}</span>`;
+    row.appendChild(nc);
+    for (let d = 0; d < 4; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'board-cell';
+      const dot  = document.createElement('div');
+      const state = (boardState[role.id]||['unknown','unknown','unknown','unknown'])[d];
+      dot.className = `status-dot ${state}`;
+      dot.innerHTML = state==='alive'?'●':state==='dead'?'✕':'';
+      dot.onclick = () => cycleStatus(role.id, d);
+      cell.appendChild(dot); row.appendChild(cell);
+    }
+    const fc = document.createElement('div');
+    fc.className = 'board-cell';
+    const states = boardState[role.id]||[];
+    const dead  = states.includes('dead');
+    const alive = !dead && states.some(s=>s==='alive');
+    fc.innerHTML = dead
+      ? '<span style="color:var(--accent2);font-size:11px;font-weight:700">💀 탈락</span>'
+      : alive
+        ? '<span style="color:#00c853;font-size:11px;font-weight:700">✅ 생존</span>'
+        : '<span style="color:var(--text-muted);font-size:11px">-</span>';
+    row.appendChild(fc);
+    body.appendChild(row);
+  });
+}
+window.cycleStatus = (roleId, day) => {
+  const cycle = ['unknown','alive','dead'];
+  if (!boardState[roleId]) boardState[roleId] = ['unknown','unknown','unknown','unknown'];
+  const cur = boardState[roleId][day];
+  boardState[roleId][day] = cycle[(cycle.indexOf(cur)+1)%3];
+  renderBoard();
+  push({ boardState });
+};
+window.setDay = d => {
+  currentDay = d;
+  [1,2,3,4].forEach(i => document.getElementById(`day${i}`).classList.toggle('current', i===d));
+  push({ currentDay });
+};
+window.resetBoard = () => {
+  if (!confirm('상황판을 초기화하시겠습니까?')) return;
+  boardState = {};
+  initBoard();
+  push({ boardState });
+  showToast('상황판이 초기화되었습니다.');
+};
+
+// Notes
+document.getElementById('gameNotes').addEventListener('input', function() {
+  push({ notes: this.value });
+});
+
+// ── Helpers ──
+function setSyncStatus(state, text) {
+  document.getElementById('syncDot').className = 'sync-dot ' + state;
+  document.getElementById('syncText').textContent = text;
+}
+function showLobbyError(msg) {
+  document.getElementById('lobbyError').textContent = msg;
+}
+window.showToast = msg => {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+};
+
+// ── Boot ──
+updateRoleInfo();
+</script>
+</body>
+</html>
