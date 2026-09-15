@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>단어의 정령 — 어휘 모험 RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1b1330; --bg2:#2a1f47; --surface:#241a3d; --surface2:#2f2354; --border:#4a3a75;
+    --gold:#ffc94a; --gold-dim:#8a6d2a;
+    --hp:#ff5d6c; --hp-dark:#7a1f28;
+    --text:#f2e9ff; --text-muted:#a898c9;
+    --kor:#4caf7d;   /* 국어 - 숲 */
+    --soc:#e08a3c;   /* 사회 - 성 */
+    --sci:#3ea8d8;   /* 과학 - 실험실 */
+    --danger:#ff4b5c;
+    --ok:#5ad18b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{
+    background:radial-gradient(circle at 50% 0%,#2c2050,#150f26 70%);
+    color:var(--text);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;
+  }
+  .jua{font-family:'Jua',sans-serif;}
+  #app{position:relative;z-index:1;max-width:760px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+  .screen{display:none;flex:1;flex-direction:column;padding:20px 18px 40px;}
+  .screen.active{display:flex;}
+
+  h1,h2,h3{font-family:'Jua',sans-serif;font-weight:400;}
+  .btn{
+    font-family:'Jua',sans-serif;font-size:16px;color:#2a1a10;background:linear-gradient(180deg,#ffe08a,var(--gold));
+    border:none;border-radius:12px;padding:14px 20px;cursor:pointer;box-shadow:0 4px 0 var(--gold-dim),0 6px 14px rgba(0,0,0,.35);
+    transition:transform .12s,box-shadow .12s;letter-spacing:.5px;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--gold-dim),0 3px 8px rgba(0,0,0,.3);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.4);}
+  .btn-ghost{
+    background:transparent;color:var(--text);border:1.5px solid var(--border);box-shadow:none;font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:13px;padding:10px 16px;
+  }
+  .btn-ghost:active{transform:translateY(1px);}
+  .btn-wide{width:100%;}
+  .btn-danger{background:linear-gradient(180deg,#ff8a90,var(--danger));box-shadow:0 4px 0 #8a1f28,0 6px 14px rgba(0,0,0,.35);}
+
+  /* ── LOADING ── */
+  #loading{align-items:center;justify-content:center;text-align:center;gap:18px;}
+  .spinner{width:54px;height:54px;border-radius:50%;border:5px solid var(--border);border-top-color:var(--gold);animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .load-msg{color:var(--text-muted);font-size:13px;}
+  .load-err{color:var(--danger);font-size:13px;max-width:480px;line-height:1.6;background:rgba(255,75,92,.1);border:1px solid rgba(255,75,92,.4);border-radius:10px;padding:16px;text-align:left;}
+
+  /* ── LOBBY ── */
+  #lobby{align-items:center;justify-content:center;gap:22px;text-align:center;}
+  .logo-title{font-size:clamp(30px,8vw,46px);color:#fff;text-shadow:0 0 24px rgba(255,201,74,.5);}
+  .logo-sub{color:var(--text-muted);font-size:13px;letter-spacing:1px;}
+  .lobby-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:28px 26px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:18px;}
+  .name-input{
+    background:var(--bg2);border:1.5px solid var(--border);color:var(--text);font-family:'Jua',sans-serif;
+    font-size:20px;padding:13px 14px;border-radius:10px;text-align:center;outline:none;width:100%;
+  }
+  .name-input:focus{border-color:var(--gold);}
+  .avatar-row{display:flex;gap:12px;justify-content:center;}
+  .avatar-opt{
+    font-size:34px;background:var(--bg2);border:2px solid var(--border);border-radius:14px;
+    width:68px;height:68px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .avatar-opt.picked{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,201,74,.25);}
+
+  /* ── HEADER / STATUS BAR ── */
+  .statusbar{
+    display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);
+    border-radius:14px;padding:10px 14px;margin-bottom:16px;flex-wrap:wrap;
+  }
+  .sb-avatar{font-size:26px;}
+  .sb-name{font-family:'Jua',sans-serif;font-size:14px;}
+  .sb-lv{font-size:11px;color:var(--gold);}
+  .sb-exp{flex:1;min-width:90px;height:8px;background:var(--bg2);border-radius:6px;overflow:hidden;}
+  .sb-exp-fill{height:100%;background:linear-gradient(90deg,#7fe0ff,#4caf7d);}
+  .sb-gold{font-size:12px;color:var(--gold);font-family:'Jua',sans-serif;white-space:nowrap;}
+
+  /* ── MAP ── */
+  .map-title{text-align:center;font-size:22px;margin-bottom:14px;}
+  .kingdoms{display:flex;flex-direction:column;gap:14px;}
+  .kingdom{
+    border-radius:16px;padding:16px 16px;border:1.5px solid var(--border);background:var(--surface);
+  }
+  .kingdom-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .kingdom-icon{font-size:26px;}
+  .kingdom-name{font-family:'Jua',sans-serif;font-size:17px;}
+  .kingdom-desc{font-size:11px;color:var(--text-muted);margin-left:auto;}
+  .stage-grid{display:flex;flex-wrap:wrap;gap:10px;}
+  .stage-btn{
+    flex:1 1 84px;min-width:84px;border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;
+    border:1.5px solid var(--border);background:var(--bg2);font-family:'Jua',sans-serif;font-size:13px;
+  }
+  .stage-btn .stage-icon{font-size:20px;display:block;margin-bottom:4px;}
+  .stage-btn.cleared{border-color:var(--ok);}
+  .stage-btn.locked{opacity:.4;cursor:not-allowed;}
+  .stage-btn.boss{background:linear-gradient(180deg,#3a1f1f,#241417);border-color:var(--danger);}
+  .stage-btn:active:not(.locked){transform:translateY(2px);}
+  .kingdom-empty{font-size:12px;color:var(--text-muted);padding:6px 0;}
+
+  .map-actions{display:flex;gap:10px;margin-top:18px;}
+  .review-badge{
+    position:relative;
+  }
+  .review-count{
+    position:absolute;top:-8px;right:-8px;background:var(--danger);color:#fff;font-size:11px;
+    border-radius:10px;min-width:20px;height:20px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+    font-family:'Jua',sans-serif;
+  }
+
+  /* ── BATTLE ── */
+  .battle-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+  .battle-progress{font-size:12px;color:var(--text-muted);}
+  .monster-zone{
+    display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 10px 8px;
+  }
+  .monster-emoji{font-size:64px;transition:transform .15s;}
+  .monster-emoji.hit{animation:shake .3s;}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .bar-wrap{width:100%;max-width:340px;}
+  .bar-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-bottom:3px;}
+  .bar-bg{height:12px;border-radius:8px;background:var(--bg2);overflow:hidden;border:1px solid var(--border);}
+  .bar-fill{height:100%;transition:width .35s ease;}
+  .bar-fill.hp{background:linear-gradient(90deg,#ff8a90,var(--hp));}
+  .bar-fill.mon{background:linear-gradient(90deg,#ffdf8a,var(--gold));}
+
+  .player-zone{display:flex;align-items:center;justify-content:center;gap:12px;margin:8px 0 18px;}
+  .player-emoji{font-size:40px;}
+
+  .question-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px 18px;margin-bottom:16px;text-align:center;
+  }
+  .q-label{font-size:11px;color:var(--text-muted);letter-spacing:2px;margin-bottom:8px;}
+  .q-word{font-family:'Jua',sans-serif;font-size:30px;color:#fff;}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .opt-btn{
+    background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:12px 10px;
+    font-size:13px;line-height:1.45;cursor:pointer;text-align:left;color:var(--text);min-height:64px;
+    display:flex;align-items:center;
+  }
+  .opt-btn:active{transform:translateY(2px);}
+  .opt-btn.correct{border-color:var(--ok);background:rgba(90,209,139,.18);}
+  .opt-btn.wrong{border-color:var(--danger);background:rgba(255,75,92,.18);}
+  .opt-btn[disabled]{cursor:default;}
+  @media (max-width:420px){.options{grid-template-columns:1fr;}}
+
+  .feedback{min-height:22px;text-align:center;font-size:13px;font-family:'Jua',sans-serif;margin-bottom:8px;}
+  .feedback.ok{color:var(--ok);}
+  .feedback.bad{color:var(--danger);}
+
+  /* ── RESULT ── */
+  #result{align-items:center;justify-content:center;text-align:center;gap:16px;}
+  .result-icon{font-size:60px;}
+  .result-stats{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 24px;display:flex;flex-direction:column;gap:8px;min-width:220px;}
+  .result-row{display:flex;justify-content:space-between;font-size:13px;}
+  .result-row b{color:var(--gold);}
+
+  /* ── REVIEW ── */
+  .review-empty{text-align:center;color:var(--text-muted);padding:40px 10px;font-size:14px;}
+
+  footer{text-align:center;color:var(--text-muted);font-size:11px;padding:14px;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="loading" class="screen active">
+    <div class="spinner"></div>
+    <div class="jua" style="font-size:20px;">단어의 정령을 불러오는 중...</div>
+    <div class="load-msg" id="loadMsg">스프레드시트에서 어휘를 가져오고 있어요</div>
+    <div id="loadErrBox"></div>
+  </div>
+
+  <div id="lobby" class="screen">
+    <div class="logo-title jua">단어의 정령</div>
+    <div class="logo-sub">국어 · 사회 · 과학 어휘 모험 RPG</div>
+    <div class="lobby-card">
+      <div>
+        <label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:8px;">모험가 이름</label>
+        <input id="nameInput" class="name-input" maxlength="8" placeholder="이름을 입력하세요">
+      </div>
+      <div>
+        <label style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:8px;">캐릭터 선택</label>
+        <div class="avatar-row" id="avatarRow"></div>
+      </div>
+      <button class="btn btn-wide" id="startBtn">모험 시작!</button>
+    </div>
+  </div>
+
+  <div id="map" class="screen">
+    <div class="statusbar" id="statusbar"></div>
+    <div class="map-title jua">🗺️ 세 왕국의 지도</div>
+    <div class="kingdoms" id="kingdoms"></div>
+    <div class="map-actions">
+      <button class="btn btn-ghost review-badge" id="reviewBtn" style="flex:1;">📖 오답 복습 던전<span class="review-count" id="reviewCount" style="display:none;"></span></button>
+      <button class="btn btn-ghost" id="resetBtn">🔄 새로 시작</button>
+    </div>
+  </div>
+
+  <div id="battle" class="screen">
+    <div class="battle-top">
+      <button class="btn-ghost btn" id="fleeBtn" style="padding:8px 12px;font-size:12px;">← 나가기</button>
+      <div class="battle-progress" id="battleProgress"></div>
+    </div>
+    <div class="monster-zone">
+      <div class="monster-emoji" id="monsterEmoji">👹</div>
+      <div class="bar-wrap">
+        <div class="bar-label"><span id="monsterName">몬스터</span><span id="monsterHpText"></span></div>
+        <div class="bar-bg"><div class="bar-fill mon" id="monsterHpBar" style="width:100%"></div></div>
+      </div>
+    </div>
+    <div class="player-zone">
+      <div class="bar-wrap">
+        <div class="bar-label"><span id="battlePlayerName">모험가</span><span id="playerHpText"></span></div>
+        <div class="bar-bg"><div class="bar-fill hp" id="playerHpBar" style="width:100%"></div></div>
+      </div>
+      <div class="player-emoji" id="battlePlayerEmoji">🧙</div>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="question-card">
+      <div class="q-label" id="qMeta">단어의 뜻으로 알맞은 것은?</div>
+      <div class="q-word jua" id="qWord">단어</div>
+    </div>
+    <div class="options" id="options"></div>
+  </div>
+
+  <div id="result" class="screen">
+    <div class="result-icon" id="resultIcon">🏆</div>
+    <div class="jua" id="resultTitle" style="font-size:22px;">스테이지 클리어!</div>
+    <div class="result-stats">
+      <div class="result-row"><span>정답</span><b id="resAcc">0 / 0</b></div>
+      <div class="result-row"><span>획득 경험치</span><b id="resExp">+0</b></div>
+      <div class="result-row"><span>획득 골드</span><b id="resGold">+0</b></div>
+    </div>
+    <button class="btn btn-wide" id="resultBtn" style="max-width:260px;">지도로 돌아가기</button>
+  </div>
+
+  <div id="review" class="screen">
+    <div class="battle-top">
+      <button class="btn-ghost btn" id="reviewBackBtn" style="padding:8px 12px;font-size:12px;">← 지도로</button>
+      <div class="battle-progress" id="reviewProgress"></div>
+    </div>
+    <h2 class="jua" style="text-align:center;margin-bottom:14px;font-size:18px;">📖 오답 복습 던전</h2>
+    <div id="reviewBody"></div>
+  </div>
+
+  <footer>구글 스프레드시트와 함께 자라는 어휘 모험 게임</footer>
+</div>
+
+<script>
+/* ========================================================================
+   설정: 스프레드시트 ID와 과목별 시트(탭) 이름을 여기서 바꿀 수 있습니다.
+   시트는 "링크가 있는 모든 사용자 - 뷰어" 이상으로 공유되어 있어야 합니다.
+   ======================================================================== */
+const CONFIG = {
+  SPREADSHEET_ID: '1s3Oc7TbPo6BmMhR2-NVKzSePpossJMUQjydLOdZisGs',
+  SHEETS: { 국어: '국어', 사회: '사회', 과학: '과학' },
+};
+
+const KINGDOM_META = {
+  국어: { icon:'🌳', label:'말의 숲', color:'var(--kor)', desc:'국어 어휘' },
+  사회: { icon:'🏰', label:'역사의 성', color:'var(--soc)', desc:'사회 어휘' },
+  과학: { icon:'🔬', label:'실험의 탑', color:'var(--sci)', desc:'과학 어휘' },
+};
+const AVATARS = ['🧙','⚔️','🏹','🦸'];
+const MONSTERS = ['👹','👺','🐉','🦇','🕷️','👻','🐺','🦂','🐲','💀'];
+const BOSS_MONSTERS = ['🐲','👑👹','🔥🐉'];
+const SAVE_KEY = 'vocabRPG_save_v1';
+
+let DB = {};          // { 국어: {units:{'1단원':[word,...]}, all:[word,...]}, ... }
+let State = null;     // save data
+let Battle = null;    // current battle runtime state
+
+/* ---------- CSV 파싱 ---------- */
+function parseCSV(text){
+  const rows = []; let row = [], field = '', inQ = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i];
+    if (inQ){
+      if (c === '"'){ if (text[i+1] === '"'){ field+='"'; i++; } else inQ=false; }
+      else field += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(field); field=''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row=[]; field=''; }
+      else if (c === '\r') { /* skip */ }
+      else field += c;
+    }
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+
+function normalizeDifficulty(v){
+  v = (v||'').trim();
+  if (v.includes('어려운')) return 'hard';
+  if (v.includes('보통')) return 'normal';
+  if (v.includes('쉬운')) return 'easy';
+  return 'normal';
+}
+function normalizeUnit(v){
+  v = (v||'').trim();
+  return v || '기타';
+}
+function unitSortKey(u){
+  const n = parseInt(u,10);
+  return isNaN(n) ? [1, u] : [0, n];
+}
+
+async function fetchSheet(subject, sheetName){
+  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`"${sheetName}" 시트를 불러오지 못했어요 (${res.status})`);
+  const text = await res.text();
+  if (/^<!DOCTYPE html/i.test(text.trim())) throw new Error(`"${sheetName}" 시트에 접근할 수 없어요 (공유 설정을 확인해주세요)`);
+  const rows = parseCSV(text);
+  if (!rows.length) return [];
+  const header = rows[0].map(h => (h||'').trim());
+  const idx = {
+    word: header.indexOf('날말'),
+    submit: header.indexOf('제출수'),
+    diff: header.indexOf('난이도'),
+    subj: header.indexOf('과목'),
+    unit: header.indexOf('단원'),
+    meaning: header.indexOf('뜻'),
+  };
+  if (idx.word === -1 || idx.meaning === -1) throw new Error(`"${sheetName}" 시트에 "날말" 또는 "뜻" 열을 찾을 수 없어요`);
+  const words = [];
+  const seen = new Set();
+  for (let i=1;i<rows.length;i++){
+    const r = rows[i];
+    if (!r) continue;
+    const word = (r[idx.word]||'').trim();
+    const meaning = (r[idx.meaning]||'').trim();
+    if (!word || !meaning) continue;
+    const key = word+'|'+meaning;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    words.push({
+      word, meaning, subject,
+      submitCount: parseInt(r[idx.submit],10) || 0,
+      difficulty: normalizeDifficulty(idx.diff>-1 ? r[idx.diff] : ''),
+      unit: normalizeUnit(idx.unit>-1 ? r[idx.unit] : ''),
+    });
+  }
+  return words;
+}
+
+async function loadAllData(){
+  const msg = document.getElementById('loadMsg');
+  const errBox = document.getElementById('loadErrBox');
+  errBox.innerHTML = '';
+  const subjects = Object.keys(CONFIG.SHEETS);
+  DB = {};
+  for (const subj of subjects){
+    msg.textContent = `${subj} 어휘를 가져오는 중...`;
+    try {
+      const words = await fetchSheet(subj, CONFIG.SHEETS[subj]);
+      const units = {};
+      for (const w of words){
+        units[w.unit] = units[w.unit] || [];
+        units[w.unit].push(w);
+      }
+      DB[subj] = { all: words, units };
+    } catch (e){
+      DB[subj] = { all: [], units: {}, error: e.message };
+    }
+  }
+  const allFailed = subjects.every(s => DB[s].error || DB[s].all.length === 0);
+  if (allFailed){
+    const firstErr = subjects.map(s=>DB[s].error).find(Boolean) || '어휘를 하나도 불러오지 못했어요.';
+    errBox.innerHTML = `<div class="load-err">
+      ⚠️ ${escapeHtml(firstErr)}<br><br>
+      다음을 확인해주세요:<br>
+      1) 스프레드시트 공유 설정이 "링크가 있는 모든 사용자 - 뷰어"로 되어 있는지<br>
+      2) 시트(탭) 이름이 국어 / 사회 / 과학 으로 되어 있는지<br>
+      3) 각 시트에 "날말", "뜻" 열이 있는지
+    </div>
+    <button class="btn btn-wide" id="retryBtn" style="margin-top:14px;">다시 시도</button>`;
+    document.getElementById('retryBtn').onclick = boot;
+    return false;
+  }
+  return true;
+}
+
+/* ---------- 저장 ---------- */
+function loadSave(){
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e){}
+  return null;
+}
+function newSave(name, avatar){
+  return {
+    name, avatar, level:1, exp:0, gold:0,
+    progress: {}, // { 국어: { cleared: ['1단원',...], bossCleared:false } }
+    wrongWords: [], // [{subject, word, meaning}]
+    stats: { correct:0, wrong:0, monstersDefeated:0 },
+  };
+}
+function save(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(State)); } catch(e){} }
+
+function expNeeded(level){ return level*30; }
+function addExpGold(exp, gold){
+  State.exp += exp; State.gold += gold;
+  while (State.exp >= expNeeded(State.level)){
+    State.exp -= expNeeded(State.level);
+    State.level++;
+  }
+  save();
+}
+function playerMaxHp(){ return 50 + (State.level-1)*8; }
+function playerAtk(){ return 10 + (State.level-1)*2; }
+
+/* ---------- 화면 전환 ---------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function sample(arr, n){ return shuffle(arr).slice(0, n); }
+
+/* ---------- 로비 ---------- */
+function initLobby(){
+  const row = document.getElementById('avatarRow');
+  row.innerHTML = '';
+  let picked = AVATARS[0];
+  AVATARS.forEach((a,i)=>{
+    const btn = document.createElement('div');
+    btn.className = 'avatar-opt' + (i===0 ? ' picked' : '');
+    btn.textContent = a;
+    btn.onclick = () => {
+      picked = a;
+      [...row.children].forEach(c=>c.classList.remove('picked'));
+      btn.classList.add('picked');
+    };
+    row.appendChild(btn);
+  });
+  document.getElementById('startBtn').onclick = () => {
+    const name = document.getElementById('nameInput').value.trim() || '이름없는 모험가';
+    State = newSave(name, picked);
+    save();
+    goToMap();
+  };
+}
+
+/* ---------- 월드맵 ---------- */
+function subjectUnitList(subj){
+  const units = DB[subj] ? Object.keys(DB[subj].units) : [];
+  return units.sort((a,b)=>{
+    const [ta,na] = unitSortKey(a), [tb,nb] = unitSortKey(b);
+    if (ta !== tb) return ta - tb;
+    return typeof na === 'number' ? na-nb : String(na).localeCompare(String(nb));
+  });
+}
+function renderStatusbar(){
+  const el = document.getElementById('statusbar');
+  const need = expNeeded(State.level);
+  const pct = Math.min(100, Math.round(State.exp/need*100));
+  el.innerHTML = `
+    <div class="sb-avatar">${State.avatar}</div>
+    <div>
+      <div class="sb-name jua">${escapeHtml(State.name)}</div>
+      <div class="sb-lv">Lv.${State.level}</div>
+    </div>
+    <div class="sb-exp"><div class="sb-exp-fill" style="width:${pct}%"></div></div>
+    <div class="sb-gold">🪙 ${State.gold}</div>
+  `;
+}
+function goToMap(){
+  showScreen('map');
+  renderStatusbar();
+  const kingdoms = document.getElementById('kingdoms');
+  kingdoms.innerHTML = '';
+  for (const subj of Object.keys(CONFIG.SHEETS)){
+    const meta = KINGDOM_META[subj];
+    const units = subjectUnitList(subj);
+    const prog = State.progress[subj] || { cleared: [], bossCleared: false };
+    const box = document.createElement('div');
+    box.className = 'kingdom';
+    box.style.borderColor = meta.color;
+    let stagesHtml = '';
+    if (!units.length){
+      stagesHtml = `<div class="kingdom-empty">${DB[subj] && DB[subj].error ? '⚠️ 불러오기 실패' : '아직 준비된 어휘가 없어요'}</div>`;
+    } else {
+      units.forEach((u, i) => {
+        const cleared = prog.cleared.includes(u);
+        const locked = i > 0 && !prog.cleared.includes(units[i-1]);
+        stagesHtml += `<div class="stage-btn ${cleared?'cleared':''} ${locked?'locked':''}" data-subj="${subj}" data-unit="${escapeHtml(u)}">
+          <span class="stage-icon">${cleared ? '⭐' : locked ? '🔒' : '⚔️'}</span>${escapeHtml(u)}
+        </div>`;
+      });
+      const allCleared = units.every(u => prog.cleared.includes(u));
+      stagesHtml += `<div class="stage-btn boss ${allCleared ? '' : 'locked'} ${prog.bossCleared?'cleared':''}" data-subj="${subj}" data-unit="__boss__">
+        <span class="stage-icon">${prog.bossCleared ? '👑' : allCleared ? '🐲' : '🔒'}</span>보스전
+      </div>`;
+    }
+    box.innerHTML = `
+      <div class="kingdom-head">
+        <div class="kingdom-icon">${meta.icon}</div>
+        <div class="kingdom-name" style="color:${meta.color}">${meta.label}</div>
+        <div class="kingdom-desc">${meta.desc}</div>
+      </div>
+      <div class="stage-grid">${stagesHtml}</div>
+    `;
+    kingdoms.appendChild(box);
+  }
+  kingdoms.querySelectorAll('.stage-btn:not(.locked)').forEach(btn=>{
+    btn.onclick = () => {
+      const subj = btn.dataset.subj, unit = btn.dataset.unit;
+      if (!DB[subj] || !DB[subj].units) return;
+      if (unit === '__boss__') startStage(subj, null, true);
+      else startStage(subj, unit, false);
+    };
+  });
+
+  const rc = document.getElementById('reviewCount');
+  if (State.wrongWords.length){
+    rc.style.display = 'flex'; rc.textContent = State.wrongWords.length;
+  } else rc.style.display = 'none';
+
+  document.getElementById('reviewBtn').onclick = openReview;
+  document.getElementById('resetBtn').onclick = () => {
+    if (confirm('정말 처음부터 다시 시작할까요? 모든 진행 상황이 사라져요.')){
+      localStorage.removeItem(SAVE_KEY);
+      State = null;
+      showScreen('lobby');
+    }
+  };
+}
+
+/* ---------- 전투 ---------- */
+function buildQuestionPool(subj, unit, isBoss){
+  const pool = isBoss ? DB[subj].all : (DB[subj].units[unit] || []);
+  if (pool.length < 4) return pool.slice();
+  const weighted = pool.flatMap(w => Array(1 + Math.min(3, w.submitCount||0)).fill(w));
+  const count = isBoss ? Math.min(12, pool.length) : Math.min(6, pool.length);
+  const picked = [];
+  const usedWords = new Set();
+  const src = shuffle(weighted);
+  for (const w of src){
+    if (picked.length >= count) break;
+    if (usedWords.has(w.word)) continue;
+    usedWords.add(w.word);
+    picked.push(w);
+  }
+  return picked;
+}
+function difficultyBonus(d){ return d==='hard'?20:d==='easy'?-6:8; }
+
+function startStage(subj, unit, isBoss){
+  const pool = buildQuestionPool(subj, unit, isBoss);
+  if (!pool.length){ alert('이 스테이지에는 아직 어휘가 없어요.'); return; }
+  const avgDiff = pool.reduce((s,w)=>s+difficultyBonus(w.difficulty),0)/pool.length;
+  Battle = {
+    subj, unit, isBoss, queue: pool, idx: 0,
+    playerHp: playerMaxHp(), playerMaxHp: playerMaxHp(),
+    monsterMaxHp: 100, monsterHp: 100,
+    correct: 0, wrong: 0,
+    dmgPerCorrect: 100/pool.length,
+    monsterAtk: Math.max(4, 6 + avgDiff*0.6),
+    emoji: isBoss ? sample(BOSS_MONSTERS,1)[0] : sample(MONSTERS,1)[0],
+  };
+  document.getElementById('monsterEmoji').textContent = Battle.emoji;
+  document.getElementById('monsterName').textContent = isBoss ? `${KINGDOM_META[subj].label} 보스` : `${unit} 몬스터`;
+  document.getElementById('battlePlayerEmoji').textContent = State.avatar;
+  document.getElementById('battlePlayerName').textContent = State.name;
+  showScreen('battle');
+  document.getElementById('fleeBtn').onclick = () => { if (confirm('전투를 포기할까요?')) goToMap(); };
+  renderBattleBars();
+  nextQuestion();
+}
+function renderBattleBars(){
+  document.getElementById('monsterHpBar').style.width = Math.max(0, Battle.monsterHp/Battle.monsterMaxHp*100)+'%';
+  document.getElementById('monsterHpText').textContent = `${Math.max(0,Math.round(Battle.monsterHp))}%`;
+  document.getElementById('playerHpBar').style.width = Math.max(0, Battle.playerHp/Battle.playerMaxHp*100)+'%';
+  document.getElementById('playerHpText').textContent = `${Math.max(0,Math.round(Battle.playerHp))} / ${Battle.playerMaxHp}`;
+}
+function nextQuestion(){
+  if (Battle.idx >= Battle.queue.length || Battle.playerHp <= 0 || Battle.monsterHp <= 0){
+    return endBattle();
+  }
+  document.getElementById('battleProgress').textContent = `${Battle.idx+1} / ${Battle.queue.length}`;
+  document.getElementById('feedback').textContent = '';
+  const w = Battle.queue[Battle.idx];
+  document.getElementById('qWord').textContent = w.word;
+  document.getElementById('qMeta').textContent = `[${w.subject} · ${w.unit}] 이 낱말의 뜻은?`;
+
+  const subjPool = DB[w.subject].all.filter(x => x.word !== w.word);
+  const distractors = sample(subjPool, Math.min(3, subjPool.length)).map(x=>x.meaning);
+  while (distractors.length < 3) distractors.push('（해당 없음）');
+  const options = shuffle([w.meaning, ...distractors]);
+
+  const optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+  options.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'opt-btn';
+    b.textContent = opt;
+    b.onclick = () => selectAnswer(b, opt, w.meaning);
+    optWrap.appendChild(b);
+  });
+}
+function selectAnswer(btn, chosen, correctMeaning){
+  const w = Battle.queue[Battle.idx];
+  const allBtns = document.querySelectorAll('#options .opt-btn');
+  allBtns.forEach(b=>b.disabled=true);
+  const isCorrect = chosen === correctMeaning;
+  const fb = document.getElementById('feedback');
+  const monEl = document.getElementById('monsterEmoji');
+
+  if (isCorrect){
+    btn.classList.add('correct');
+    Battle.monsterHp = Math.max(0, Battle.monsterHp - Battle.dmgPerCorrect);
+    Battle.correct++; State.stats.correct++;
+    fb.textContent = '✅ 정답! 공격 성공!';
+    fb.className = 'feedback ok';
+    monEl.classList.add('hit');
+    setTimeout(()=>monEl.classList.remove('hit'), 300);
+    removeFromWrongWords(w);
+  } else {
+    btn.classList.add('wrong');
+    allBtns.forEach(b=>{ if (b.textContent === correctMeaning) b.classList.add('correct'); });
+    Battle.playerHp = Math.max(0, Battle.playerHp - Battle.monsterAtk);
+    Battle.wrong++; State.stats.wrong++;
+    fb.textContent = '❌ 오답! 몬스터의 반격!';
+    fb.className = 'feedback bad';
+    addToWrongWords(w);
+  }
+  renderBattleBars();
+  Battle.idx++;
+  setTimeout(nextQuestion, 1100);
+}
+function addToWrongWords(w){
+  if (!State.wrongWords.some(x=>x.word===w.word && x.subject===w.subject)){
+    State.wrongWords.push({ subject:w.subject, word:w.word, meaning:w.meaning });
+    save();
+  }
+}
+function removeFromWrongWords(w){
+  const before = State.wrongWords.length;
+  State.wrongWords = State.wrongWords.filter(x=>!(x.word===w.word && x.subject===w.subject));
+  if (State.wrongWords.length !== before) save();
+}
+function endBattle(){
+  const win = Battle.playerHp > 0;
+  if (win){
+    State.stats.monstersDefeated++;
+    if (!Battle.isBoss){
+      State.progress[Battle.subj] = State.progress[Battle.subj] || { cleared: [], bossCleared:false };
+      if (!State.progress[Battle.subj].cleared.includes(Battle.unit)){
+        State.progress[Battle.subj].cleared.push(Battle.unit);
+      }
+    } else {
+      State.progress[Battle.subj] = State.progress[Battle.subj] || { cleared: [], bossCleared:false };
+      State.progress[Battle.subj].bossCleared = true;
+    }
+  }
+  const total = Battle.correct + Battle.wrong;
+  const exp = win ? (Battle.isBoss ? 40 : 15) + Battle.correct*3 : Math.floor(Battle.correct*1.5);
+  const gold = win ? (Battle.isBoss ? 30 : 10) + Battle.correct*2 : Battle.correct;
+  addExpGold(exp, gold);
+
+  document.getElementById('resultIcon').textContent = win ? (Battle.isBoss ? '👑' : '🏆') : '💫';
+  document.getElementById('resultTitle').textContent = win ? (Battle.isBoss ? '보스 격파!' : '스테이지 클리어!') : '쓰러졌어요... 다시 도전해봐요';
+  document.getElementById('resAcc').textContent = `${Battle.correct} / ${total}`;
+  document.getElementById('resExp').textContent = `+${exp}`;
+  document.getElementById('resGold').textContent = `+${gold}`;
+  document.getElementById('resultBtn').onclick = goToMap;
+  showScreen('result');
+}
+
+/* ---------- 오답 복습 던전 ---------- */
+function openReview(){
+  showScreen('review');
+  runReview();
+}
+function runReview(){
+  const body = document.getElementById('reviewBody');
+  if (!State.wrongWords.length){
+    body.innerHTML = `<div class="review-empty">✨ 복습할 틀린 단어가 없어요!<br>전투에서 틀린 단어가 여기 쌓여요.</div>`;
+    document.getElementById('reviewProgress').textContent = '';
+    return;
+  }
+  const list = shuffle(State.wrongWords);
+  let i = 0;
+  document.getElementById('reviewBackBtn').onclick = goToMap;
+  function show(){
+    if (i >= list.length){ openReview(); return; }
+    document.getElementById('reviewProgress').textContent = `${i+1} / ${list.length}`;
+    const w = list[i];
+    const subjPool = DB[w.subject] ? DB[w.subject].all.filter(x=>x.word!==w.word) : [];
+    const distractors = sample(subjPool, Math.min(3, subjPool.length)).map(x=>x.meaning);
+    while (distractors.length < 3) distractors.push('（해당 없음）');
+    const options = shuffle([w.meaning, ...distractors]);
+    body.innerHTML = `
+      <div class="question-card">
+        <div class="q-label">[${w.subject}] 이 낱말의 뜻은?</div>
+        <div class="q-word jua">${escapeHtml(w.word)}</div>
+      </div>
+      <div class="feedback" id="revFeedback"></div>
+      <div class="options" id="revOptions"></div>
+    `;
+    document.getElementById('revOptions').innerHTML = '';
+    options.forEach(opt=>{
+      const b = document.createElement('button');
+      b.className='opt-btn';
+      b.textContent = opt;
+      b.onclick = () => {
+        document.querySelectorAll('#revOptions .opt-btn').forEach(x=>x.disabled=true);
+        const fb = document.getElementById('revFeedback');
+        if (opt === w.meaning){
+          b.classList.add('correct');
+          fb.textContent = '✅ 정답! 오답노트에서 사라져요.';
+          fb.className = 'feedback ok';
+          removeFromWrongWords(w);
+        } else {
+          b.classList.add('wrong');
+          document.querySelectorAll('#revOptions .opt-btn').forEach(x=>{ if (x.textContent===w.meaning) x.classList.add('correct'); });
+          fb.textContent = '❌ 아직이에요. 다음에 또 만나요!';
+          fb.className = 'feedback bad';
+        }
+        setTimeout(()=>{ i++; show(); }, 1100);
+      };
+      document.getElementById('revOptions').appendChild(b);
+    });
+  }
+  show();
+}
+
+/* ---------- 부팅 ---------- */
+async function boot(){
+  showScreen('loading');
+  const ok = await loadAllData();
+  if (!ok) return;
+  State = loadSave();
+  if (State){
+    goToMap();
+  } else {
+    initLobby();
+    showScreen('lobby');
+  }
+}
+boot();
+</script>
+</body>
+</html>
