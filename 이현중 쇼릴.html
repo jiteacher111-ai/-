@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>이현중 쇼릴</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #0A1220;
+    --ink-2: #0F1A2C;
+    --ink-3: #16243A;
+    --paper: #E9EDF2;
+    --muted: #8D9AAD;
+    --line: rgba(233, 237, 242, 0.12);
+    --amber: #E58A3A;
+    --red: #E8485A;
+    --blue: #4C8BE6;
+    --accent: var(--amber);
+    --display: "Black Han Sans", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+    --num: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  }
+  html, body { background: var(--ink); color: var(--paper); }
+  body {
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.6;
+    padding-inline: 16px;
+    padding-block: 24px 56px;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 40px; }
+
+  /* ---------- masthead ---------- */
+  .mast { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; }
+  .mast h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(28px, 4vw, 40px); letter-spacing: 0.01em; line-height: 1.1; }
+  .mast h1 span { font-family: var(--num); font-weight: 600; font-size: 0.55em; letter-spacing: 0.18em; color: var(--muted); margin-left: 12px; vertical-align: middle; }
+  .mast p { margin: 0; color: var(--muted); font-size: 13px; }
+
+  /* ---------- stage ---------- */
+  .stage {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    max-width: 100%;
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+  .stage::after {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(90deg, rgba(10,18,32,0.92) 0%, rgba(10,18,32,0.72) 45%, rgba(10,18,32,0) 78%);
+  }
+  .scene {
+    position: absolute; z-index: 2; inset: 0;
+    padding: clamp(20px, 4.2vw, 52px) clamp(20px, 4.6vw, 56px) 88px;
+    display: flex; flex-direction: column; justify-content: center; gap: clamp(10px, 1.6vw, 18px);
+    max-width: 680px;
+  }
+  .eyebrow {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--num); font-weight: 600; font-size: clamp(13px, 1.3vw, 16px);
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent);
+  }
+  .eyebrow .yr { font-size: 1.5em; letter-spacing: 0.04em; color: var(--paper); }
+  .eyebrow .rule { width: 28px; height: 2px; background: var(--accent); }
+  .headline {
+    margin: 0; font-family: var(--display); font-weight: 400;
+    font-size: clamp(30px, 5.2vw, 64px); line-height: 1.08; letter-spacing: -0.005em;
+    text-wrap: balance; word-break: keep-all;
+  }
+  .headline em { font-style: normal; color: var(--accent); }
+  .lede { margin: 0; color: #C3CBD6; font-size: clamp(14px, 1.45vw, 17px); max-width: 52ch; word-break: keep-all; text-wrap: pretty; }
+  .stats { display: flex; flex-wrap: wrap; gap: 10px clamp(20px, 3vw, 40px); margin-top: 4px; }
+  .stat { display: grid; gap: 0; }
+  .stat b {
+    font-family: var(--num); font-weight: 700; font-size: clamp(34px, 4.8vw, 60px);
+    line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -0.01em;
+  }
+  .stat b small { font-size: 0.45em; font-weight: 600; margin-left: 2px; color: var(--accent); }
+  .stat span { font-size: 12px; color: var(--muted); letter-spacing: 0.02em; }
+
+  .scene.enter .eyebrow  { animation: rise .6s cubic-bezier(.2,.7,.2,1) both; }
+  .scene.enter .headline { animation: rise .7s .08s cubic-bezier(.2,.7,.2,1) both; }
+  .scene.enter .lede     { animation: rise .7s .18s cubic-bezier(.2,.7,.2,1) both; }
+  .scene.enter .stats    { animation: rise .7s .28s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- transport ---------- */
+  .transport {
+    position: absolute; z-index: 3; left: 0; right: 0; bottom: 0;
+    padding: 12px clamp(14px, 3vw, 24px) 14px;
+    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 14px;
+    background: linear-gradient(0deg, rgba(10,18,32,0.9), rgba(10,18,32,0));
+  }
+  .btns { display: flex; gap: 4px; }
+  .tbtn {
+    width: 36px; height: 36px; display: grid; place-items: center;
+    border: 1px solid var(--line); border-radius: 50%; background: rgba(15,26,44,0.7);
+    color: var(--paper); cursor: pointer; padding: 0;
+  }
+  .tbtn:hover { border-color: var(--accent); }
+  .tbtn:focus-visible, .chap:focus-visible, .row a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tbtn svg { width: 14px; height: 14px; fill: currentColor; }
+  .chapters { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; min-width: 0; }
+  .chap {
+    appearance: none; border: 0; background: none; padding: 8px 0 0; cursor: pointer;
+    display: grid; gap: 6px; min-width: 0; color: var(--muted);
+    font-family: var(--num); font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-align: left;
+  }
+  .chap i { display: block; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
+  .chap i::before { content: ""; display: block; height: 100%; width: var(--p, 0%); background: var(--accent); }
+  .chap.done i::before { width: 100%; background: rgba(233,237,242,0.55); }
+  .chap.on { color: var(--paper); }
+  .chap span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  @media (max-width: 1100px) { .chap span { visibility: hidden; } .chap.on span { visibility: visible; overflow: visible; } }
+  .counter { font-family: var(--num); font-weight: 600; font-size: 14px; letter-spacing: 0.08em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .counter b { color: var(--paper); font-weight: 700; }
+
+  /* ---------- archive ---------- */
+  .archive h2, .sources h2 {
+    margin: 0 0 14px; font-family: var(--num); font-weight: 600; font-size: 14px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  }
+  .rows { display: grid; border-top: 1px solid var(--line); }
+  .row {
+    display: grid; grid-template-columns: 104px minmax(0, 1fr) minmax(0, 300px); gap: 8px 24px;
+    padding: 16px 0; border-bottom: 1px solid var(--line); align-items: baseline;
+  }
+  .row .y { font-family: var(--num); font-weight: 700; font-size: 22px; white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; }
+  .row .y small { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; margin-top: 6px; color: var(--c, var(--amber)); }
+  .row h3 { margin: 0 0 4px; font-size: 16px; font-weight: 600; line-height: 1.4; word-break: keep-all; }
+  .row p { margin: 0; color: #B6BFCC; font-size: 14px; word-break: keep-all; max-width: 62ch; }
+  .row .nums { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--num); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .row .nums span { color: var(--muted); font-weight: 500; margin-left: 4px; font-family: var(--body); font-size: 12px; }
+  .row button {
+    grid-column: 2; justify-self: start; margin-top: 6px; background: none; border: 0; padding: 0;
+    color: var(--c, var(--amber)); font-family: var(--num); font-weight: 600; font-size: 13px; letter-spacing: 0.1em; cursor: pointer;
+  }
+  .row button:hover { text-decoration: underline; }
+  .row button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .sources ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; }
+  .sources a { color: #B6BFCC; text-underline-offset: 3px; }
+  .sources a:hover { color: var(--paper); }
+  .note { margin: 12px 0 0; color: var(--muted); font-size: 12px; }
+
+  @media (max-width: 760px) {
+    .stage { aspect-ratio: auto; min-height: 560px; }
+    .stage::after { background: linear-gradient(180deg, rgba(10,18,32,0.25) 0%, rgba(10,18,32,0.88) 42%, rgba(10,18,32,0.95) 100%); }
+    .scene { justify-content: flex-end; padding-bottom: 92px; max-width: none; }
+    .chap span { display: none; }
+    .row { grid-template-columns: 84px minmax(0, 1fr); }
+    .row .y { font-size: 18px; }
+    .mast h1 span { display: block; margin: 6px 0 0; font-size: 0.42em; }
+    .row .nums { grid-column: 2; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scene.enter .eyebrow, .scene.enter .headline, .scene.enter .lede, .scene.enter .stats { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="mast">
+    <h1>이현중 <span>LEE HYUN-JUNG · SHOWREEL</span></h1>
+    <p>데이비슨에서 나고야까지, 2019–2026 · 2026년 9월 28일 기준</p>
+  </header>
+
+  <section class="stage" id="stage" aria-roledescription="쇼릴" aria-label="이현중 커리어 쇼릴">
+    <canvas id="court" aria-hidden="true"></canvas>
+    <article class="scene" id="scene" aria-live="polite"></article>
+    <div class="transport">
+      <div class="btns">
+        <button class="tbtn" id="prev" type="button" aria-label="이전 장면"><svg viewBox="0 0 16 16"><path d="M3 2h2v12H3zM14 2v12L6 8z"/></svg></button>
+        <button class="tbtn" id="play" type="button" aria-label="일시정지"><svg viewBox="0 0 16 16" id="playIcon"><path d="M4 2h3v12H4zM9 2h3v12H9z"/></svg></button>
+        <button class="tbtn" id="next" type="button" aria-label="다음 장면"><svg viewBox="0 0 16 16"><path d="M11 2h2v12h-2zM2 2v12l8-6z"/></svg></button>
+      </div>
+      <nav class="chapters" id="chapters" aria-label="장면 선택"></nav>
+      <div class="counter" id="counter"></div>
+    </div>
+  </section>
+
+  <section class="archive" aria-labelledby="archiveTitle">
+    <h2 id="archiveTitle">커리어 기록 전체</h2>
+    <div class="rows" id="rows"></div>
+  </section>
+
+  <section class="sources" aria-labelledby="srcTitle">
+    <h2 id="srcTitle">출처</h2>
+    <ul>
+      <li><a href="https://www.ksilbo.co.kr/news/articleView.html?idxno=790211" target="_blank" rel="noopener">경상일보 · 데이비슨대 이현중 50-40-90 클럽 가입 (2021)</a></li>
+      <li><a href="https://www.mksports.co.kr/news/sports/10655229" target="_blank" rel="noopener">MK스포츠 · 드래프트 낙방 후 산타크루즈 워리어스 입단 (2023)</a></li>
+      <li><a href="https://www.fiba.basketball/en/events/fiba-asiacup-2025/news/lee-hyunjung-leads-closeout-as-korea-repel-qatar-for-win-no-1" target="_blank" rel="noopener">FIBA · Lee Hyunjung leads closeout as Korea repel Qatar (2025)</a></li>
+      <li><a href="https://imnews.imbc.com/news/2025/sports/article/6780327_36751.html" target="_blank" rel="noopener">MBC · 중국 원정 7년 만에 승리, 이현중 33점 (2025)</a></li>
+      <li><a href="https://www.starnewskorea.com/sports/2025/12/01/2025120116530317637" target="_blank" rel="noopener">스타뉴스 · 중국전 12년 만의 2연승 (2025)</a></li>
+      <li><a href="https://www.seoul.co.kr/news/sport/basketball/2026/05/28/20260528034002" target="_blank" rel="noopener">서울신문 · 日 리그 평정한 이현중 (2026)</a></li>
+      <li><a href="https://m.news.nate.com/view/20260529n33143" target="_blank" rel="noopener">네이트 스포츠 · B.리그 베스트5·아시아특별상·3점슛 성공률상 (2026)</a></li>
+      <li><a href="https://www.dailysportshankook.co.kr/news/articleView.html?idxno=433727" target="_blank" rel="noopener">데일리스포츠한국 · 아시안게임 결승 27점 18리바운드 (2026)</a></li>
+      <li><a href="https://www.thereport.co.kr/news/articleView.html?idxno=91598" target="_blank" rel="noopener">더리포트 · 어머니 성정아와 36년 만의 모자 金 (2026)</a></li>
+      <li><a href="https://www.newspim.com/news/view/20260907000698" target="_blank" rel="noopener">뉴스핌 · 포틀랜드와 비보장 1년 계약 (2026)</a></li>
+    </ul>
+    <p class="note">기록은 위 보도를 기준으로 정리했습니다. 시즌 기록은 정규리그 기준이며, 별도 표기가 있는 경우 대회 기록입니다.</p>
+  </section>
+</div>
+
+<script>
+(() => {
+  const A = { amber: '#E58A3A', red: '#E8485A', blue: '#4C8BE6' };
+  const scenes = [
+    {
+      yr: '2026', tag: 'Showreel', chap: 'INTRO', c: 'amber',
+      title: '한 번의 슛,<br><em>일곱 해의 궤적</em>',
+      body: '미국 대학 무대에서 시작해 호주, 일본, 그리고 아시아 정상까지. 한국 농구의 슈터 이현중이 지금까지 걸어온 길을 장면으로 따라갑니다.',
+      stats: [{ v: '47.9', u: '%', l: 'B.리그 3점슛 성공률 1위' }, { v: '24.0', u: '점', l: '아시안게임 평균 득점' }]
+    },
+    {
+      yr: '1984 · 1990', tag: 'Family', chap: 'ROOTS', c: 'red',
+      title: '농구 코트에서<br><em>태어난 슈터</em>',
+      body: '어머니 성정아는 1984 LA 올림픽 여자농구 은메달, 1990 베이징 아시안게임 금메달의 주역입니다. 36년 뒤 아들이 같은 금메달을 목에 겁니다.',
+      stats: [{ v: '1984', u: '', l: 'LA 올림픽 은메달 (어머니)' }, { v: '1990', u: '', l: '베이징 AG 금메달 (어머니)' }]
+    },
+    {
+      yr: '2019', tag: 'Davidson College · NCAA D-I', chap: 'NCAA', c: 'blue',
+      title: '스테픈 커리의 학교,<br><em>데이비슨</em>',
+      body: '데이비슨 와일드캐츠 유니폼을 입고 NCAA 디비전 1 무대에 데뷔했습니다. 1학년 시즌에 애틀랜틱 10 콘퍼런스 신인 베스트 5에 이름을 올렸습니다.',
+      stats: [{ v: '8.4', u: '점', l: '1학년 평균 득점' }, { v: '3.1', u: '개', l: '평균 리바운드' }]
+    },
+    {
+      yr: '2021', tag: 'Davidson · 50-40-90 Club', chap: '50-40-90', c: 'blue',
+      title: '슈터의 훈장,<br><em>50-40-90 클럽</em>',
+      body: '2학년 정규리그 19경기 전 경기 선발 출전. 야투 50%, 3점슛 40%, 자유투 90%를 모두 넘긴 NCAA 디비전 1의 희귀한 기록을 남겼습니다.',
+      stats: [{ v: '50.3', u: '%', l: '야투' }, { v: '43.6', u: '%', l: '3점슛' }, { v: '90.5', u: '%', l: '자유투' }]
+    },
+    {
+      yr: '2022', tag: 'NBA Draft', chap: 'SETBACK', c: 'blue',
+      title: '드래프트 1주일 전,<br><em>발등 부상</em>',
+      body: 'NBA 드래프트를 앞둔 워크아웃에서 왼쪽 발등뼈와 인대를 다쳤고, 지명을 받지 못했습니다. 한국에서 재활에 매달리며 다음 기회를 준비했습니다.',
+      stats: [{ v: '13.2', u: '점', l: '2020-21 평균 득점' }, { v: '4.3', u: '개', l: '평균 리바운드' }]
+    },
+    {
+      yr: '2023', tag: 'Santa Cruz Warriors · NBA G League', chap: 'G LEAGUE', c: 'blue',
+      title: '다시 선 무대,<br><em>G리그</em>',
+      body: '골든스테이트 워리어스 산하 산타크루즈 워리어스에 입단했습니다. 데이비슨 선배 커리의 팀 산하에서 미국 프로 무대를 처음 밟았습니다.',
+      stats: [{ v: '2', u: '월', l: '2023년 산타크루즈 입단' }]
+    },
+    {
+      yr: '2023–24', tag: 'Illawarra Hawks · NBL', chap: 'NBL', c: 'amber',
+      title: '호크스의<br><em>첫 아시아 선수</em>',
+      body: '호주 NBL 일라와라 호크스에 입단해 구단 역사상 첫 아시아 선수가 됐습니다. 2024년 비시즌에는 일본 B.리그 오사카 에벳사에서 두 달간 뛰었습니다.',
+      stats: [{ v: '1', u: '호', l: '일라와라 첫 아시아 선수' }]
+    },
+    {
+      yr: '2025', tag: 'FIBA Asia Cup · Jeddah', chap: 'ASIA CUP', c: 'red',
+      title: '대표팀의<br><em>득점 1옵션</em>',
+      body: '카타르전 24점(야투 7/11) 7리바운드로 대회 첫 승을 이끌었고, 조별리그 팀 내 득점 1위로 8강에 올랐습니다. 8강에서 중국에 막혀 눈물을 흘렸습니다.',
+      stats: [{ v: '19.3', u: '점', l: '조별리그 평균 득점' }, { v: '24', u: '점', l: '카타르전 득점' }]
+    },
+    {
+      yr: '2025.11', tag: 'World Cup Qualifiers · Beijing', chap: 'BEIJING', c: 'red',
+      title: '만리장성을 넘은<br><em>3점슛 9개</em>',
+      body: '석 달 전의 패배를 베이징에서 갚았습니다. 33점 14리바운드로 80-76 승리, 7년 만의 중국 원정 승리. 사흘 뒤 원주에서도 이겨 12년 만에 중국전 2연승을 거뒀습니다.',
+      stats: [{ v: '33', u: '점', l: '득점' }, { v: '9', u: '개', l: '3점슛 성공' }, { v: '14', u: '개', l: '리바운드' }]
+    },
+    {
+      yr: '2025–26', tag: 'Nagasaki Velca · B.League', chap: 'B.LEAGUE', c: 'amber',
+      title: '일본 리그를<br><em>평정한 3점 슈터</em>',
+      body: '정규리그 57경기에서 3점슛 성공 개수와 성공률 모두 리그 1위. 나가사키는 47승 13패로 전체 1위에 올랐고, 이현중은 베스트 5·아시아 특별상·3점슛 성공률상을 받았습니다.',
+      stats: [{ v: '187', u: '개', l: '3점슛 성공 1위' }, { v: '47.9', u: '%', l: '3점슛 성공률 1위' }, { v: '17.4', u: '점', l: '평균 득점' }]
+    },
+    {
+      yr: '2026.05', tag: 'B.League Championship · Yokohama', chap: 'FINALS MVP', c: 'amber',
+      title: '창단 첫 우승,<br><em>챔피언십 MVP</em>',
+      body: '요코하마 아레나에서 열린 파이널 3차전. 류큐 골든킹스를 72-64로 꺾은 경기에서 양 팀 최다 23점으로 나가사키의 창단 첫 우승을 완성했습니다.',
+      stats: [{ v: '23', u: '점', l: '파이널 3차전 득점' }, { v: '72-64', u: '', l: 'vs 류큐 골든킹스' }]
+    },
+    {
+      yr: '2026.09', tag: 'Asian Games · Aichi-Nagoya', chap: 'GOLD', c: 'red',
+      title: '12년 만의 금메달,<br><em>모자(母子) 金</em>',
+      body: '결승 한일전 67-57 승리. 27점 18리바운드 더블더블로 원정 대회 44년 만의 금메달을 이끌었습니다. 어머니 성정아 이후 36년 만의 모자 금메달입니다.',
+      stats: [{ v: '27', u: '점', l: '결승 득점' }, { v: '18', u: '개', l: '결승 리바운드' }, { v: '24.0', u: '점', l: '대회 평균' }]
+    },
+    {
+      yr: '2026–27', tag: 'Portland Trail Blazers · NBA', chap: 'NEXT', c: 'blue',
+      title: '다음 장면은<br><em>NBA</em>',
+      body: '서머리그 스퍼스 소속으로 유타전 22점(3점슛 4개)을 올렸고, 9월 포틀랜드 트레일블레이저스와 1년 비보장 계약을 맺었습니다. 금메달을 걸고 9월 26일 미국으로 떠났습니다.',
+      stats: [{ v: '22', u: '점', l: '서머리그 유타전' }, { v: '1', u: '년', l: '포틀랜드 계약' }]
+    }
+  ];
+
+  const archive = [
+    { y: '1984–90', t: 'Family', c: 'red', h: '어머니 성정아, 올림픽 은·아시안게임 금', p: '1984 LA 올림픽 여자농구 은메달, 1990 베이징 아시안게임 금메달의 주역. 한국 농구의 레전드 가족에서 자랐습니다.', n: [], s: 1 },
+    { y: '2019–20', t: 'Davidson', c: 'blue', h: 'A-10 콘퍼런스 신인 베스트 5', p: '데이비슨대 1학년으로 NCAA 디비전 1 데뷔.', n: [['8.4', '점'], ['3.1', '리바운드']], s: 2 },
+    { y: '2020–21', t: 'Davidson', c: 'blue', h: 'NCAA 디비전 1 50-40-90 클럽 가입', p: '2학년 정규리그 19경기 전 경기 선발.', n: [['13.2', '점'], ['4.3', '리바운드'], ['2.6', '어시스트'], ['50.3 / 43.6 / 90.5', '%']], s: 3 },
+    { y: '2022', t: 'NBA Draft', c: 'blue', h: '드래프트 직전 발등 부상, 미지명', p: '워크아웃 중 왼쪽 발등뼈와 인대 부상. 한국에서 재활.', n: [], s: 4 },
+    { y: '2023', t: 'G League', c: 'blue', h: '산타크루즈 워리어스 입단', p: '골든스테이트 워리어스 산하 G리그 팀과 계약하며 미국 프로 무대에 복귀.', n: [], s: 5 },
+    { y: '2023–24', t: 'NBL', c: 'amber', h: '일라와라 호크스, 구단 첫 아시아 선수', p: '호주 NBL 진출. 2024년 비시즌에는 B.리그 오사카 에벳사와 단기 계약, 포틀랜드 소속으로 서머리그 출전.', n: [], s: 6 },
+    { y: '2025.08', t: 'Asia Cup', c: 'red', h: 'FIBA 아시아컵 8강', p: '카타르전 24점 7리바운드 4어시스트로 첫 승. 조별리그 팀 내 득점 1위. 8강에서 중국에 패배.', n: [['19.3', '조별리그 평균 득점']], s: 7 },
+    { y: '2025.11', t: 'WC Qualifiers', c: 'red', h: '베이징 원정 80-76 승리, 33점', p: '3점슛 9개 포함 33점 14리바운드. 7년 만의 중국 원정 승리, 이어 원주 홈경기 승리로 12년 만의 중국전 2연승.', n: [['33', '점'], ['14', '리바운드'], ['9', '3점슛']], s: 8 },
+    { y: '2025–26', t: 'B.League', c: 'amber', h: '나가사키 벨카, 정규리그 전체 1위', p: '57경기 출전. 3점슛 성공 개수·성공률 리그 1위. B.리그 베스트 5, 아시아 특별상, 3점슛 성공률상 수상. 팀 47승 13패.', n: [['17.4', '점'], ['5.6', '리바운드'], ['2.7', '어시스트'], ['187', '3점슛'], ['47.9', '%']], s: 9 },
+    { y: '2026.05', t: 'Finals', c: 'amber', h: 'B.리그 창단 첫 우승, 챔피언십 MVP', p: '파이널 3차전 류큐 골든킹스전 72-64 승리, 양 팀 최다 23점(3점슛 3개).', n: [['23', '점']], s: 10 },
+    { y: '2026.07', t: 'Summer League', c: 'blue', h: '샌안토니오 스퍼스 서머리그', p: '유타 재즈전 벤치에서 나와 3점슛 4개 포함 22점 5리바운드.', n: [['22', '점'], ['5', '리바운드']], s: 12 },
+    { y: '2026.09', t: 'Asian Games', c: 'red', h: '아이치·나고야 아시안게임 금메달', p: '결승 일본전 67-57, 27점 18리바운드(3점슛 5개). 12년 만의 우승이자 1982년 이후 첫 원정 금메달. 어머니와 36년 만의 모자 금메달.', n: [['24.0', '점'], ['9.7', '리바운드'], ['4.2', '어시스트'], ['51.8 / 47.2 / 86.1', '%']], s: 11 },
+    { y: '2026.09', t: 'NBA', c: 'blue', h: '포틀랜드 트레일블레이저스 1년 비보장 계약', p: '캠프와 프리시즌을 거쳐 NBA 정규 로스터 진입에 도전. 9월 26일 출국.', n: [], s: 12 }
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  const stage = $('stage'), sceneEl = $('scene'), chapters = $('chapters'), counter = $('counter');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const DUR = 7200;
+  let idx = 0, playing = true, elapsed = 0, last = performance.now();
+
+  // ---------- chapters ----------
+  scenes.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'chap';
+    b.setAttribute('aria-label', `${i + 1}번 장면: ${s.chap}`);
+    b.innerHTML = `<i></i><span>${s.chap}</span>`;
+    b.addEventListener('click', () => go(i, true));
+    chapters.appendChild(b);
+  });
+  const chapBtns = [...chapters.children];
+
+  // ---------- archive ----------
+  $('rows').innerHTML = archive.map((r) => `
+    <div class="row" style="--c:${A[r.c]}">
+      <div class="y">${r.y}<small>${r.t.toUpperCase()}</small></div>
+      <div><h3>${r.h}</h3><p>${r.p}</p></div>
+      <div class="nums">${r.n.map(([v, l]) => `<div>${v}<span>${l}</span></div>`).join('')}</div>
+      <button type="button" data-s="${r.s}">▶ 장면 보기</button>
+    </div>`).join('');
+  $('rows').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-s]');
+    if (!b) return;
+    go(+b.dataset.s, true);
+    stage.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'center' });
+  });
+
+  // ---------- scene render ----------
+  function render(i, animate) {
+    const s = scenes[i];
+    stage.style.setProperty('--accent', A[s.c]);
+    sceneEl.className = 'scene';
+    sceneEl.innerHTML = `
+      <div class="eyebrow"><span class="yr">${s.yr}</span><span class="rule"></span><span>${s.tag}</span></div>
+      <h2 class="headline">${s.title}</h2>
+      <p class="lede">${s.body}</p>
+      <div class="stats">${s.stats.map((st) => `<div class="stat"><b data-v="${st.v}">${st.v}<small>${st.u}</small></b><span>${st.l}</span></div>`).join('')}</div>`;
+    if (animate && !reduced) {
+      void sceneEl.offsetWidth;
+      sceneEl.classList.add('enter');
+      sceneEl.querySelectorAll('.stat b').forEach(countUp);
+    }
+    counter.innerHTML = `<b>${String(i + 1).padStart(2, '0')}</b> / ${String(scenes.length).padStart(2, '0')}`;
+    chapBtns.forEach((b, j) => {
+      b.classList.toggle('on', j === i);
+      b.classList.toggle('done', j < i);
+      if (j !== i) b.firstChild.style.setProperty('--p', '0%');
+    });
+  }
+
+  function countUp(el) {
+    const raw = el.dataset.v;
+    if (!/^\d+(\.\d+)?$/.test(raw) || /^(19|20)\d\d$/.test(raw)) return;
+    const target = parseFloat(raw), dec = (raw.split('.')[1] || '').length;
+    const unit = el.querySelector('small');
+    const t0 = performance.now(), d = 1100;
+    const tick = (t) => {
+      const k = Math.min(1, (t - t0) / d), e = 1 - Math.pow(1 - k, 3);
+      el.firstChild.nodeValue = (target * e).toFixed(dec);
+      if (k < 1) requestAnimationFrame(tick);
+    };
+    el.firstChild.nodeValue = (0).toFixed(dec);
+    el.appendChild(unit);
+    requestAnimationFrame(tick);
+  }
+
+  function go(i, user) {
+    idx = (i + scenes.length) % scenes.length;
+    elapsed = 0;
+    render(idx, true);
+    shoot();
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    $('play').setAttribute('aria-label', p ? '일시정지' : '재생');
+    $('playIcon').innerHTML = p
+      ? '<path d="M4 2h3v12H4zM9 2h3v12H9z"/>'
+      : '<path d="M4 2v12l10-6z"/>';
+    last = performance.now();
+  }
+
+  $('play').addEventListener('click', () => {
+    if (!playing && idx === scenes.length - 1 && elapsed >= DUR) go(0, true);
+    setPlaying(!playing);
+  });
+  $('prev').addEventListener('click', () => go(idx - 1, true));
+  $('next').addEventListener('click', () => go(idx + 1, true));
+  stage.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { go(idx + 1, true); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { go(idx - 1, true); e.preventDefault(); }
+  });
+
+  // ---------- court canvas ----------
+  const cv = $('court'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1, geo = null;
+  const makes = [];
+  let ball = null;
+
+  function layout() {
+    const r = cv.getBoundingClientRect();
+    dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const land = W >= H;
+    if (land) {
+      const rad = H * 0.44;
+      geo = { land, hx: W - H * 0.12, hy: H * 0.46, rad, dir: Math.PI };
+    } else {
+      const rad = W * 0.42;
+      geo = { land, hx: W * 0.5, hy: W * 0.12, rad, dir: Math.PI / 2 };
+    }
+  }
+
+  function drawCourt() {
+    const { hx, hy, rad, dir, land } = geo;
+    ctx.clearRect(0, 0, W, H);
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'rgba(233,237,242,0.10)';
+    const spread = 1.18;
+    ctx.beginPath();
+    ctx.arc(hx, hy, rad, dir - spread, dir + spread);
+    ctx.stroke();
+    // corner threes
+    const a1 = dir - spread, a2 = dir + spread;
+    ctx.beginPath();
+    if (land) {
+      ctx.moveTo(hx + rad * Math.cos(a1), hy + rad * Math.sin(a1)); ctx.lineTo(W, hy + rad * Math.sin(a1));
+      ctx.moveTo(hx + rad * Math.cos(a2), hy + rad * Math.sin(a2)); ctx.lineTo(W, hy + rad * Math.sin(a2));
+    } else {
+      ctx.moveTo(hx + rad * Math.cos(a1), hy + rad * Math.sin(a1)); ctx.lineTo(hx + rad * Math.cos(a1), 0);
+      ctx.moveTo(hx + rad * Math.cos(a2), hy + rad * Math.sin(a2)); ctx.lineTo(hx + rad * Math.cos(a2), 0);
+    }
+    ctx.stroke();
+    // key + free throw circle
+    const kl = rad * 0.66, kw = rad * 0.36;
+    ctx.save();
+    ctx.translate(hx, hy); ctx.rotate(dir);
+    ctx.strokeRect(-rad * 0.14, -kw / 2, kl, kw);
+    ctx.beginPath(); ctx.arc(kl - rad * 0.14, 0, kw / 2, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+    ctx.strokeStyle = 'rgba(233,237,242,0.22)';
+    ctx.beginPath(); ctx.moveTo(-rad * 0.06, -rad * 0.1); ctx.lineTo(-rad * 0.06, rad * 0.1); ctx.stroke();
+    ctx.restore();
+    // rim
+    ctx.strokeStyle = 'rgba(229,138,58,0.7)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(hx, hy, Math.max(6, rad * 0.035), 0, Math.PI * 2); ctx.stroke();
+    // shot chart: every scene leaves a made three
+    makes.forEach((m) => {
+      ctx.fillStyle = m.col;
+      ctx.globalAlpha = 0.85;
+      ctx.beginPath(); ctx.arc(hx + m.r * Math.cos(m.a), hy + m.r * Math.sin(m.a), 3.2, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  function shoot() {
+    if (!geo) return;
+    const a = geo.dir + (Math.random() * 2 - 1) * 1.05;
+    const r = geo.rad * (1.03 + Math.random() * 0.1);
+    const col = getComputedStyle(stage).getPropertyValue('--accent').trim() || A.amber;
+    if (reduced) { makes.push({ a, r, col }); if (makes.length > 40) makes.shift(); return; }
+    ball = { a, r, col, t0: performance.now(), d: 1150, done: false, ring: 0 };
+  }
+
+  function drawBall(now) {
+    if (!ball) return;
+    const { hx, hy } = geo;
+    const sx = hx + ball.r * Math.cos(ball.a), sy = hy + ball.r * Math.sin(ball.a);
+    const k = Math.min(1, (now - ball.t0) / ball.d);
+    if (k < 1) {
+      const e = k;
+      const x = sx + (hx - sx) * e, y = sy + (hy - sy) * e;
+      const lift = Math.sin(Math.PI * e);
+      const size = geo.rad * (0.045 + 0.05 * lift);
+      // shadow on the floor
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.beginPath(); ctx.ellipse(x, y + size * 0.3, size * 0.9, size * 0.45, 0, 0, Math.PI * 2); ctx.fill();
+      // ball rises toward the viewer
+      const by = y - lift * geo.rad * 0.18;
+      ctx.fillStyle = '#E58A3A';
+      ctx.beginPath(); ctx.arc(x, by, size, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = 'rgba(10,18,32,0.7)'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(x - size, by); ctx.lineTo(x + size, by); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, by, size, -Math.PI / 2 + 0.6, Math.PI / 2 - 0.6); ctx.stroke();
+      // start marker
+      ctx.strokeStyle = ball.col; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(sx, sy, 5, 0, Math.PI * 2); ctx.stroke();
+    } else {
+      if (!ball.done) { ball.done = true; makes.push({ a: ball.a, r: ball.r, col: ball.col }); if (makes.length > 40) makes.shift(); }
+      const rk = Math.min(1, (now - ball.t0 - ball.d) / 700);
+      ctx.strokeStyle = ball.col; ctx.globalAlpha = 1 - rk; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(hx, hy, geo.rad * (0.04 + rk * 0.22), 0, Math.PI * 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (rk >= 1) ball = null;
+    }
+  }
+
+  function frame(now) {
+    const dt = now - last; last = now;
+    if (playing) {
+      elapsed += dt;
+      if (elapsed >= DUR) {
+        if (idx < scenes.length - 1) go(idx + 1);
+        else { elapsed = DUR; setPlaying(false); }
+      }
+    }
+    const p = Math.min(100, (elapsed / DUR) * 100);
+    chapBtns[idx].firstChild.style.setProperty('--p', p + '%');
+    if (geo) { drawCourt(); drawBall(now); }
+    requestAnimationFrame(frame);
+  }
+
+  new ResizeObserver(() => layout()).observe(cv);
+  layout();
+  stage.tabIndex = 0;
+  document.addEventListener('visibilitychange', () => { last = performance.now(); });
+  render(0, false);
+  // seed the chart with a few makes so the first frame reads as a shot chart
+  for (let i = 0; i < 6; i++) makes.push({ a: geo.dir + (i / 5 - 0.5) * 2, r: geo.rad * 1.06, col: 'rgba(233,237,242,0.35)' });
+  setTimeout(shoot, 400);
+  requestAnimationFrame(frame);
+})();
+</script>
+
+</body>
+</html>
