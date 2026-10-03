@@ -1,0 +1,12 @@
+{
+  "threshold": 34,
+  "feather": 18,
+  "margin": 12,
+  "autoExpandStep": 0.06,
+  "autoExpandMax": 3,
+  "removeEnclosed": false,
+  "enclosedThreshold": 18,
+  "minComponentRatio": 0.03,
+  "outputPadding": 8,
+  "overrides": {}
+}

@@ -1,0 +1,92 @@
+{
+  "generatedAt": "2026-10-03T23:41:29.101Z",
+  "ok": false,
+  "summary": {
+    "pass": 0,
+    "fail": 1,
+    "warn": 1,
+    "skip": 9
+  },
+  "checks": [
+    {
+      "name": "required-inputs",
+      "status": "fail",
+      "missing": [
+        "docs/claude-code-production-brief.md",
+        "assets/manifest.json",
+        "data/timeline-v1.json",
+        "data/voice-lines.ko.json",
+        "data/subtitles.ko.srt",
+        "data/character-crops-v1.json",
+        "docs/playground-safety-script-v1.md",
+        "docs/shot-list-v1.md",
+        "docs/audio-production-v1.md"
+      ]
+    },
+    {
+      "name": "timeline-continuity",
+      "status": "skip",
+      "reason": "data/timeline-v1.json 없음"
+    },
+    {
+      "name": "backgrounds-exist",
+      "status": "skip",
+      "missing": []
+    },
+    {
+      "name": "character-sprites-exist",
+      "status": "skip",
+      "missing": []
+    },
+    {
+      "name": "cutouts-reviewed",
+      "status": "skip",
+      "total": 0,
+      "flagged": [],
+      "contactSheet": null
+    },
+    {
+      "name": "audio-exists",
+      "status": "warn",
+      "voiceMissing": 0,
+      "musicSfxMissing": 0,
+      "report": "out/missing-assets.json"
+    },
+    {
+      "name": "layout",
+      "status": "skip",
+      "issues": []
+    },
+    {
+      "name": "output-preview",
+      "status": "skip",
+      "file": "out/dino-playground-preview-silent.mp4",
+      "reason": "not rendered"
+    },
+    {
+      "name": "output-final",
+      "status": "skip",
+      "file": "out/dino-playground-final.mp4",
+      "reason": "not rendered"
+    },
+    {
+      "name": "layout-stills",
+      "status": "skip",
+      "count": 0
+    },
+    {
+      "name": "srt-copied",
+      "status": "skip"
+    }
+  ],
+  "outputs": {
+    "preview": {
+      "file": "out/dino-playground-preview-silent.mp4",
+      "exists": false
+    },
+    "final": {
+      "file": "out/dino-playground-final.mp4",
+      "exists": false
+    }
+  }
+}

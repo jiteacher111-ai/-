@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-10-03T23:41:35.342Z",
+  "ok": false,
+  "errors": [
+    "필수 입력 누락: docs/claude-code-production-brief.md",
+    "필수 입력 누락: assets/manifest.json",
+    "필수 입력 누락: data/timeline-v1.json",
+    "필수 입력 누락: data/voice-lines.ko.json",
+    "필수 입력 누락: data/subtitles.ko.srt",
+    "필수 입력 누락: data/character-crops-v1.json",
+    "필수 입력 누락: docs/playground-safety-script-v1.md",
+    "필수 입력 누락: docs/shot-list-v1.md",
+    "필수 입력 누락: docs/audio-production-v1.md"
+  ],
+  "warnings": [],
+  "required": [
+    {
+      "file": "docs/claude-code-production-brief.md",
+      "exists": false
+    },
+    {
+      "file": "assets/manifest.json",
+      "exists": false
+    },
+    {
+      "file": "data/timeline-v1.json",
+      "exists": false
+    },
+    {
+      "file": "data/voice-lines.ko.json",
+      "exists": false
+    },
+    {
+      "file": "data/subtitles.ko.srt",
+      "exists": false
+    },
+    {
+      "file": "data/character-crops-v1.json",
+      "exists": false
+    },
+    {
+      "file": "docs/playground-safety-script-v1.md",
+      "exists": false
+    },
+    {
+      "file": "docs/shot-list-v1.md",
+      "exists": false
+    },
+    {
+      "file": "docs/audio-production-v1.md",
+      "exists": false
+    }
+  ],
+  "jsonChecks": [],
+  "images": {},
+  "crops": {
+    "count": 0,
+    "issues": []
+  },
+  "timeline": {
+    "available": false
+  },
+  "allAudioPresent": false
+}
