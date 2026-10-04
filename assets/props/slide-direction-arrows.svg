@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" role="img" aria-label="Slide stairs up and slide down direction arrows">
+  <defs>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#725846" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" stroke="#FFF7E8" stroke-width="12" stroke-linejoin="round">
+    <path d="M220 430V180H135L270 55l135 125h-85v250z" fill="#55B889"/>
+    <path d="M580 90v250h-85l135 125 135-125h-85V90z" fill="#F18D63"/>
+  </g>
+</svg>

@@ -1,0 +1,433 @@
+{
+  "schemaVersion": 1,
+  "composition": {
+    "id": "DinoPlaygroundSafety",
+    "width": 1920,
+    "height": 1080,
+    "fps": 24,
+    "durationInFrames": 2880,
+    "audioSampleRate": 48000,
+    "safeAreaPercent": 5
+  },
+  "defaults": {
+    "transitionFrames": 12,
+    "characterAnchor": "bottom-center",
+    "subtitleBottomPercent": 10,
+    "subtitleMaxWidthPercent": 82
+  },
+  "shots": [
+    {
+      "id": "S01",
+      "scene": 1,
+      "startFrame": 0,
+      "endFrame": 72,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"push-in","scaleFrom":1.0,"scaleTo":1.035,"xFrom":50,"xTo":50,"yFrom":50,"yTo":49},
+      "characters": [],
+      "props": [],
+      "dialogue": [],
+      "notes": "놀이기구가 모두 정지한 평온한 오프닝."
+    },
+    {
+      "id": "S02",
+      "scene": 1,
+      "startFrame": 72,
+      "endFrame": 144,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"static","scale":1.03,"x":50,"y":49},
+      "characters": [{"id":"seongun","pose":"walk","xFrom":7,"xTo":27,"y":92,"scale":0.57,"facing":"right","animation":"walk-bob"}],
+      "props": [],
+      "dialogue": ["L01"],
+      "notes": "성운이가 왼쪽에서 진입하며 손을 흔든다."
+    },
+    {
+      "id": "S03",
+      "scene": 1,
+      "startFrame": 144,
+      "endFrame": 216,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"pan","scale":1.04,"xFrom":47,"xTo":54,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"wave","x":28,"y":92,"scale":0.57,"facing":"right","animation":"gentle-bob"},
+        {"id":"tino","pose":"greet","x":50,"y":92,"scale":0.61,"facing":"left","animation":"pop-in"},
+        {"id":"ppulli","pose":"greet","x":67,"y":92,"scale":0.54,"facing":"left","animation":"pop-in-delay-4"},
+        {"id":"karo","pose":"greet","x":83,"y":92,"scale":0.59,"facing":"left","animation":"pop-in-delay-8"}
+      ],
+      "props": [],
+      "dialogue": ["L02"],
+      "notes": "공룡 셋이 순차적으로 나타난다."
+    },
+    {
+      "id": "S04",
+      "scene": 1,
+      "startFrame": 216,
+      "endFrame": 288,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"pull-back","scaleFrom":1.04,"scaleTo":1.0,"x":50,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"friendly","x":24,"y":92,"scale":0.56,"facing":"right","animation":"idle"},
+        {"id":"tino","pose":"friendly","x":43,"y":92,"scale":0.61,"facing":"left","animation":"idle-offset-1"},
+        {"id":"ppulli","pose":"friendly","x":63,"y":92,"scale":0.53,"facing":"left","animation":"idle-offset-2"},
+        {"id":"karo","pose":"friendly","x":81,"y":92,"scale":0.58,"facing":"left","animation":"idle-offset-3"}
+      ],
+      "props": [],
+      "dialogue": [],
+      "notes": "네 친구가 한 무리로 모인다."
+    },
+    {
+      "id": "S05",
+      "scene": 2,
+      "startFrame": 288,
+      "endFrame": 360,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"static","scale":1.02,"x":50,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"curious","x":20,"y":93,"scale":0.52,"facing":"right","animation":"idle"},
+        {"id":"tino","pose":"listen","x":34,"y":93,"scale":0.56,"facing":"right","animation":"idle-offset-1"},
+        {"id":"ppulli","pose":"indicate","x":48,"y":93,"scale":0.49,"facing":"right","animation":"raise-forefoot"},
+        {"id":"karo","pose":"listen","x":61,"y":93,"scale":0.53,"facing":"right","animation":"idle-offset-2"}
+      ],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":80,"y":86,"scale":0.44,"animation":"rise-and-settle"}],
+      "dialogue": ["L03"],
+      "notes": "표지판은 오른쪽에 충분한 여백을 두고 배치."
+    },
+    {
+      "id": "S06",
+      "scene": 2,
+      "startFrame": 360,
+      "endFrame": 456,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"push-in","scaleFrom":1.02,"scaleTo":1.08,"xFrom":58,"xTo":63,"y":51},
+      "characters": [
+        {"id":"seongun","pose":"curious","x":26,"y":93,"scale":0.54,"facing":"right","animation":"head-tilt"},
+        {"id":"ppulli","pose":"indicate","x":44,"y":93,"scale":0.51,"facing":"right","animation":"indicate"}
+      ],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":76,"y":86,"scale":0.49,"animation":"idle"}],
+      "dialogue": ["L04"],
+      "notes": "성운이의 질문 후 표지판으로 시선 이동."
+    },
+    {
+      "id": "S07",
+      "scene": 2,
+      "startFrame": 456,
+      "endFrame": 576,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"static","scale":1.05,"x":55,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"happy","x":18,"y":93,"scale":0.5,"facing":"front","animation":"chant-bounce"},
+        {"id":"tino","pose":"happy","x":32,"y":93,"scale":0.54,"facing":"front","animation":"chant-bounce-delay-2"},
+        {"id":"ppulli","pose":"happy","x":46,"y":93,"scale":0.48,"facing":"front","animation":"chant-bounce-delay-4"},
+        {"id":"karo","pose":"happy","x":59,"y":93,"scale":0.52,"facing":"front","animation":"chant-bounce-delay-6"}
+      ],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":81,"y":86,"scale":0.43,"animation":"icon-glow-sequence"}],
+      "dialogue": ["L05"],
+      "notes": "세 아이콘을 12프레임 간격으로 점등."
+    },
+    {
+      "id": "S08",
+      "scene": 3,
+      "startFrame": 576,
+      "endFrame": 672,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"static","scale":1.0,"x":50,"y":50},
+      "characters": [
+        {"id":"karo","pose":"wait","x":62,"y":92,"scale":0.49,"facing":"right","animation":"idle"},
+        {"id":"ppulli","pose":"wait","x":77,"y":92,"scale":0.46,"facing":"right","animation":"idle-offset-2"},
+        {"id":"tino","pose":"ready","xFrom":42,"xTo":53,"y":92,"scale":0.55,"facing":"right","animation":"eager-step"}
+      ],
+      "props": [{"id":"queue-footprints","asset":"assets/props/queue-footprints.svg","x":67,"y":94,"scale":0.43,"opacity":0.0}],
+      "dialogue": ["L06"],
+      "notes": "티노가 한 걸음만 앞서고 친구에게 접촉하지 않는다."
+    },
+    {
+      "id": "S09",
+      "scene": 3,
+      "startFrame": 672,
+      "endFrame": 816,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"push-in","scaleFrom":1.0,"scaleTo":1.05,"xFrom":51,"xTo":57,"y":52},
+      "characters": [
+        {"id":"seongun","pose":"point","x":29,"y":92,"scale":0.52,"facing":"right","animation":"point-down"},
+        {"id":"tino","pose":"listen","x":48,"y":92,"scale":0.57,"facing":"left","animation":"pause-and-look"},
+        {"id":"karo","pose":"wait","x":67,"y":92,"scale":0.48,"facing":"left","animation":"idle"},
+        {"id":"ppulli","pose":"wait","x":81,"y":92,"scale":0.45,"facing":"left","animation":"idle-offset-2"}
+      ],
+      "props": [{"id":"queue-footprints","asset":"assets/props/queue-footprints.svg","x":66,"y":95,"scale":0.45,"opacityFrom":0.0,"opacityTo":1.0,"animation":"pop-sequence"}],
+      "dialogue": ["L07"],
+      "notes": "성운이가 발자국과 기다리는 친구를 번갈아 가리킨다."
+    },
+    {
+      "id": "S10",
+      "scene": 3,
+      "startFrame": 816,
+      "endFrame": 936,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"close-up","scale":1.12,"x":47,"y":52},
+      "characters": [{"id":"tino","pose":"embarrassed","x":48,"y":94,"scale":0.72,"facing":"front","animation":"small-head-dip"}],
+      "props": [],
+      "dialogue": ["L08"],
+      "notes": "수치심이 아니라 가볍게 깨닫는 표정."
+    },
+    {
+      "id": "S11",
+      "scene": 3,
+      "startFrame": 936,
+      "endFrame": 1056,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"static","scale":1.03,"x":55,"y":51},
+      "characters": [
+        {"id":"karo","pose":"wait","x":51,"y":92,"scale":0.47,"facing":"right","animation":"step-to-mark"},
+        {"id":"tino","pose":"wait","x":65,"y":92,"scale":0.54,"facing":"right","animation":"step-to-mark-delay-3"},
+        {"id":"ppulli","pose":"indicate","x":80,"y":92,"scale":0.44,"facing":"left","animation":"indicate"}
+      ],
+      "props": [{"id":"queue-footprints","asset":"assets/props/queue-footprints.svg","x":67,"y":95,"scale":0.48,"opacity":1.0}],
+      "dialogue": ["L09","L10"],
+      "notes": "캐릭터의 발이 각 발자국 위치에 맞도록 배치."
+    },
+    {
+      "id": "S12",
+      "scene": 3,
+      "startFrame": 1056,
+      "endFrame": 1176,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"pan","scale":1.02,"xFrom":55,"xTo":48,"y":51},
+      "characters": [
+        {"id":"karo","pose":"walk","xFrom":49,"xTo":35,"y":92,"scale":0.47,"facing":"left","animation":"walk"},
+        {"id":"tino","pose":"wait","x":63,"y":92,"scale":0.54,"facing":"left","animation":"patient-bob"},
+        {"id":"ppulli","pose":"wait","x":78,"y":92,"scale":0.44,"facing":"left","animation":"patient-bob-delay-3"}
+      ],
+      "props": [{"id":"queue-footprints","asset":"assets/props/queue-footprints.svg","x":66,"y":95,"scale":0.48,"opacity":1.0}],
+      "dialogue": ["L11"],
+      "notes": "맨 앞 친구만 움직이고 나머지는 기다린다."
+    },
+    {
+      "id": "S13",
+      "scene": 4,
+      "startFrame": 1176,
+      "endFrame": 1296,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"static","scale":1.05,"x":39,"y":51},
+      "characters": [{"id":"karo","pose":"curious","x":36,"y":93,"scale":0.58,"facing":"left","animation":"head-tilt"}],
+      "props": [],
+      "dialogue": ["L12"],
+      "notes": "카로가 미끄럼틀 하단을 바라보지만 진입하지 않는다."
+    },
+    {
+      "id": "S14",
+      "scene": 4,
+      "startFrame": 1296,
+      "endFrame": 1416,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"push-in","scaleFrom":1.05,"scaleTo":1.09,"x":38,"y":51},
+      "characters": [{"id":"karo","pose":"curious-lean","xFrom":38,"xTo":41,"y":93,"scale":0.59,"facing":"left","animation":"one-step-and-freeze"}],
+      "props": [],
+      "dialogue": [],
+      "notes": "발을 한 번 들었다가 정지. 미끄럼틀 면에는 올라가지 않는다."
+    },
+    {
+      "id": "S15",
+      "scene": 4,
+      "startFrame": 1416,
+      "endFrame": 1536,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"static","scale":1.08,"x":43,"y":51},
+      "characters": [
+        {"id":"seongun","pose":"stop","x":61,"y":93,"scale":0.56,"facing":"left","animation":"gentle-stop"},
+        {"id":"karo","pose":"surprised","x":39,"y":93,"scale":0.58,"facing":"right","animation":"pause"}
+      ],
+      "props": [],
+      "dialogue": ["L13","L14"],
+      "notes": "성운이 손바닥은 경고보다 도움의 느낌."
+    },
+    {
+      "id": "S16",
+      "scene": 4,
+      "startFrame": 1536,
+      "endFrame": 1656,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"static","scale":1.02,"x":50,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"point","x":64,"y":93,"scale":0.54,"facing":"left","animation":"point-route"},
+        {"id":"karo","pose":"listen","x":80,"y":93,"scale":0.54,"facing":"left","animation":"nod"}
+      ],
+      "props": [{"id":"slide-arrows","asset":"assets/props/slide-direction-arrows.svg","x":49,"y":69,"scale":0.55,"animation":"arrows-sequential"}],
+      "dialogue": ["L15"],
+      "notes": "초록 상승 화살표는 계단, 코럴 하강 화살표는 슬라이드에 정렬."
+    },
+    {
+      "id": "S17",
+      "scene": 4,
+      "startFrame": 1656,
+      "endFrame": 1752,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"pan","scale":1.03,"xFrom":57,"xTo":67,"y":50},
+      "characters": [{"id":"karo","pose":"walk","xFrom":73,"xTo":82,"yFrom":92,"yTo":69,"scaleFrom":0.52,"scaleTo":0.38,"facing":"right","animation":"stair-climb-simulated"}],
+      "props": [{"id":"slide-arrows","asset":"assets/props/slide-direction-arrows.svg","x":49,"y":69,"scale":0.55,"opacity":0.78}],
+      "dialogue": ["L16"],
+      "notes": "실제 계단 이미지와 맞춰 위치·크기를 보간한다."
+    },
+    {
+      "id": "S18",
+      "scene": 4,
+      "startFrame": 1752,
+      "endFrame": 1824,
+      "background": "assets/backgrounds/playground-slide-zone-v1.png",
+      "camera": {"type":"pan","scale":1.05,"xFrom":47,"xTo":38,"y":50},
+      "characters": [{"id":"karo","pose":"slide-seated","xFrom":49,"xTo":35,"yFrom":57,"yTo":82,"scaleFrom":0.38,"scaleTo":0.48,"facing":"left","animation":"slide-ease-out"}],
+      "props": [],
+      "dialogue": ["L17"],
+      "notes": "앉은 자세를 유지하고 바닥 도착 직전에 속도를 줄인다."
+    },
+    {
+      "id": "S19",
+      "scene": 5,
+      "startFrame": 1824,
+      "endFrame": 1920,
+      "background": "assets/backgrounds/playground-swing-zone-v1.png",
+      "camera": {"type":"static","scale":1.0,"x":50,"y":50},
+      "characters": [],
+      "props": [{"id":"swing-motion","type":"background-region","animation":"pendulum-very-slow","amplitudeDegrees":6,"periodFrames":84}],
+      "dialogue": ["L18"],
+      "notes": "배경 그네 좌석 영역만 마스킹해 아주 느리게 움직인다."
+    },
+    {
+      "id": "S20",
+      "scene": 5,
+      "startFrame": 1920,
+      "endFrame": 2040,
+      "background": "assets/backgrounds/playground-swing-zone-v1.png",
+      "camera": {"type":"static","scale":1.02,"x":50,"y":51},
+      "characters": [{"id":"karo","pose":"walk","xFrom":15,"xTo":35,"y":93,"scale":0.54,"facing":"right","animation":"walk-and-freeze"}],
+      "props": [{"id":"swing-motion","type":"background-region","animation":"pendulum-very-slow","amplitudeDegrees":6,"periodFrames":84}],
+      "dialogue": [],
+      "notes": "카로는 안전구역에 들어가기 전에 멈춘다."
+    },
+    {
+      "id": "S21",
+      "scene": 5,
+      "startFrame": 2040,
+      "endFrame": 2136,
+      "background": "assets/backgrounds/playground-swing-zone-v1.png",
+      "camera": {"type":"push-in","scaleFrom":1.02,"scaleTo":1.07,"x":37,"y":52},
+      "characters": [
+        {"id":"ppulli","pose":"indicate","x":18,"y":93,"scale":0.47,"facing":"right","animation":"raise-forefoot"},
+        {"id":"karo","pose":"surprised","x":37,"y":93,"scale":0.56,"facing":"left","animation":"pause"}
+      ],
+      "props": [{"id":"swing-motion","type":"background-region","animation":"pendulum-very-slow","amplitudeDegrees":5,"periodFrames":84}],
+      "dialogue": ["L19"],
+      "notes": "뿔리의 제지는 부드럽고 그네와 충분히 떨어져 있다."
+    },
+    {
+      "id": "S22",
+      "scene": 5,
+      "startFrame": 2136,
+      "endFrame": 2256,
+      "background": "assets/backgrounds/playground-swing-zone-v1.png",
+      "camera": {"type":"static","scale":1.0,"x":50,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"point","x":16,"y":93,"scale":0.51,"facing":"right","animation":"point-boundary"},
+        {"id":"ppulli","pose":"wait","x":30,"y":93,"scale":0.44,"facing":"right","animation":"idle"},
+        {"id":"karo","pose":"listen","x":43,"y":93,"scale":0.52,"facing":"right","animation":"nod"}
+      ],
+      "props": [
+        {"id":"swing-boundary","asset":"assets/props/swing-safety-boundary.svg","x":58,"y":82,"scale":0.82,"opacityFrom":0.0,"opacityTo":1.0,"animation":"draw-dashes"},
+        {"id":"swing-motion","type":"background-region","animation":"pendulum-very-slow","amplitudeDegrees":4,"periodFrames":84}
+      ],
+      "dialogue": ["L20"],
+      "notes": "점선 경계가 그네 앞뒤를 넓게 감싸야 한다."
+    },
+    {
+      "id": "S23",
+      "scene": 5,
+      "startFrame": 2256,
+      "endFrame": 2376,
+      "background": "assets/backgrounds/playground-swing-zone-v1.png",
+      "camera": {"type":"static","scale":1.0,"x":50,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"friendly","x":12,"y":93,"scale":0.49,"facing":"right","animation":"nod"},
+        {"id":"tino","pose":"wait","x":25,"y":93,"scale":0.53,"facing":"right","animation":"patient-bob"},
+        {"id":"ppulli","pose":"wait","x":38,"y":93,"scale":0.43,"facing":"right","animation":"patient-bob-delay-2"},
+        {"id":"karo","pose":"wait","x":50,"y":93,"scale":0.51,"facing":"right","animation":"patient-bob-delay-4"}
+      ],
+      "props": [
+        {"id":"swing-boundary","asset":"assets/props/swing-safety-boundary.svg","x":66,"y":82,"scale":0.78,"opacity":1.0},
+        {"id":"swing-motion","type":"background-region","animation":"pendulum-slowing","amplitudeFrom":4,"amplitudeTo":1,"periodFrames":84}
+      ],
+      "dialogue": ["L21","L22"],
+      "notes": "모든 캐릭터는 점선 바깥에 위치."
+    },
+    {
+      "id": "S24",
+      "scene": 5,
+      "startFrame": 2376,
+      "endFrame": 2472,
+      "background": "assets/backgrounds/playground-swing-zone-v1.png",
+      "camera": {"type":"pan","scale":1.0,"xFrom":48,"xTo":40,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"walk","xFrom":13,"xTo":5,"y":93,"scale":0.48,"facing":"left","animation":"walk"},
+        {"id":"tino","pose":"walk","xFrom":25,"xTo":15,"y":93,"scale":0.51,"facing":"left","animation":"walk-delay-2"},
+        {"id":"ppulli","pose":"walk","xFrom":37,"xTo":26,"y":93,"scale":0.42,"facing":"left","animation":"walk-delay-4"},
+        {"id":"karo","pose":"walk","xFrom":49,"xTo":37,"y":93,"scale":0.49,"facing":"left","animation":"walk-delay-6"}
+      ],
+      "props": [
+        {"id":"swing-boundary","asset":"assets/props/swing-safety-boundary.svg","x":66,"y":82,"scale":0.78,"opacityFrom":1.0,"opacityTo":0.55},
+        {"id":"swing-motion","type":"background-region","animation":"stopped","amplitudeDegrees":0}
+      ],
+      "dialogue": ["L23"],
+      "notes": "그네 바깥쪽으로 우회하며 화면 왼쪽으로 이동."
+    },
+    {
+      "id": "S25",
+      "scene": 6,
+      "startFrame": 2472,
+      "endFrame": 2568,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"close-up","scale":1.12,"x":65,"y":52},
+      "characters": [{"id":"ppulli","pose":"indicate","x":34,"y":93,"scale":0.5,"facing":"right","animation":"indicate"}],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":68,"y":86,"scale":0.55,"animation":"glow-panel-1"}],
+      "dialogue": ["L24"],
+      "notes": "발자국 패널만 밝게 강조."
+    },
+    {
+      "id": "S26",
+      "scene": 6,
+      "startFrame": 2568,
+      "endFrame": 2664,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"close-up","scale":1.12,"x":66,"y":52},
+      "characters": [{"id":"karo","pose":"indicate","x":34,"y":93,"scale":0.54,"facing":"right","animation":"indicate"}],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":68,"y":86,"scale":0.55,"animation":"glow-panel-2"}],
+      "dialogue": ["L25"],
+      "notes": "미끄럼틀 패널만 밝게 강조."
+    },
+    {
+      "id": "S27",
+      "scene": 6,
+      "startFrame": 2664,
+      "endFrame": 2760,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"close-up","scale":1.12,"x":66,"y":52},
+      "characters": [{"id":"tino","pose":"indicate","x":33,"y":93,"scale":0.58,"facing":"right","animation":"indicate"}],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":68,"y":86,"scale":0.55,"animation":"glow-panel-3"}],
+      "dialogue": ["L26"],
+      "notes": "그네 패널만 밝게 강조."
+    },
+    {
+      "id": "S28",
+      "scene": 7,
+      "startFrame": 2760,
+      "endFrame": 2880,
+      "background": "assets/backgrounds/playground-establishing-v1.png",
+      "camera": {"type":"pull-back","scaleFrom":1.04,"scaleTo":1.0,"x":50,"y":50},
+      "characters": [
+        {"id":"seongun","pose":"wave","x":23,"y":93,"scale":0.56,"facing":"front","animation":"wave"},
+        {"id":"tino","pose":"greet","x":42,"y":93,"scale":0.6,"facing":"front","animation":"greet-delay-2"},
+        {"id":"ppulli","pose":"greet","x":62,"y":93,"scale":0.51,"facing":"front","animation":"greet-delay-4"},
+        {"id":"karo","pose":"greet","x":80,"y":93,"scale":0.57,"facing":"front","animation":"greet-delay-6"}
+      ],
+      "props": [{"id":"promise-board","asset":"assets/props/playground-safety-promise-board-v1.png","x":91,"y":83,"scale":0.28,"animation":"icon-glow-sequence"}],
+      "dialogue": ["L27","L28"],
+      "notes": "119.6초부터 웜 아이보리로 페이드. 120초에 완전 종료."
+    }
+  ]
+}

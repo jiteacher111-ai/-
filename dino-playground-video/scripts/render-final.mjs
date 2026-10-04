@@ -8,7 +8,7 @@ import {probe} from './lib/probe.mjs';
 const data = generateProjectData();
 const missing = computeMissingAudio(data);
 if (!missing.allAudioPresent) {
-  console.log(`최종본 렌더 건너뜀: 타임라인 ${data.available ? '있음' : '없음'}, 대사 오디오 누락 ${missing.voice.length}개, 음악·효과음 누락 ${missing.musicAndSfx.length}개 (out/missing-assets.json)`);
+  console.log(`최종본 렌더 건너뜀: 타임라인 ${data.available ? '있음' : '없음'}, 대사 오디오 누락 ${missing.voice.length}개, 음악 누락 ${missing.music.length}개, 효과음 누락 ${missing.sfx.length}개 (out/missing-assets.json)`);
   process.exit(0);
 }
 ensureDir(OUT_DIR);

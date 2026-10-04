@@ -1,12 +1,14 @@
 import path from 'node:path';
 import {bundle} from '@remotion/bundler';
 import {renderMedia, renderStill, selectComposition} from '@remotion/renderer';
-import {PROJECT_DIR, chromiumExecutable} from './paths.mjs';
+import {PROJECT_DATA_FILE, PROJECT_DIR, chromiumExecutable, readJson} from './paths.mjs';
+
+const projectId = () => readJson(PROJECT_DATA_FILE).meta.id;
 
 export const prepare = async () => {
   const serveUrl = await bundle({entryPoint: path.join(PROJECT_DIR, 'src', 'index.ts'), publicDir: path.join(PROJECT_DIR, 'public')});
   const browserExecutable = chromiumExecutable();
-  const composition = await selectComposition({serveUrl, id: 'DinoPlayground', browserExecutable});
+  const composition = await selectComposition({serveUrl, id: projectId(), browserExecutable});
   return {serveUrl, composition, browserExecutable};
 };
 

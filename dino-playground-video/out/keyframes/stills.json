@@ -1,0 +1,44 @@
+{
+  "rendered": [
+    {
+      "shot": "S03",
+      "frame": 194,
+      "file": "keyframes/keyframe-01-S03-f194.png"
+    },
+    {
+      "shot": "S07",
+      "frame": 528,
+      "file": "keyframes/keyframe-02-S07-f528.png"
+    },
+    {
+      "shot": "S09",
+      "frame": 758,
+      "file": "keyframes/keyframe-03-S09-f758.png"
+    },
+    {
+      "shot": "S10",
+      "frame": 876,
+      "file": "keyframes/keyframe-04-S10-f876.png"
+    },
+    {
+      "shot": "S16",
+      "frame": 1608,
+      "file": "keyframes/keyframe-05-S16-f1608.png"
+    },
+    {
+      "shot": "S22",
+      "frame": 2220,
+      "file": "keyframes/keyframe-06-S22-f2220.png"
+    },
+    {
+      "shot": "S27",
+      "frame": 2721,
+      "file": "keyframes/keyframe-07-S27-f2721.png"
+    },
+    {
+      "shot": "S28",
+      "frame": 2820,
+      "file": "keyframes/keyframe-08-S28-f2820.png"
+    }
+  ]
+}

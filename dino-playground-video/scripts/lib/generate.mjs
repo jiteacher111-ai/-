@@ -1,9 +1,12 @@
-// 사본(source/, public/assets, public/characters)을 읽어 src/generated/project-data.json 을 만든다.
-// 이 JSON 이 Remotion 컴포지션의 유일한 데이터 소스다. 입력이 없으면 available:false 로 기록한다.
+// 사본(source/, public/assets)을 읽어 src/generated/project-data.json 을 만든다 — Remotion 의 유일한 데이터 소스.
+// 캐릭터 포즈 이름 → 컷아웃 파일 해석도 여기서 한다(React 와 QA 가 같은 결과를 쓰도록).
 import fs from 'node:fs';
 import path from 'node:path';
-import {EXPECTED, PROJECT_DATA_FILE, PUBLIC_CHAR_DIR, PUBLIC_DIR, REQUIRED_FILES, exists, readJson, sourcePath, writeJson} from './paths.mjs';
-import {collectAudioCues, indexManifest, normalizeTimeline, normalizeVoiceLines, parseSrt} from './normalize.mjs';
+import {EXPECTED, PROJECT_DATA_FILE, PROJECT_DIR, PUBLIC_DIR, REQUIRED_FILES, exists, readJson, sourcePath, writeJson} from './paths.mjs';
+import {cropFallbacks, extractCrops, normalizeTimeline, normalizeVoiceLines, parseSrt, voiceProfiles} from './normalize.mjs';
+
+export const CUTOUT_INDEX = path.join(PUBLIC_DIR, 'assets', 'characters', 'cutouts', 'index.json');
+export const loadProductionConfig = () => readJson(path.join(PROJECT_DIR, 'production.config.json'));
 
 const tryJson = (rel, problems) => {
   const p = sourcePath(rel);
@@ -15,91 +18,178 @@ const tryJson = (rel, problems) => {
     return undefined;
   }
 };
+export const publicExists = (rel) => Boolean(rel) && exists(path.join(PUBLIC_DIR, rel));
 
-/** public/ 아래 실제로 존재하는지 (assets/... 상대경로) */
-const publicExists = (rel) => Boolean(rel) && exists(path.join(PUBLIC_DIR, rel));
+/**
+ * 타임라인의 pose 이름을 컷아웃으로 해석한다.
+ * 1) crops.fallbacks ("karo.curious" → "karo.inspect") 를 반복 적용
+ * 2) 목록에 없고 "-" 가 있으면 앞부분으로 재시도 ("curious-lean" → "curious")
+ * 3) 전신 포즈면 그대로, 표정이면 클로즈업 숏에서만 흉상, 일반 숏에서는 expressionBodyPose 의 전신 포즈
+ */
+export const resolveSprite = ({character, pose, closeUp, cropsJson, cutouts, config}) => {
+  const def = cropsJson?.characters?.[character];
+  const trail = [pose];
+  if (!def) return {file: null, kind: null, name: pose, trail, reason: `crops 에 캐릭터 ${character} 없음`};
+  const fallbacks = cropFallbacks(cropsJson);
+  const has = (kind, n) => (def[`${kind}s`] ?? []).includes(n);
+  let name = pose;
+  for (let guard = 0; guard < 6; guard++) {
+    if (has('pose', name) || has('expression', name)) break;
+    const fb = fallbacks[`${character}.${name}`];
+    if (fb) {
+      name = fb.split('.').slice(1).join('.');
+      trail.push(name);
+      continue;
+    }
+    if (name.includes('-')) {
+      name = name.split('-')[0];
+      trail.push(name);
+      continue;
+    }
+    break;
+  }
+  const file = (kind, n) => cutouts?.sprites?.[`${character}/${kind}-${n}`] ?? null;
+  if (has('pose', name)) return {file: file('pose', name), kind: 'pose', name, trail, expression: null};
+  if (has('expression', name) && closeUp) return {file: file('expression', name), kind: 'expression', name, trail, expression: name};
+  // 일반(전신) 숏: 표정 이름이거나 해석되지 않은 감정 이름(예: tino.happy)이면 expressionBodyPose 로 전신 포즈 선택.
+  // 대체 경로의 모든 이름을 원래 이름부터 차례로 확인한다 (seongun.happy → wave, karo.listen → wait).
+  if (!closeUp || !has('expression', name)) {
+    const map = config.expressionBodyPose ?? {};
+    const isEmotion = has('expression', name) || trail.some((n) => map[n]);
+    if (isEmotion) {
+      const candidates = [...trail.flatMap((n) => map[n] ?? []), ...(map.default ?? ['wait'])];
+      const body = candidates.find((c) => has('pose', c));
+      if (body) return {file: file('pose', body), kind: 'pose', name: body, trail: [...trail, `${body}(전신 숏)`], expression: name};
+    }
+  }
+  return {file: null, kind: null, name, trail, reason: `포즈/표정 ${pose} 를 해석하지 못함`};
+};
+
+export const nativeFacing = (config, character, kind, name) => {
+  const nf = config.nativeFacing ?? {};
+  return nf[`${character}/${kind}-${name}`] ?? nf[`${character}/*`] ?? nf['*'] ?? 'front';
+};
 
 export const generateProjectData = () => {
   const problems = [];
+  const config = loadProductionConfig();
   const missingRequired = REQUIRED_FILES.filter((f) => !exists(sourcePath(f)));
-  const manifest = tryJson('assets/manifest.json', problems);
   const timeline = tryJson('data/timeline-v1.json', problems);
   const voice = tryJson('data/voice-lines.ko.json', problems);
+  const cropsJson = tryJson('data/character-crops-v1.json', problems);
+  tryJson('assets/manifest.json', problems);
   const srtPath = sourcePath('data/subtitles.ko.srt');
+  const cutouts = exists(CUTOUT_INDEX) ? readJson(CUTOUT_INDEX) : {sprites: {}, meta: {}};
 
-  const manifestIndex = indexManifest(manifest ?? {});
   const empty = {
     available: false,
     missingRequired,
     problems,
-    meta: {fps: EXPECTED.fps, width: EXPECTED.width, height: EXPECTED.height, durationInFrames: EXPECTED.durationInFrames, title: '성운이와 공룡 친구들의 놀이터 안전 약속'},
+    meta: {id: 'DinoPlaygroundSafety', fps: EXPECTED.fps, width: EXPECTED.width, height: EXPECTED.height, durationInFrames: EXPECTED.durationInFrames, safeArea: 0.05, transitionFrames: 12, subtitleBottom: 0.1, subtitleMaxWidth: 0.82, title: '성운이와 공룡 친구들의 놀이터 안전 약속'},
+    config,
     shots: [],
     voiceLines: [],
     subtitles: [],
     audioCues: [],
-    sprites: {},
     spriteMeta: {},
+    propMeta: {},
+    speakerLabels: {},
   };
   if (!timeline) {
     writeJson(PROJECT_DATA_FILE, empty);
     return empty;
   }
-
-  const {meta, shots, issues} = normalizeTimeline(timeline, manifestIndex);
+  const {meta, shots, issues} = normalizeTimeline(timeline);
   problems.push(...issues);
-  const voiceLines = voice ? normalizeVoiceLines(voice, meta.fps, manifestIndex) : [];
-  // 대사 시간이 voice-lines 에 없으면 SRT 에서 같은 문구를 찾아 채운다 (문구는 바꾸지 않는다)
-  const subtitles = exists(srtPath) ? parseSrt(fs.readFileSync(srtPath, 'utf8'), meta.fps) : [];
-  for (const l of voiceLines) {
-    if (l.from === null) {
-      const cue = subtitles.find((c) => c.text.replace(/\s+/g, '') === l.text.replace(/\s+/g, '') || c.text.replace(/\s+/g, '').includes(l.text.replace(/\s+/g, '')));
-      if (cue) Object.assign(l, {from: cue.from, to: cue.to, timingFrom: 'srt'});
+  // 레이아웃 보정 (production.config.json layoutFixes) — 타이밍·대사는 건드리지 않고 위치만
+  const layoutFixesApplied = [];
+  for (const [shotId, fix] of Object.entries(config.layoutFixes ?? {})) {
+    const s = shots.find((x) => x.id === shotId);
+    if (!s || typeof fix !== 'object') continue;
+    for (const [charId, vals] of Object.entries(fix.characters ?? {})) {
+      const c = s.characters.find((x) => x.id === charId);
+      if (!c) continue;
+      const before = {};
+      for (const [k, v] of Object.entries(vals)) {
+        before[k] = Math.round(c[k] * 1000) / 10;
+        c[k] = /^scale/.test(k) ? v : v / 100;
+      }
+      layoutFixesApplied.push({shot: shotId, character: charId, before, after: vals, reason: fix.reason});
     }
-    l.audioExists = publicExists(l.audio);
   }
-  const audioCues = collectAudioCues(timeline, shots, meta.fps, manifestIndex).map((c) => ({...c, exists: publicExists(c.asset)}));
+  const closeUpTypes = config.closeUpCameraTypes ?? ['close-up'];
   for (const s of shots) {
     s.backgroundExists = publicExists(s.background);
-    for (const p of s.props) p.exists = publicExists(p.asset);
+    const closeUp = closeUpTypes.includes(s.camera.type);
+    for (const c of s.characters) {
+      const r = resolveSprite({character: c.id, pose: c.pose, closeUp, cropsJson, cutouts, config});
+      c.sprite = r.file;
+      c.spriteKind = r.kind;
+      c.spriteName = r.name;
+      c.resolution = r.trail.join(' → ') + (r.reason ? ` (${r.reason})` : '');
+      c.flip = r.kind ? (c.facing === 'left' && nativeFacing(config, c.id, r.kind, r.name) === 'right') || (c.facing === 'right' && nativeFacing(config, c.id, r.kind, r.name) === 'left') : false;
+    }
+    for (const p of s.props) p.exists = p.asset ? publicExists(p.asset) : p.kind === 'swing';
   }
-
-  const spriteIndexFile = path.join(PUBLIC_CHAR_DIR, 'index.json');
-  const spriteIndex = exists(spriteIndexFile) ? readJson(spriteIndexFile) : {sprites: {}, meta: {}};
+  const voiceLines = voice ? normalizeVoiceLines(voice, meta.fps) : [];
+  for (const l of voiceLines) l.audio = l.audioFiles.map((f) => ({file: f, exists: publicExists(f)}));
+  const subtitles = exists(srtPath) ? parseSrt(fs.readFileSync(srtPath, 'utf8'), meta.fps) : [];
+  const audioCues = (config.audioCues ?? []).map((c) => ({
+    kind: c.kind,
+    file: c.file,
+    from: Math.round(c.startSec * meta.fps),
+    to: c.endSec !== undefined ? Math.round(c.endSec * meta.fps) : null,
+    volume: c.volume ?? 1,
+    exists: publicExists(c.file),
+  }));
+  // 소품 원본 크기: PNG 는 manifest 의 width/height, SVG 는 viewBox
+  const propMeta = {};
+  const manifest = tryJson('assets/manifest.json', []) ?? {};
+  for (const a of manifest.existingAssets ?? []) {
+    if (a.width && a.height) propMeta[a.path] = {width: a.width, height: a.height};
+    if (/\.svg$/i.test(a.path) && publicExists(a.path)) {
+      const vb = /viewBox="([\d.\s-]+)"/.exec(fs.readFileSync(path.join(PUBLIC_DIR, a.path), 'utf8'));
+      if (vb) {
+        const [, , w, h] = vb[1].trim().split(/\s+/).map(Number);
+        propMeta[a.path] = {width: w, height: h};
+      }
+    }
+  }
 
   const data = {
     available: shots.length > 0,
     missingRequired,
     problems,
     meta,
+    config,
     shots,
     voiceLines,
     subtitles,
     audioCues,
-    sprites: spriteIndex.sprites,
-    spriteMeta: spriteIndex.meta,
+    spriteMeta: cutouts.meta ?? {},
+    propMeta,
+    speakerLabels: voice ? voiceProfiles(voice) : {},
+    layoutFixesApplied,
   };
   writeJson(PROJECT_DATA_FILE, data);
   return data;
 };
 
-/** 누락 오디오 (대사 · 타임라인 음악/효과음 · manifest 에 등록된 오디오). validate 와 render-final 이 같은 기준을 쓴다. */
+/** manifest.requiredExternalAudio + 대사 audioFiles + 설정의 audioCues 중 없는 파일. validate·render-final·qa 공통 기준. */
 export const computeMissingAudio = (data) => {
-  const AUDIO_RE = /\.(wav|mp3|m4a|aac|ogg|flac)$/i;
-  let manifestAudio = [];
-  const mp = sourcePath('assets/manifest.json');
-  if (exists(mp)) {
-    try {
-      manifestAudio = indexManifest(readJson(mp)).all.filter((a) => AUDIO_RE.test(a.path));
-    } catch {
-      /* validate 가 JSON 오류를 보고 */
-    }
+  let manifest = {};
+  try {
+    manifest = exists(sourcePath('assets/manifest.json')) ? readJson(sourcePath('assets/manifest.json')) : {};
+  } catch {
+    /* validate 가 보고 */
   }
-  const rel = (p) => (p.startsWith('assets/') ? p : `assets/${p.replace(/^\.?\//, '')}`);
-  const voice = data.voiceLines.filter((l) => !l.audioExists).map((l) => ({id: l.id, speaker: l.speaker, text: l.text, expectedPath: l.audio ?? '(voice-lines 에 파일 경로 없음)'}));
-  const musicAndSfx = [
-    ...data.audioCues.filter((c) => !c.exists).map((c) => ({kind: c.kind, expectedPath: c.asset, from: c.from})),
-    ...manifestAudio.filter((a) => !publicExists(rel(a.path))).map((a) => ({kind: a.type ?? 'audio', expectedPath: rel(a.path), id: a.id})),
-  ].filter((v, i, arr) => arr.findIndex((o) => o.expectedPath === v.expectedPath) === i);
-  const allAudioPresent = data.available && data.voiceLines.length > 0 && voice.length === 0 && musicAndSfx.length === 0;
-  return {voice, musicAndSfx, allAudioPresent};
+  const req = manifest.requiredExternalAudio ?? {};
+  const voice = data.voiceLines.flatMap((l) => l.audio.filter((a) => !a.exists).map((a) => ({line: l.id, speaker: a.file.match(/_([a-z]+)\.wav$/i)?.[1] ?? l.speaker, text: l.text, file: a.file})));
+  const music = asList(req.music).filter((f) => !publicExists(f));
+  const sfx = asList(req.sfx).filter((f) => !publicExists(f));
+  const cueOnly = data.audioCues.filter((c) => !c.exists && !music.includes(c.file) && !sfx.includes(c.file)).map((c) => c.file);
+  const unique = (a) => [...new Set(a)];
+  const allAudioPresent = data.available && data.voiceLines.length > 0 && voice.length === 0 && music.length === 0 && sfx.length === 0 && cueOnly.length === 0;
+  return {voice, music: unique(music), sfx: unique(sfx), otherCues: unique(cueOnly), allAudioPresent};
 };
+const asList = (v) => (Array.isArray(v) ? v : v ? [v] : []);

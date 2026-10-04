@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "sourceSize": {"width": 1774, "height": 887},
+  "backgroundRemoval": {
+    "method": "corner-color-distance",
+    "sampleCorners": true,
+    "colorDistanceSoftStart": 18,
+    "colorDistanceFullAlpha": 42,
+    "preserveContactShadow": false,
+    "edgeDecontaminate": true,
+    "outputFormat": "png"
+  },
+  "grids": {
+    "expressions": {
+      "y": 0,
+      "height": 410,
+      "xBoundaries": [0, 253, 507, 760, 1014, 1267, 1521, 1774]
+    },
+    "poses": {
+      "y": 365,
+      "height": 522,
+      "xBoundaries": [0, 296, 591, 887, 1183, 1478, 1774]
+    }
+  },
+  "characters": {
+    "seongun": {
+      "sheet": "assets/characters/seongun/seongun-expression-pose-sheet-v1.png",
+      "expressions": ["friendly", "curious", "surprised", "concerned", "thoughtful", "excited", "sleepy"],
+      "poses": ["wave", "walk", "run", "point", "wait", "stop"]
+    },
+    "tino": {
+      "sheet": "assets/characters/tino/tino-expression-pose-sheet-v1.png",
+      "expressions": ["friendly", "excited", "curious", "surprised", "embarrassed", "patient", "sleepy"],
+      "poses": ["greet", "walk", "run", "ready", "wait", "stop"]
+    },
+    "ppulli": {
+      "sheet": "assets/characters/ppulli/ppulli-expression-pose-sheet-v1.png",
+      "expressions": ["friendly", "listen", "thoughtful", "surprised", "concerned", "proud", "sleepy"],
+      "poses": ["greet", "walk", "trot", "sit", "wait", "indicate"]
+    },
+    "karo": {
+      "sheet": "assets/characters/karo/karo-expression-pose-sheet-v1.png",
+      "expressions": ["friendly", "idea", "listen", "surprised", "worried", "understood", "sleepy"],
+      "poses": ["greet", "walk", "run", "inspect", "wait", "stop"]
+    }
+  },
+  "fallbacks": {
+    "seongun.happy": "seongun.friendly",
+    "tino.listen": "tino.curious",
+    "tino.indicate": "tino.stop",
+    "ppulli.happy": "ppulli.proud",
+    "karo.curious": "karo.inspect",
+    "karo.indicate": "karo.stop",
+    "karo.slide-seated": "karo.wait"
+  },
+  "notes": [
+    "크롭 후 네 모서리의 배경색을 기준으로 알파를 생성한다.",
+    "시트의 바닥 그림자는 제거하고 Remotion에서 CSS drop-shadow를 다시 적용한다.",
+    "크롭 결과가 이웃 셀을 포함하면 각 경계에서 8~14픽셀을 추가로 안쪽 크롭한다.",
+    "자동 결과를 접촉시켜 사용하지 말고 각 출력 PNG를 한 번 시각 검수한다."
+  ]
+}

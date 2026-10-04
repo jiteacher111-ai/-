@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 180" role="img" aria-label="Single-file queue footprint markers">
+  <defs>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#8B6A55" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+  <g fill="#FFF7E8" stroke="#F18D63" stroke-width="7" stroke-linejoin="round" filter="url(#shadow)">
+    <g transform="translate(70 26) rotate(-5 60 64)">
+      <ellipse cx="42" cy="78" rx="27" ry="43"/>
+      <circle cx="22" cy="27" r="9"/><circle cx="39" cy="17" r="10"/><circle cx="58" cy="16" r="10"/><circle cx="76" cy="25" r="9"/>
+      <ellipse cx="106" cy="78" rx="27" ry="43"/>
+      <circle cx="86" cy="27" r="9"/><circle cx="103" cy="17" r="10"/><circle cx="122" cy="16" r="10"/><circle cx="140" cy="25" r="9"/>
+    </g>
+    <g transform="translate(286 26) rotate(3 60 64)">
+      <ellipse cx="42" cy="78" rx="27" ry="43"/>
+      <circle cx="22" cy="27" r="9"/><circle cx="39" cy="17" r="10"/><circle cx="58" cy="16" r="10"/><circle cx="76" cy="25" r="9"/>
+      <ellipse cx="106" cy="78" rx="27" ry="43"/>
+      <circle cx="86" cy="27" r="9"/><circle cx="103" cy="17" r="10"/><circle cx="122" cy="16" r="10"/><circle cx="140" cy="25" r="9"/>
+    </g>
+    <g transform="translate(502 26) rotate(-3 60 64)">
+      <ellipse cx="42" cy="78" rx="27" ry="43"/>
+      <circle cx="22" cy="27" r="9"/><circle cx="39" cy="17" r="10"/><circle cx="58" cy="16" r="10"/><circle cx="76" cy="25" r="9"/>
+      <ellipse cx="106" cy="78" rx="27" ry="43"/>
+      <circle cx="86" cy="27" r="9"/><circle cx="103" cy="17" r="10"/><circle cx="122" cy="16" r="10"/><circle cx="140" cy="25" r="9"/>
+    </g>
+  </g>
+</svg>

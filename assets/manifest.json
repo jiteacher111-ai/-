@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "project": "dino-playground-safety",
+  "existingAssets": [
+    {"id":"bg-establishing","path":"assets/backgrounds/playground-establishing-v1.png","type":"background","width":1672,"height":941,"alpha":false},
+    {"id":"bg-slide","path":"assets/backgrounds/playground-slide-zone-v1.png","type":"background","width":1672,"height":941,"alpha":false},
+    {"id":"bg-swing","path":"assets/backgrounds/playground-swing-zone-v1.png","type":"background","width":1672,"height":941,"alpha":false},
+    {"id":"seongun-turnaround","path":"assets/characters/seongun/seongun-turnaround-v1.png","type":"character-reference","width":1774,"height":887,"alpha":false},
+    {"id":"seongun-poses","path":"assets/characters/seongun/seongun-expression-pose-sheet-v1.png","type":"character-sheet","width":1774,"height":887,"alpha":false},
+    {"id":"tino-turnaround","path":"assets/characters/tino/tino-turnaround-v1.png","type":"character-reference","width":1774,"height":887,"alpha":false},
+    {"id":"tino-poses","path":"assets/characters/tino/tino-expression-pose-sheet-v1.png","type":"character-sheet","width":1774,"height":887,"alpha":false},
+    {"id":"ppulli-turnaround","path":"assets/characters/ppulli/ppulli-turnaround-v1.png","type":"character-reference","width":1774,"height":887,"alpha":false},
+    {"id":"ppulli-poses","path":"assets/characters/ppulli/ppulli-expression-pose-sheet-v1.png","type":"character-sheet","width":1774,"height":887,"alpha":false},
+    {"id":"karo-turnaround","path":"assets/characters/karo/karo-turnaround-v1.png","type":"character-reference","width":1774,"height":887,"alpha":false},
+    {"id":"karo-poses","path":"assets/characters/karo/karo-expression-pose-sheet-v1.png","type":"character-sheet","width":1774,"height":887,"alpha":false},
+    {"id":"promise-board","path":"assets/props/playground-safety-promise-board-v1.png","type":"prop","width":1536,"height":1024,"alpha":true},
+    {"id":"queue-footprints","path":"assets/props/queue-footprints.svg","type":"overlay-vector"},
+    {"id":"slide-arrows","path":"assets/props/slide-direction-arrows.svg","type":"overlay-vector"},
+    {"id":"swing-boundary","path":"assets/props/swing-safety-boundary.svg","type":"overlay-vector"}
+  ],
+  "productionData": [
+    "docs/playground-safety-script-v1.md",
+    "docs/shot-list-v1.md",
+    "data/timeline-v1.json",
+    "data/voice-lines.ko.json",
+    "data/subtitles.ko.srt",
+    "data/character-crops-v1.json"
+  ],
+  "generatedDuringPreprocess": {
+    "directory": "dino-playground-video/public/assets/characters/cutouts",
+    "source": "data/character-crops-v1.json",
+    "format": "transparent PNG",
+    "overwriteSourceSheets": false
+  },
+  "requiredExternalAudio": {
+    "voiceDirectory": "assets/audio/voices",
+    "voiceManifest": "data/voice-lines.ko.json",
+    "music": ["assets/audio/music/playground-theme-120s.wav"],
+    "sfx": [
+      "assets/audio/sfx/footsteps-soft.wav",
+      "assets/audio/sfx/bell-soft.wav",
+      "assets/audio/sfx/icon-chime.wav",
+      "assets/audio/sfx/pop-soft.wav",
+      "assets/audio/sfx/slide-whoosh-soft.wav",
+      "assets/audio/sfx/swing-creak-soft.wav",
+      "assets/audio/sfx/sparkle-soft.wav",
+      "assets/audio/sfx/laugh-soft.wav"
+    ]
+  },
+  "missingAssetPolicy": "외부 음성·음악·효과음이 없으면 침묵 파일이나 다른 캐릭터 음성으로 대체하지 말고 누락 목록을 출력한다. 영상 레이아웃 프리뷰는 무음으로 생성할 수 있다."
+}

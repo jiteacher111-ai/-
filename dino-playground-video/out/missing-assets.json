@@ -1,23 +1,302 @@
 {
-  "generatedAt": "2026-10-03T23:41:35.342Z",
-  "workspaceRoot": "/home/user/-",
-  "note": "누락 자산은 대체 생성하지 않았다. 아래 파일을 원본 경로에 넣고 npm run sync → validate 를 다시 실행한다.",
-  "requiredInputs": [
-    "docs/claude-code-production-brief.md",
-    "assets/manifest.json",
-    "data/timeline-v1.json",
-    "data/voice-lines.ko.json",
-    "data/subtitles.ko.srt",
-    "data/character-crops-v1.json",
-    "docs/playground-safety-script-v1.md",
-    "docs/shot-list-v1.md",
-    "docs/audio-production-v1.md"
-  ],
+  "generatedAt": "2026-10-04T06:10:50.818Z",
+  "note": "누락 오디오는 생성·다운로드·무음 파일로 대체하지 않았다. 아래 경로(작업공간 루트 기준)에 파일을 넣고 npm run sync → validate → render:final 을 실행한다.",
+  "requiredInputs": [],
   "images": [],
   "audio": {
-    "voice": [],
-    "musicAndSfx": [],
-    "undetermined": "data/voice-lines.ko.json · docs/audio-production-v1.md 가 없어 필요한 대사·음악·효과음 파일 목록을 산출할 수 없음"
+    "voiceFiles": 46,
+    "voice": [
+      {
+        "line": "L01",
+        "speaker": "seongun",
+        "text": "티노, 뿔리, 카로야! 같이 놀자!",
+        "file": "assets/audio/voices/L01_seongun.wav"
+      },
+      {
+        "line": "L02",
+        "speaker": "seongun",
+        "text": "좋아!",
+        "file": "assets/audio/voices/L02_seongun.wav"
+      },
+      {
+        "line": "L02",
+        "speaker": "tino",
+        "text": "좋아!",
+        "file": "assets/audio/voices/L02_tino.wav"
+      },
+      {
+        "line": "L02",
+        "speaker": "ppulli",
+        "text": "좋아!",
+        "file": "assets/audio/voices/L02_ppulli.wav"
+      },
+      {
+        "line": "L02",
+        "speaker": "karo",
+        "text": "좋아!",
+        "file": "assets/audio/voices/L02_karo.wav"
+      },
+      {
+        "line": "L03",
+        "speaker": "ppulli",
+        "text": "놀기 전에 약속이 세 개 있어.",
+        "file": "assets/audio/voices/L03_ppulli.wav"
+      },
+      {
+        "line": "L04",
+        "speaker": "seongun",
+        "text": "안전 약속?",
+        "file": "assets/audio/voices/L04_seongun.wav"
+      },
+      {
+        "line": "L05",
+        "speaker": "seongun",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L05_seongun.wav"
+      },
+      {
+        "line": "L05",
+        "speaker": "tino",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L05_tino.wav"
+      },
+      {
+        "line": "L05",
+        "speaker": "ppulli",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L05_ppulli.wav"
+      },
+      {
+        "line": "L05",
+        "speaker": "karo",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L05_karo.wav"
+      },
+      {
+        "line": "L06",
+        "speaker": "tino",
+        "text": "내가 먼저! 빨리 타고 싶어!",
+        "file": "assets/audio/voices/L06_tino.wav"
+      },
+      {
+        "line": "L07",
+        "speaker": "seongun",
+        "text": "티노야, 친구들도 기다리고 있어.",
+        "file": "assets/audio/voices/L07_seongun.wav"
+      },
+      {
+        "line": "L08",
+        "speaker": "tino",
+        "text": "아, 차례를 잊었네.",
+        "file": "assets/audio/voices/L08_tino.wav"
+      },
+      {
+        "line": "L09",
+        "speaker": "ppulli",
+        "text": "발자국 뒤에 한 줄로 서자.",
+        "file": "assets/audio/voices/L09_ppulli.wav"
+      },
+      {
+        "line": "L10",
+        "speaker": "tino",
+        "text": "좋아! 내 차례까지 기다릴게.",
+        "file": "assets/audio/voices/L10_tino.wav"
+      },
+      {
+        "line": "L11",
+        "speaker": "seongun",
+        "text": "차례차례!",
+        "file": "assets/audio/voices/L11_seongun.wav"
+      },
+      {
+        "line": "L11",
+        "speaker": "tino",
+        "text": "차례차례!",
+        "file": "assets/audio/voices/L11_tino.wav"
+      },
+      {
+        "line": "L11",
+        "speaker": "ppulli",
+        "text": "차례차례!",
+        "file": "assets/audio/voices/L11_ppulli.wav"
+      },
+      {
+        "line": "L11",
+        "speaker": "karo",
+        "text": "차례차례!",
+        "file": "assets/audio/voices/L11_karo.wav"
+      },
+      {
+        "line": "L12",
+        "speaker": "karo",
+        "text": "여기로 올라가면 더 빠르겠지?",
+        "file": "assets/audio/voices/L12_karo.wav"
+      },
+      {
+        "line": "L13",
+        "speaker": "seongun",
+        "text": "잠깐! 여기는 내려오는 길이야.",
+        "file": "assets/audio/voices/L13_seongun.wav"
+      },
+      {
+        "line": "L14",
+        "speaker": "karo",
+        "text": "그럼 어디로 올라가?",
+        "file": "assets/audio/voices/L14_karo.wav"
+      },
+      {
+        "line": "L15",
+        "speaker": "seongun",
+        "text": "계단으로 올라가서, 앉아서 아래로 슝!",
+        "file": "assets/audio/voices/L15_seongun.wav"
+      },
+      {
+        "line": "L16",
+        "speaker": "karo",
+        "text": "계단으로 올라가고, 아래로 슝!",
+        "file": "assets/audio/voices/L16_karo.wav"
+      },
+      {
+        "line": "L17",
+        "speaker": "seongun",
+        "text": "바르게!",
+        "file": "assets/audio/voices/L17_seongun.wav"
+      },
+      {
+        "line": "L17",
+        "speaker": "tino",
+        "text": "바르게!",
+        "file": "assets/audio/voices/L17_tino.wav"
+      },
+      {
+        "line": "L17",
+        "speaker": "ppulli",
+        "text": "바르게!",
+        "file": "assets/audio/voices/L17_ppulli.wav"
+      },
+      {
+        "line": "L17",
+        "speaker": "karo",
+        "text": "바르게!",
+        "file": "assets/audio/voices/L17_karo.wav"
+      },
+      {
+        "line": "L18",
+        "speaker": "karo",
+        "text": "저쪽으로 지나가자!",
+        "file": "assets/audio/voices/L18_karo.wav"
+      },
+      {
+        "line": "L19",
+        "speaker": "ppulli",
+        "text": "멈춰! 그네가 움직이고 있어.",
+        "file": "assets/audio/voices/L19_ppulli.wav"
+      },
+      {
+        "line": "L20",
+        "speaker": "seongun",
+        "text": "그네의 앞과 뒤에서는 멀리 기다려야 해.",
+        "file": "assets/audio/voices/L20_seongun.wav"
+      },
+      {
+        "line": "L21",
+        "speaker": "karo",
+        "text": "안전선 밖에서 기다리면 되지?",
+        "file": "assets/audio/voices/L21_karo.wav"
+      },
+      {
+        "line": "L22",
+        "speaker": "seongun",
+        "text": "맞아! 멈춘 뒤에도 바깥쪽으로 돌아가자.",
+        "file": "assets/audio/voices/L22_seongun.wav"
+      },
+      {
+        "line": "L23",
+        "speaker": "seongun",
+        "text": "안전하게!",
+        "file": "assets/audio/voices/L23_seongun.wav"
+      },
+      {
+        "line": "L23",
+        "speaker": "tino",
+        "text": "안전하게!",
+        "file": "assets/audio/voices/L23_tino.wav"
+      },
+      {
+        "line": "L23",
+        "speaker": "ppulli",
+        "text": "안전하게!",
+        "file": "assets/audio/voices/L23_ppulli.wav"
+      },
+      {
+        "line": "L23",
+        "speaker": "karo",
+        "text": "안전하게!",
+        "file": "assets/audio/voices/L23_karo.wav"
+      },
+      {
+        "line": "L24",
+        "speaker": "ppulli",
+        "text": "첫째, 차례를 지켜요!",
+        "file": "assets/audio/voices/L24_ppulli.wav"
+      },
+      {
+        "line": "L25",
+        "speaker": "karo",
+        "text": "둘째, 계단으로 올라가 아래로 타요!",
+        "file": "assets/audio/voices/L25_karo.wav"
+      },
+      {
+        "line": "L26",
+        "speaker": "tino",
+        "text": "셋째, 움직이는 그네와 멀리 떨어져요!",
+        "file": "assets/audio/voices/L26_tino.wav"
+      },
+      {
+        "line": "L27",
+        "speaker": "seongun",
+        "text": "우리 모두 약속!",
+        "file": "assets/audio/voices/L27_seongun.wav"
+      },
+      {
+        "line": "L28",
+        "speaker": "seongun",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L28_seongun.wav"
+      },
+      {
+        "line": "L28",
+        "speaker": "tino",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L28_tino.wav"
+      },
+      {
+        "line": "L28",
+        "speaker": "ppulli",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L28_ppulli.wav"
+      },
+      {
+        "line": "L28",
+        "speaker": "karo",
+        "text": "차례차례, 바르게, 안전하게!",
+        "file": "assets/audio/voices/L28_karo.wav"
+      }
+    ],
+    "music": [
+      "assets/audio/music/playground-theme-120s.wav"
+    ],
+    "sfx": [
+      "assets/audio/sfx/footsteps-soft.wav",
+      "assets/audio/sfx/bell-soft.wav",
+      "assets/audio/sfx/icon-chime.wav",
+      "assets/audio/sfx/pop-soft.wav",
+      "assets/audio/sfx/slide-whoosh-soft.wav",
+      "assets/audio/sfx/swing-creak-soft.wav",
+      "assets/audio/sfx/sparkle-soft.wav",
+      "assets/audio/sfx/laugh-soft.wav"
+    ],
+    "otherCues": []
   },
   "allAudioPresent": false
 }

@@ -1,0 +1,214 @@
+{
+  "_comment": "타임라인에 단위·규칙이 명시되지 않은 부분의 해석값. 숫자만 바꿔서 조정한다 (README '주요 수정 지점' 참고).",
+  "closeUpCameraTypes": [
+    "close-up"
+  ],
+  "expressionBodyPose": {
+    "_comment": "일반(전신) 숏에서 pose 자리에 표정 이름이 오면, 흉상 대신 같은 캐릭터의 이 전신 포즈를 쓴다 (앞쪽 후보부터 존재하는 것).",
+    "default": [
+      "wait"
+    ],
+    "happy": [
+      "greet",
+      "wave",
+      "wait"
+    ],
+    "friendly": [
+      "wait"
+    ],
+    "excited": [
+      "greet",
+      "wave",
+      "wait"
+    ],
+    "proud": [
+      "greet",
+      "wait"
+    ]
+  },
+  "bustBottomOverhang": 0.03,
+  "nativeFacing": {
+    "_comment": "컷아웃 원본이 바라보는 방향 (contact sheet 로 확인). 키: <character>/<pose|expression>-<name>, <character>/*, *",
+    "*": "front",
+    "seongun/pose-walk": "right",
+    "seongun/pose-run": "right",
+    "seongun/pose-point": "right",
+    "tino/pose-walk": "right",
+    "tino/pose-run": "right",
+    "tino/pose-ready": "right",
+    "tino/pose-stop": "left",
+    "ppulli/pose-greet": "left",
+    "ppulli/pose-walk": "left",
+    "ppulli/pose-trot": "right",
+    "ppulli/pose-indicate": "right",
+    "karo/pose-greet": "left",
+    "karo/pose-walk": "right",
+    "karo/pose-run": "right",
+    "karo/pose-inspect": "right",
+    "karo/pose-stop": "left"
+  },
+  "propScaleUnit": {
+    "board": "height",
+    "default": "width"
+  },
+  "keepInSafeArea": [
+    "board"
+  ],
+  "swingMotion": "static",
+  "endFade": {
+    "fromSec": 119.6,
+    "color": "#F6EFE1"
+  },
+  "contactShadow": {
+    "opacity": 0.22,
+    "widthRatio": 0.62,
+    "heightRatio": 0.055
+  },
+  "audioCues": [
+    {
+      "file": "assets/audio/music/playground-theme-120s.wav",
+      "kind": "music",
+      "startSec": 0,
+      "endSec": 120,
+      "volume": 0.5
+    },
+    {
+      "file": "assets/audio/sfx/footsteps-soft.wav",
+      "kind": "sfx",
+      "startSec": 3.2,
+      "volume": 0.35
+    },
+    {
+      "file": "assets/audio/sfx/bell-soft.wav",
+      "kind": "sfx",
+      "startSec": 6.2,
+      "volume": 0.35
+    },
+    {
+      "file": "assets/audio/sfx/icon-chime.wav",
+      "kind": "sfx",
+      "startSec": 19.25,
+      "volume": 0.35
+    },
+    {
+      "file": "assets/audio/sfx/icon-chime.wav",
+      "kind": "sfx",
+      "startSec": 19.75,
+      "volume": 0.35
+    },
+    {
+      "file": "assets/audio/sfx/icon-chime.wav",
+      "kind": "sfx",
+      "startSec": 20.25,
+      "volume": 0.35
+    },
+    {
+      "file": "assets/audio/sfx/footsteps-soft.wav",
+      "kind": "sfx",
+      "startSec": 24.2,
+      "volume": 0.3
+    },
+    {
+      "file": "assets/audio/sfx/pop-soft.wav",
+      "kind": "sfx",
+      "startSec": 28.3,
+      "volume": 0.3
+    },
+    {
+      "file": "assets/audio/sfx/pop-soft.wav",
+      "kind": "sfx",
+      "startSec": 64.3,
+      "volume": 0.3
+    },
+    {
+      "file": "assets/audio/sfx/slide-whoosh-soft.wav",
+      "kind": "sfx",
+      "startSec": 73.2,
+      "volume": 0.3
+    },
+    {
+      "file": "assets/audio/sfx/swing-creak-soft.wav",
+      "kind": "sfx",
+      "startSec": 76.2,
+      "endSec": 98.5,
+      "volume": 0.15
+    },
+    {
+      "file": "assets/audio/sfx/pop-soft.wav",
+      "kind": "sfx",
+      "startSec": 89.2,
+      "volume": 0.3
+    },
+    {
+      "file": "assets/audio/sfx/sparkle-soft.wav",
+      "kind": "sfx",
+      "startSec": 115.3,
+      "volume": 0.3
+    },
+    {
+      "file": "assets/audio/sfx/laugh-soft.wav",
+      "kind": "sfx",
+      "startSec": 118.4,
+      "volume": 0.3
+    }
+  ],
+  "keyframes": {
+    "_comment": "레이아웃 확인용 스틸 8장: [숏, 숏 안 위치(0~1)]",
+    "shots": [
+      [
+        "S03",
+        0.7
+      ],
+      [
+        "S07",
+        0.6
+      ],
+      [
+        "S09",
+        0.6
+      ],
+      [
+        "S10",
+        0.5
+      ],
+      [
+        "S16",
+        0.6
+      ],
+      [
+        "S22",
+        0.7
+      ],
+      [
+        "S27",
+        0.6
+      ],
+      [
+        "S28",
+        0.5
+      ]
+    ]
+  },
+  "bustScaleMultiplier": 1.2,
+  "propOverrides": {
+    "_comment": "원본 SVG 를 배경에 맞추기 위한 보정. flipX: 좌우 반전, groundSquash: 바닥에 눕도록 세로 압축 비율",
+    "slide-arrows": {
+      "flipX": true
+    },
+    "swing-boundary": {
+      "groundSquash": 0.45
+    }
+  },
+  "layoutFixes": {
+    "_comment": "레이아웃 QA(잘림·겹침·접촉)로 필요한 최소 위치 보정. 값은 timeline 과 같은 백분율 단위. 적용 내역은 qa-report.json 에 기록된다.",
+    "S08": {
+      "characters": {
+        "tino": {
+          "xFrom": 30,
+          "xTo": 38
+        }
+      },
+      "reason": "timeline 위치(42→53%)에서는 티노의 넓은 ready 포즈가 카로(62%)를 가려 '친구에게 접촉하지 않는다'(숏 메모·대본) 위반. 한 걸음 이동 폭(8%)을 유지하고 카로 앞에서 멈추게 보정."
+    }
+  }
+}

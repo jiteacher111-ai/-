@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "language": "ko-KR",
+  "projectFps": 24,
+  "mixSampleRate": 48000,
+  "profiles": {
+    "seongun": {
+      "label": "성운",
+      "direction": "밝고 다정한 세 살 남자아이. 또박또박 말하며 아기 말투를 과장하지 않는다.",
+      "rate": 0.9,
+      "pitch": "slightly-high"
+    },
+    "tino": {
+      "label": "티노",
+      "direction": "에너지가 넘치지만 순한 아기 공룡. 둥글고 통통 튀는 음색.",
+      "rate": 0.92,
+      "pitch": "medium"
+    },
+    "ppulli": {
+      "label": "뿔리",
+      "direction": "차분하고 따뜻한 아기 공룡. 안전수칙은 분명하고 안정적으로 말한다.",
+      "rate": 0.88,
+      "pitch": "medium-high"
+    },
+    "karo": {
+      "label": "카로",
+      "direction": "호기심 많고 경쾌한 아기 공룡. 깨달은 뒤에는 목소리가 밝아진다.",
+      "rate": 0.92,
+      "pitch": "medium-high"
+    }
+  },
+  "lines": [
+    {"id":"L01","speaker":"seongun","start":4.0,"end":7.5,"text":"티노, 뿔리, 카로야! 같이 놀자!","emotion":"반가움","audioFiles":["assets/audio/voices/L01_seongun.wav"]},
+    {"id":"L02","speaker":"all","start":8.2,"end":9.2,"text":"좋아!","emotion":"함께 반갑게","renderAs":["seongun","tino","ppulli","karo"],"audioFiles":["assets/audio/voices/L02_seongun.wav","assets/audio/voices/L02_tino.wav","assets/audio/voices/L02_ppulli.wav","assets/audio/voices/L02_karo.wav"]},
+    {"id":"L03","speaker":"ppulli","start":13.5,"end":16.8,"text":"놀기 전에 약속이 세 개 있어.","emotion":"차분한 안내","audioFiles":["assets/audio/voices/L03_ppulli.wav"]},
+    {"id":"L04","speaker":"seongun","start":17.3,"end":18.5,"text":"안전 약속?","emotion":"호기심","audioFiles":["assets/audio/voices/L04_seongun.wav"]},
+    {"id":"L05","speaker":"all","start":19.2,"end":22.2,"text":"차례차례, 바르게, 안전하게!","emotion":"리듬감 있는 구호","renderAs":["seongun","tino","ppulli","karo"],"audioFiles":["assets/audio/voices/L05_seongun.wav","assets/audio/voices/L05_tino.wav","assets/audio/voices/L05_ppulli.wav","assets/audio/voices/L05_karo.wav"]},
+    {"id":"L06","speaker":"tino","start":25.0,"end":28.2,"text":"내가 먼저! 빨리 타고 싶어!","emotion":"신남","audioFiles":["assets/audio/voices/L06_tino.wav"]},
+    {"id":"L07","speaker":"seongun","start":29.2,"end":32.4,"text":"티노야, 친구들도 기다리고 있어.","emotion":"부드러운 안내","audioFiles":["assets/audio/voices/L07_seongun.wav"]},
+    {"id":"L08","speaker":"tino","start":33.2,"end":35.3,"text":"아, 차례를 잊었네.","emotion":"가벼운 깨달음","audioFiles":["assets/audio/voices/L08_tino.wav"]},
+    {"id":"L09","speaker":"ppulli","start":36.0,"end":38.7,"text":"발자국 뒤에 한 줄로 서자.","emotion":"친절한 제안","audioFiles":["assets/audio/voices/L09_ppulli.wav"]},
+    {"id":"L10","speaker":"tino","start":39.8,"end":43.1,"text":"좋아! 내 차례까지 기다릴게.","emotion":"밝은 동의","audioFiles":["assets/audio/voices/L10_tino.wav"]},
+    {"id":"L11","speaker":"all","start":45.2,"end":46.4,"text":"차례차례!","emotion":"짧은 구호","renderAs":["seongun","tino","ppulli","karo"],"audioFiles":["assets/audio/voices/L11_seongun.wav","assets/audio/voices/L11_tino.wav","assets/audio/voices/L11_ppulli.wav","assets/audio/voices/L11_karo.wav"]},
+    {"id":"L12","speaker":"karo","start":50.3,"end":53.1,"text":"여기로 올라가면 더 빠르겠지?","emotion":"호기심","audioFiles":["assets/audio/voices/L12_karo.wav"]},
+    {"id":"L13","speaker":"seongun","start":55.0,"end":58.1,"text":"잠깐! 여기는 내려오는 길이야.","emotion":"차분하고 분명하게","audioFiles":["assets/audio/voices/L13_seongun.wav"]},
+    {"id":"L14","speaker":"karo","start":59.4,"end":61.1,"text":"그럼 어디로 올라가?","emotion":"궁금함","audioFiles":["assets/audio/voices/L14_karo.wav"]},
+    {"id":"L15","speaker":"seongun","start":62.2,"end":66.0,"text":"계단으로 올라가서, 앉아서 아래로 슝!","emotion":"즐거운 설명","audioFiles":["assets/audio/voices/L15_seongun.wav"]},
+    {"id":"L16","speaker":"karo","start":67.0,"end":70.5,"text":"계단으로 올라가고, 아래로 슝!","emotion":"이해하고 따라 말함","audioFiles":["assets/audio/voices/L16_karo.wav"]},
+    {"id":"L17","speaker":"all","start":73.0,"end":74.1,"text":"바르게!","emotion":"짧은 구호","renderAs":["seongun","tino","ppulli","karo"],"audioFiles":["assets/audio/voices/L17_seongun.wav","assets/audio/voices/L17_tino.wav","assets/audio/voices/L17_ppulli.wav","assets/audio/voices/L17_karo.wav"]},
+    {"id":"L18","speaker":"karo","start":77.2,"end":79.3,"text":"저쪽으로 지나가자!","emotion":"경쾌함","audioFiles":["assets/audio/voices/L18_karo.wav"]},
+    {"id":"L19","speaker":"ppulli","start":81.0,"end":84.2,"text":"멈춰! 그네가 움직이고 있어.","emotion":"부드럽지만 분명하게","audioFiles":["assets/audio/voices/L19_ppulli.wav"]},
+    {"id":"L20","speaker":"seongun","start":85.3,"end":89.0,"text":"그네의 앞과 뒤에서는 멀리 기다려야 해.","emotion":"차분한 설명","audioFiles":["assets/audio/voices/L20_seongun.wav"]},
+    {"id":"L21","speaker":"karo","start":90.2,"end":93.0,"text":"안전선 밖에서 기다리면 되지?","emotion":"확인","audioFiles":["assets/audio/voices/L21_karo.wav"]},
+    {"id":"L22","speaker":"seongun","start":94.2,"end":98.3,"text":"맞아! 멈춘 뒤에도 바깥쪽으로 돌아가자.","emotion":"칭찬과 안내","audioFiles":["assets/audio/voices/L22_seongun.wav"]},
+    {"id":"L23","speaker":"all","start":100.0,"end":101.3,"text":"안전하게!","emotion":"짧은 구호","renderAs":["seongun","tino","ppulli","karo"],"audioFiles":["assets/audio/voices/L23_seongun.wav","assets/audio/voices/L23_tino.wav","assets/audio/voices/L23_ppulli.wav","assets/audio/voices/L23_karo.wav"]},
+    {"id":"L24","speaker":"ppulli","start":104.0,"end":106.5,"text":"첫째, 차례를 지켜요!","emotion":"또박또박","audioFiles":["assets/audio/voices/L24_ppulli.wav"]},
+    {"id":"L25","speaker":"karo","start":107.0,"end":110.1,"text":"둘째, 계단으로 올라가 아래로 타요!","emotion":"밝고 분명하게","audioFiles":["assets/audio/voices/L25_karo.wav"]},
+    {"id":"L26","speaker":"tino","start":110.5,"end":114.0,"text":"셋째, 움직이는 그네와 멀리 떨어져요!","emotion":"씩씩하게","audioFiles":["assets/audio/voices/L26_tino.wav"]},
+    {"id":"L27","speaker":"seongun","start":115.5,"end":117.0,"text":"우리 모두 약속!","emotion":"밝게","audioFiles":["assets/audio/voices/L27_seongun.wav"]},
+    {"id":"L28","speaker":"all","start":117.2,"end":119.6,"text":"차례차례, 바르게, 안전하게!","emotion":"천천히 따라 하기 좋은 구호","renderAs":["seongun","tino","ppulli","karo"],"audioFiles":["assets/audio/voices/L28_seongun.wav","assets/audio/voices/L28_tino.wav","assets/audio/voices/L28_ppulli.wav","assets/audio/voices/L28_karo.wav"]}
+  ]
+}

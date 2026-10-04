@@ -1,71 +1,93 @@
-// scripts/lib/normalize.mjs 가 만드는 정규화 스키마. 프레임은 모두 전체 영상 기준 절대 프레임.
-export type CharacterPlacement = {
-  character: string;
-  sprite: string | null; // 크롭 id 를 직접 지정한 경우
-  pose: string;
-  expression: string;
-  x: number; // 0~1, 발 중심 가로 위치
-  y: number; // 0~1, 발 바닥(기준선) 세로 위치
-  scale: number; // 화면 높이 대비 캐릭터 높이
+// scripts/lib/normalize.mjs + generate.mjs 가 만드는 정규화 스키마.
+// 좌표·크기는 0~1 비율, 프레임은 전체 영상 기준 절대 프레임.
+export type Anim = {name: string; base: string; delay: number; offset: number};
+
+export type ShotCharacter = {
+  id: string;
+  pose: string; // 타임라인 원래 이름
+  xFrom: number;
+  xTo: number;
+  yFrom: number; // 발밑 기준선
+  yTo: number;
+  scaleFrom: number; // 화면 높이 대비 캐릭터(불투명 영역) 높이
+  scaleTo: number;
+  facing: 'left' | 'right' | 'front' | string;
+  animation: Anim;
+  sprite: string | null; // public/ 기준 컷아웃 경로
+  spriteKind: 'pose' | 'expression' | null;
+  spriteName: string;
+  resolution: string;
   flip: boolean;
-  z: number;
-  enter: string | null;
-  exit: string | null;
-  move: {x: number; y: number} | null;
-  expressions: {at: number; expression: string}[]; // at: 숏 시작 기준 프레임
 };
 
-export type Overlay = {
-  type: string; // zone | line | check | stop | label ...
-  label: string | null;
-  icon: string | null;
-  shape: string;
-  rect: {x: number; y: number; w: number; h: number} | null;
-  from: number | null; // 숏 기준
-  to: number | null;
+export type ShotProp = {
+  id: string;
+  kind: 'board' | 'footprints' | 'arrows' | 'boundary' | 'swing' | 'image';
+  asset: string | null;
+  x: number;
+  y: number; // 바닥 중앙 기준
+  scale: number;
+  opacityFrom: number;
+  opacityTo: number;
+  animation: Anim;
+  amplitudeFrom: number;
+  amplitudeTo: number;
+  periodFrames: number;
+  exists?: boolean;
 };
+
+export type Camera = {type: string; scaleFrom: number; scaleTo: number; xFrom: number; xTo: number; yFrom: number; yTo: number};
 
 export type Shot = {
   id: string;
+  scene: number | null;
   index: number;
-  title: string;
   from: number;
   durationInFrames: number;
   background: string | null;
-  backgroundRef: string | null;
   backgroundExists?: boolean;
-  camera: {zoomFrom: number; zoomTo: number; panXFrom: number; panXTo: number; panYFrom: number; panYTo: number; type: string | null};
-  transition: string | null;
-  characters: CharacterPlacement[];
-  props: {asset: string | null; x: number; y: number; scale: number; flip: boolean; exists?: boolean}[];
-  overlays: Overlay[];
-  promiseBoard: {title: string; items: string[]; revealed?: number; revealFrames: number[]} | null;
-  lineIds: string[];
+  camera: Camera;
+  characters: ShotCharacter[];
+  props: ShotProp[];
+  dialogue: string[];
+  notes: string;
 };
 
 export type VoiceLine = {
   id: string;
   speaker: string;
+  speakers: string[];
   text: string;
-  from: number | null;
-  to: number | null;
-  expression: string | null;
-  audio: string | null;
-  audioExists?: boolean;
+  emotion: string | null;
+  from: number;
+  to: number;
+  audio: {file: string; exists: boolean}[];
 };
 
 export type SubtitleCue = {index: number; from: number; to: number; text: string; startSec: number; endSec: number};
-export type AudioCue = {kind: string; asset: string; from: number; to: number | null; volume: number; exists?: boolean};
+export type AudioCue = {kind: string; file: string; from: number; to: number | null; volume: number; exists: boolean};
+
+export type ProductionConfig = {
+  bustBottomOverhang: number;
+  bustScaleMultiplier: number;
+  propOverrides: Record<string, {flipX?: boolean; groundSquash?: number}>;
+  propScaleUnit: Record<string, 'width' | 'height'>;
+  keepInSafeArea: string[];
+  endFade: {fromSec: number; color: string};
+  contactShadow: {opacity: number; widthRatio: number; heightRatio: number};
+};
 
 export type ProjectData = {
   available: boolean;
   missingRequired: string[];
   problems: string[];
-  meta: {fps: number; width: number; height: number; durationInFrames: number; title: string};
+  meta: {id: string; fps: number; width: number; height: number; durationInFrames: number; safeArea: number; transitionFrames: number; subtitleBottom: number; subtitleMaxWidth: number; title: string};
+  config: ProductionConfig;
   shots: Shot[];
   voiceLines: VoiceLine[];
   subtitles: SubtitleCue[];
   audioCues: AudioCue[];
-  sprites: Record<string, string>;
-  spriteMeta: Record<string, {width: number; height: number; padding: number}>;
+  spriteMeta: Record<string, {width: number; height: number; padTop: number; padBottom: number; kind: string}>;
+  propMeta: Record<string, {width: number; height: number}>;
+  speakerLabels: Record<string, string>;
 };

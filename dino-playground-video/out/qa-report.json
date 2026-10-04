@@ -1,88 +1,490 @@
 {
-  "generatedAt": "2026-10-03T23:41:29.101Z",
-  "ok": false,
+  "generatedAt": "2026-10-04T06:14:20.662Z",
+  "ok": true,
   "summary": {
-    "pass": 0,
-    "fail": 1,
-    "warn": 1,
-    "skip": 9
+    "pass": 15,
+    "fail": 0,
+    "warn": 4,
+    "skip": 1
   },
   "checks": [
     {
       "name": "required-inputs",
-      "status": "fail",
-      "missing": [
-        "docs/claude-code-production-brief.md",
-        "assets/manifest.json",
-        "data/timeline-v1.json",
-        "data/voice-lines.ko.json",
-        "data/subtitles.ko.srt",
-        "data/character-crops-v1.json",
-        "docs/playground-safety-script-v1.md",
-        "docs/shot-list-v1.md",
-        "docs/audio-production-v1.md"
-      ]
+      "status": "pass",
+      "missing": []
     },
     {
       "name": "timeline-continuity",
-      "status": "skip",
-      "reason": "data/timeline-v1.json 없음"
+      "status": "pass",
+      "gaps": [],
+      "coverage": "0~2879"
+    },
+    {
+      "name": "shot-count",
+      "status": "pass",
+      "actual": 28
+    },
+    {
+      "name": "duration-120s",
+      "status": "pass",
+      "frames": 2880,
+      "fps": 24,
+      "seconds": 120
+    },
+    {
+      "name": "no-nan-values",
+      "status": "pass"
+    },
+    {
+      "name": "srt-matches-voice-lines",
+      "status": "pass"
+    },
+    {
+      "name": "dialogue-within-assigned-shot",
+      "status": "warn",
+      "note": "voice-lines/SRT 시간과 timeline 숏 배정이 다름. 시간·문구는 바꾸지 않았다.",
+      "items": [
+        {
+          "line": "L01",
+          "frames": "96~180",
+          "assignedShot": "S02",
+          "shotFrames": "72~144",
+          "playsDuring": [
+            "S02",
+            "S03"
+          ]
+        },
+        {
+          "line": "L03",
+          "frames": "324~403",
+          "assignedShot": "S05",
+          "shotFrames": "288~360",
+          "playsDuring": [
+            "S05",
+            "S06"
+          ]
+        },
+        {
+          "line": "L08",
+          "frames": "797~847",
+          "assignedShot": "S10",
+          "shotFrames": "816~936",
+          "playsDuring": [
+            "S09",
+            "S10"
+          ]
+        },
+        {
+          "line": "L09",
+          "frames": "864~929",
+          "assignedShot": "S11",
+          "shotFrames": "936~1056",
+          "playsDuring": [
+            "S10"
+          ]
+        },
+        {
+          "line": "L13",
+          "frames": "1320~1394",
+          "assignedShot": "S15",
+          "shotFrames": "1416~1536",
+          "playsDuring": [
+            "S14"
+          ]
+        },
+        {
+          "line": "L15",
+          "frames": "1493~1584",
+          "assignedShot": "S16",
+          "shotFrames": "1536~1656",
+          "playsDuring": [
+            "S15",
+            "S16"
+          ]
+        },
+        {
+          "line": "L16",
+          "frames": "1608~1692",
+          "assignedShot": "S17",
+          "shotFrames": "1656~1752",
+          "playsDuring": [
+            "S16",
+            "S17"
+          ]
+        },
+        {
+          "line": "L19",
+          "frames": "1944~2021",
+          "assignedShot": "S21",
+          "shotFrames": "2040~2136",
+          "playsDuring": [
+            "S20"
+          ]
+        },
+        {
+          "line": "L20",
+          "frames": "2047~2136",
+          "assignedShot": "S22",
+          "shotFrames": "2136~2256",
+          "playsDuring": [
+            "S21"
+          ]
+        },
+        {
+          "line": "L21",
+          "frames": "2165~2232",
+          "assignedShot": "S23",
+          "shotFrames": "2256~2376",
+          "playsDuring": [
+            "S22"
+          ]
+        },
+        {
+          "line": "L26",
+          "frames": "2652~2736",
+          "assignedShot": "S27",
+          "shotFrames": "2664~2760",
+          "playsDuring": [
+            "S26",
+            "S27"
+          ]
+        }
+      ]
     },
     {
       "name": "backgrounds-exist",
-      "status": "skip",
+      "status": "pass"
+    },
+    {
+      "name": "props-exist",
+      "status": "pass"
+    },
+    {
+      "name": "character-cutouts-exist",
+      "status": "pass",
       "missing": []
     },
     {
-      "name": "character-sprites-exist",
-      "status": "skip",
-      "missing": []
-    },
-    {
-      "name": "cutouts-reviewed",
-      "status": "skip",
-      "total": 0,
+      "name": "cutout-contact-sheet",
+      "status": "pass",
+      "cutouts": 52,
       "flagged": [],
-      "contactSheet": null
+      "file": "out/contact-sheets/character-cutouts.png"
+    },
+    {
+      "name": "pose-name-resolution",
+      "status": "pass",
+      "note": "타임라인 pose 이름 → 컷아웃 해석 (crops fallbacks + production.config.json expressionBodyPose)",
+      "items": [
+        {
+          "shot": "S04",
+          "character": "seongun",
+          "resolution": "friendly → wait(전신 숏)"
+        },
+        {
+          "shot": "S04",
+          "character": "tino",
+          "resolution": "friendly → wait(전신 숏)"
+        },
+        {
+          "shot": "S04",
+          "character": "ppulli",
+          "resolution": "friendly → wait(전신 숏)"
+        },
+        {
+          "shot": "S04",
+          "character": "karo",
+          "resolution": "friendly → wait(전신 숏)"
+        },
+        {
+          "shot": "S05",
+          "character": "seongun",
+          "resolution": "curious → wait(전신 숏)"
+        },
+        {
+          "shot": "S05",
+          "character": "tino",
+          "resolution": "listen → curious → wait(전신 숏)"
+        },
+        {
+          "shot": "S05",
+          "character": "karo",
+          "resolution": "listen → wait(전신 숏)"
+        },
+        {
+          "shot": "S06",
+          "character": "seongun",
+          "resolution": "curious → wait(전신 숏)"
+        },
+        {
+          "shot": "S07",
+          "character": "seongun",
+          "resolution": "happy → friendly → wave(전신 숏)"
+        },
+        {
+          "shot": "S07",
+          "character": "tino",
+          "resolution": "happy → greet(전신 숏)"
+        },
+        {
+          "shot": "S07",
+          "character": "ppulli",
+          "resolution": "happy → proud → greet(전신 숏)"
+        },
+        {
+          "shot": "S07",
+          "character": "karo",
+          "resolution": "happy → greet(전신 숏)"
+        },
+        {
+          "shot": "S09",
+          "character": "tino",
+          "resolution": "listen → curious → wait(전신 숏)"
+        },
+        {
+          "shot": "S13",
+          "character": "karo",
+          "resolution": "curious → inspect"
+        },
+        {
+          "shot": "S14",
+          "character": "karo",
+          "resolution": "curious-lean → curious → inspect"
+        },
+        {
+          "shot": "S15",
+          "character": "karo",
+          "resolution": "surprised → wait(전신 숏)"
+        },
+        {
+          "shot": "S16",
+          "character": "karo",
+          "resolution": "listen → wait(전신 숏)"
+        },
+        {
+          "shot": "S18",
+          "character": "karo",
+          "resolution": "slide-seated → wait"
+        },
+        {
+          "shot": "S21",
+          "character": "karo",
+          "resolution": "surprised → wait(전신 숏)"
+        },
+        {
+          "shot": "S22",
+          "character": "karo",
+          "resolution": "listen → wait(전신 숏)"
+        },
+        {
+          "shot": "S23",
+          "character": "seongun",
+          "resolution": "friendly → wait(전신 숏)"
+        },
+        {
+          "shot": "S26",
+          "character": "karo",
+          "resolution": "indicate → stop"
+        },
+        {
+          "shot": "S27",
+          "character": "tino",
+          "resolution": "indicate → stop"
+        }
+      ]
     },
     {
       "name": "audio-exists",
       "status": "warn",
-      "voiceMissing": 0,
-      "musicSfxMissing": 0,
+      "voiceFilesMissing": 46,
+      "musicMissing": [
+        "assets/audio/music/playground-theme-120s.wav"
+      ],
+      "sfxMissing": [
+        "assets/audio/sfx/footsteps-soft.wav",
+        "assets/audio/sfx/bell-soft.wav",
+        "assets/audio/sfx/icon-chime.wav",
+        "assets/audio/sfx/pop-soft.wav",
+        "assets/audio/sfx/slide-whoosh-soft.wav",
+        "assets/audio/sfx/swing-creak-soft.wav",
+        "assets/audio/sfx/sparkle-soft.wav",
+        "assets/audio/sfx/laugh-soft.wav"
+      ],
       "report": "out/missing-assets.json"
     },
     {
+      "name": "layout-fixes-applied",
+      "status": "warn",
+      "note": "timeline 위치를 보정한 항목 (production.config.json layoutFixes)",
+      "items": [
+        {
+          "shot": "S08",
+          "character": "tino",
+          "before": {
+            "xFrom": 42,
+            "xTo": 53
+          },
+          "after": {
+            "xFrom": 30,
+            "xTo": 38
+          },
+          "reason": "timeline 위치(42→53%)에서는 티노의 넓은 ready 포즈가 카로(62%)를 가려 '친구에게 접촉하지 않는다'(숏 메모·대본) 위반. 한 걸음 이동 폭(8%)을 유지하고 카로 앞에서 멈추게 보정."
+        }
+      ]
+    },
+    {
       "name": "layout",
-      "status": "skip",
-      "issues": []
+      "status": "warn",
+      "summary": {
+        "fail": 0,
+        "warn": 2,
+        "info": 9
+      },
+      "issues": [
+        {
+          "shot": "S02",
+          "kind": "entering-from-edge",
+          "severity": "info",
+          "character": "seongun",
+          "at": 0,
+          "cutRatio": 0.154,
+          "headOutTop": false
+        },
+        {
+          "shot": "S05",
+          "kind": "board-moved-into-safe-area",
+          "severity": "info",
+          "shiftPx": 58,
+          "xPercent": 77
+        },
+        {
+          "shot": "S05",
+          "kind": "board-partly-hidden-by-character",
+          "severity": "warn",
+          "coveredWidthRatio": 0.3
+        },
+        {
+          "shot": "S06",
+          "kind": "board-moved-into-safe-area",
+          "severity": "info",
+          "shiftPx": 21,
+          "xPercent": 74.9
+        },
+        {
+          "shot": "S07",
+          "kind": "board-moved-into-safe-area",
+          "severity": "info",
+          "shiftPx": 70,
+          "xPercent": 77.4
+        },
+        {
+          "shot": "S24",
+          "kind": "character-overlap",
+          "severity": "info",
+          "pair": [
+            "seongun",
+            "tino"
+          ],
+          "ratio": 0.51
+        },
+        {
+          "shot": "S24",
+          "kind": "character-overlap",
+          "severity": "info",
+          "pair": [
+            "tino",
+            "ppulli"
+          ],
+          "ratio": 0.5
+        },
+        {
+          "shot": "S24",
+          "kind": "character-overlap",
+          "severity": "info",
+          "pair": [
+            "ppulli",
+            "karo"
+          ],
+          "ratio": 0.55
+        },
+        {
+          "shot": "S24",
+          "kind": "exiting-to-edge",
+          "severity": "info",
+          "character": "seongun",
+          "at": 1,
+          "cutRatio": 0.13,
+          "headOutTop": false
+        },
+        {
+          "shot": "S28",
+          "kind": "board-moved-into-safe-area",
+          "severity": "info",
+          "shiftPx": 144,
+          "xPercent": 83.5
+        },
+        {
+          "shot": "S28",
+          "kind": "board-partly-hidden-by-character",
+          "severity": "warn",
+          "coveredWidthRatio": 0.98
+        }
+      ]
     },
     {
       "name": "output-preview",
-      "status": "skip",
-      "file": "out/dino-playground-preview-silent.mp4",
-      "reason": "not rendered"
+      "status": "pass",
+      "videoFrames": 2880,
+      "videoSeconds": 120,
+      "containerSeconds": 120,
+      "resolution": "960x540",
+      "hasAudio": false,
+      "blackSegments": 0
     },
     {
       "name": "output-final",
       "status": "skip",
       "file": "out/dino-playground-final.mp4",
-      "reason": "not rendered"
+      "reason": "오디오가 모두 있을 때만 렌더"
     },
     {
-      "name": "layout-stills",
-      "status": "skip",
-      "count": 0
+      "name": "keyframes-8",
+      "status": "pass",
+      "files": [
+        "keyframes/keyframe-01-S03-f194.png",
+        "keyframes/keyframe-02-S07-f528.png",
+        "keyframes/keyframe-03-S09-f758.png",
+        "keyframes/keyframe-04-S10-f876.png",
+        "keyframes/keyframe-05-S16-f1608.png",
+        "keyframes/keyframe-06-S22-f2220.png",
+        "keyframes/keyframe-07-S27-f2721.png",
+        "keyframes/keyframe-08-S28-f2820.png"
+      ]
     },
     {
-      "name": "srt-copied",
-      "status": "skip"
+      "name": "srt-copied-unchanged",
+      "status": "pass"
+    },
+    {
+      "name": "source-assets-untouched",
+      "status": "pass",
+      "note": "원본 assets/ 는 읽기만 하고, 컷아웃은 dino-playground-video/public/assets/characters/cutouts 에만 쓴다"
     }
   ],
   "outputs": {
     "preview": {
       "file": "out/dino-playground-preview-silent.mp4",
-      "exists": false
+      "sizeBytes": 18216446,
+      "duration": 120,
+      "video": {
+        "codec": "h264",
+        "width": 960,
+        "height": 540,
+        "fps": "24/1",
+        "frames": 2880
+      },
+      "hasAudio": false,
+      "blackSegments": 0
     },
     "final": {
       "file": "out/dino-playground-final.mp4",

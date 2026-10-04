@@ -1,64 +1,169 @@
 {
-  "generatedAt": "2026-10-03T23:41:35.342Z",
-  "ok": false,
-  "errors": [
-    "필수 입력 누락: docs/claude-code-production-brief.md",
-    "필수 입력 누락: assets/manifest.json",
-    "필수 입력 누락: data/timeline-v1.json",
-    "필수 입력 누락: data/voice-lines.ko.json",
-    "필수 입력 누락: data/subtitles.ko.srt",
-    "필수 입력 누락: data/character-crops-v1.json",
-    "필수 입력 누락: docs/playground-safety-script-v1.md",
-    "필수 입력 누락: docs/shot-list-v1.md",
-    "필수 입력 누락: docs/audio-production-v1.md"
+  "generatedAt": "2026-10-04T06:10:50.818Z",
+  "ok": true,
+  "errors": [],
+  "warnings": [
+    "L01(96~180) 가 S02(72~144) 밖으로 걸침",
+    "L03(324~403) 가 S05(288~360) 밖으로 걸침",
+    "L08(797~847) 가 S10(816~936) 밖으로 걸침",
+    "L09(864~929) 가 S11(936~1056) 밖으로 걸침",
+    "L13(1320~1394) 가 S15(1416~1536) 밖으로 걸침",
+    "L15(1493~1584) 가 S16(1536~1656) 밖으로 걸침",
+    "L16(1608~1692) 가 S17(1656~1752) 밖으로 걸침",
+    "L19(1944~2021) 가 S21(2040~2136) 밖으로 걸침",
+    "L20(2047~2136) 가 S22(2136~2256) 밖으로 걸침",
+    "L21(2165~2232) 가 S23(2256~2376) 밖으로 걸침",
+    "L26(2652~2736) 가 S27(2664~2760) 밖으로 걸침"
   ],
-  "warnings": [],
   "required": [
     {
       "file": "docs/claude-code-production-brief.md",
-      "exists": false
+      "exists": true
     },
     {
       "file": "assets/manifest.json",
-      "exists": false
+      "exists": true
     },
     {
       "file": "data/timeline-v1.json",
-      "exists": false
+      "exists": true
     },
     {
       "file": "data/voice-lines.ko.json",
-      "exists": false
+      "exists": true
     },
     {
       "file": "data/subtitles.ko.srt",
-      "exists": false
+      "exists": true
     },
     {
       "file": "data/character-crops-v1.json",
-      "exists": false
+      "exists": true
     },
     {
       "file": "docs/playground-safety-script-v1.md",
-      "exists": false
+      "exists": true
     },
     {
       "file": "docs/shot-list-v1.md",
-      "exists": false
+      "exists": true
     },
     {
       "file": "docs/audio-production-v1.md",
-      "exists": false
+      "exists": true
     }
   ],
-  "jsonChecks": [],
-  "images": {},
-  "crops": {
-    "count": 0,
-    "issues": []
+  "jsonChecks": [
+    {
+      "file": "data/character-crops-v1.json",
+      "valid": true
+    },
+    {
+      "file": "data/timeline-v1.json",
+      "valid": true
+    },
+    {
+      "file": "data/voice-lines.ko.json",
+      "valid": true
+    },
+    {
+      "file": "assets/manifest.json",
+      "valid": true
+    }
+  ],
+  "images": {
+    "assets/backgrounds/playground-establishing-v1.png": {
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/backgrounds/playground-slide-zone-v1.png": {
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/backgrounds/playground-swing-zone-v1.png": {
+      "width": 1672,
+      "height": 941,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/karo/karo-expression-pose-sheet-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/karo/karo-turnaround-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/ppulli/ppulli-expression-pose-sheet-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/ppulli/ppulli-turnaround-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/seongun/seongun-expression-pose-sheet-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/seongun/seongun-turnaround-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/tino/tino-expression-pose-sheet-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/characters/tino/tino-turnaround-v1.png": {
+      "width": 1774,
+      "height": 887,
+      "format": "png",
+      "hasAlpha": false,
+      "alphaUsed": false
+    },
+    "assets/props/playground-safety-promise-board-v1.png": {
+      "width": 1536,
+      "height": 1024,
+      "format": "png",
+      "hasAlpha": true,
+      "alphaUsed": true
+    }
   },
+  "crops": 52,
   "timeline": {
-    "available": false
+    "available": true,
+    "fps": 24,
+    "durationInFrames": 2880,
+    "shotCount": 28,
+    "srtMatchesVoiceLines": true
   },
   "allAudioPresent": false
 }

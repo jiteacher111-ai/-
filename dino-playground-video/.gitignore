@@ -1,8 +1,5 @@
 node_modules/
-out/*.mp4
-out/stills/
 # 원본에서 복사·생성되는 파일 (npm run sync / preprocess 로 다시 만든다)
 source/
 public/assets/
-public/characters/
 src/generated/
