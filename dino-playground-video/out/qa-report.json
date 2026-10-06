@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-04T06:14:20.662Z",
+  "generatedAt": "2026-10-06T12:31:58.737Z",
   "ok": true,
   "summary": {
-    "pass": 15,
+    "pass": 16,
     "fail": 0,
     "warn": 4,
     "skip": 1
@@ -167,9 +167,237 @@
     {
       "name": "cutout-contact-sheet",
       "status": "pass",
-      "cutouts": 52,
+      "cutouts": 84,
       "flagged": [],
       "file": "out/contact-sheets/character-cutouts.png"
+    },
+    {
+      "name": "multi-shot-cuts",
+      "status": "pass",
+      "note": "숏 시간은 그대로, 카메라 컷만 추가 (scripts/lib/director.mjs)",
+      "totalCuts": 52,
+      "shots": [
+        {
+          "shot": "S01",
+          "transitionIn": "none",
+          "cuts": [
+            "0-72 wide: 타임라인 카메라"
+          ]
+        },
+        {
+          "shot": "S02",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-72 speaker: seongun L01"
+          ]
+        },
+        {
+          "shot": "S03",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-72 group: 등장 그룹 (seongun L01)"
+          ]
+        },
+        {
+          "shot": "S04",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-24 group: 합창 L02",
+            "24-72 wide: 와이드"
+          ]
+        },
+        {
+          "shot": "S05",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-33 wide: 설정 와이드",
+            "33-72 speaker: ppulli L03"
+          ]
+        },
+        {
+          "shot": "S06",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-49 speaker: ppulli L03",
+            "49-96 speaker: seongun L04"
+          ]
+        },
+        {
+          "shot": "S07",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-83 group: 합창 L05",
+            "83-120 wide: 와이드"
+          ]
+        },
+        {
+          "shot": "S08",
+          "transitionIn": "dissolve",
+          "cuts": [
+            "0-40 wide: 설정 와이드",
+            "40-96 speaker: tino L06"
+          ]
+        },
+        {
+          "shot": "S09",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-24 speaker: tino L06",
+            "24-112 speaker: seongun L07",
+            "112-144 speaker: tino L08"
+          ]
+        },
+        {
+          "shot": "S10",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-120 wide: 타임라인 카메라"
+          ]
+        },
+        {
+          "shot": "S11",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-120 speaker: tino L10"
+          ]
+        },
+        {
+          "shot": "S12",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-64 group: 합창 L11",
+            "64-120 wide: 와이드"
+          ]
+        },
+        {
+          "shot": "S13",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-120 speaker: karo L12"
+          ]
+        },
+        {
+          "shot": "S14",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-120 reaction: karo 리액션 (seongun L13 화면 밖)"
+          ]
+        },
+        {
+          "shot": "S15",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-56 speaker: karo L14",
+            "56-120 speaker: seongun L15"
+          ]
+        },
+        {
+          "shot": "S16",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-54 speaker: seongun L15",
+            "54-120 speaker: karo L16"
+          ]
+        },
+        {
+          "shot": "S17",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-42 speaker: karo L16",
+            "42-96 wide: 와이드"
+          ]
+        },
+        {
+          "shot": "S18",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-32 group: 합창 L17",
+            "32-72 wide: 와이드"
+          ]
+        },
+        {
+          "shot": "S19",
+          "transitionIn": "dissolve",
+          "cuts": [
+            "0-96 wide: 타임라인 카메라"
+          ]
+        },
+        {
+          "shot": "S20",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-120 reaction: karo 리액션 (ppulli L19 화면 밖)"
+          ]
+        },
+        {
+          "shot": "S21",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-96 reaction: karo 리액션 (seongun L20 화면 밖)"
+          ]
+        },
+        {
+          "shot": "S22",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-120 speaker: karo L21"
+          ]
+        },
+        {
+          "shot": "S23",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-120 speaker: seongun L22"
+          ]
+        },
+        {
+          "shot": "S24",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-30 wide: 설정 와이드",
+            "30-61 group: 합창 L23",
+            "61-96 wide: 와이드"
+          ]
+        },
+        {
+          "shot": "S25",
+          "transitionIn": "dissolve",
+          "cuts": [
+            "0-40 wide: 화자와 표지판",
+            "40-96 subject: 표지판 패널 1 인서트"
+          ]
+        },
+        {
+          "shot": "S26",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-40 wide: 화자와 표지판",
+            "40-96 subject: 표지판 패널 2 인서트"
+          ]
+        },
+        {
+          "shot": "S27",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-40 wide: 화자와 표지판",
+            "40-96 subject: 표지판 패널 3 인서트"
+          ]
+        },
+        {
+          "shot": "S28",
+          "transitionIn": "cut",
+          "cuts": [
+            "0-120 speaker: seongun L27"
+          ]
+        }
+      ]
     },
     {
       "name": "pose-name-resolution",
@@ -184,12 +412,12 @@
         {
           "shot": "S04",
           "character": "tino",
-          "resolution": "friendly → wait(전신 숏)"
+          "resolution": "friendly → action:calm(전신 숏)"
         },
         {
           "shot": "S04",
           "character": "ppulli",
-          "resolution": "friendly → wait(전신 숏)"
+          "resolution": "friendly → action:happy(전신 숏)"
         },
         {
           "shot": "S04",
@@ -228,11 +456,6 @@
         },
         {
           "shot": "S07",
-          "character": "ppulli",
-          "resolution": "happy → proud → greet(전신 숏)"
-        },
-        {
-          "shot": "S07",
           "character": "karo",
           "resolution": "happy → greet(전신 숏)"
         },
@@ -252,11 +475,6 @@
           "resolution": "curious-lean → curious → inspect"
         },
         {
-          "shot": "S15",
-          "character": "karo",
-          "resolution": "surprised → wait(전신 숏)"
-        },
-        {
           "shot": "S16",
           "character": "karo",
           "resolution": "listen → wait(전신 숏)"
@@ -264,12 +482,7 @@
         {
           "shot": "S18",
           "character": "karo",
-          "resolution": "slide-seated → wait"
-        },
-        {
-          "shot": "S21",
-          "character": "karo",
-          "resolution": "surprised → wait(전신 숏)"
+          "resolution": "slide-seated → action:laugh-crouch(poseOverrides)"
         },
         {
           "shot": "S22",
@@ -337,8 +550,8 @@
       "status": "warn",
       "summary": {
         "fail": 0,
-        "warn": 2,
-        "info": 9
+        "warn": 3,
+        "info": 12
       },
       "issues": [
         {
@@ -346,9 +559,19 @@
           "kind": "entering-from-edge",
           "severity": "info",
           "character": "seongun",
-          "at": 0,
-          "cutRatio": 0.154,
+          "at": "wide@0",
+          "cutRatio": 0.162,
           "headOutTop": false
+        },
+        {
+          "shot": "S05",
+          "kind": "character-overlap",
+          "severity": "info",
+          "pair": [
+            "ppulli",
+            "karo"
+          ],
+          "ratio": 0.45
         },
         {
           "shot": "S05",
@@ -361,7 +584,7 @@
           "shot": "S05",
           "kind": "board-partly-hidden-by-character",
           "severity": "warn",
-          "coveredWidthRatio": 0.3
+          "coveredWidthRatio": 0.31
         },
         {
           "shot": "S06",
@@ -378,14 +601,10 @@
           "xPercent": 77.4
         },
         {
-          "shot": "S24",
-          "kind": "character-overlap",
-          "severity": "info",
-          "pair": [
-            "seongun",
-            "tino"
-          ],
-          "ratio": 0.51
+          "shot": "S07",
+          "kind": "board-partly-hidden-by-character",
+          "severity": "warn",
+          "coveredWidthRatio": 0.31
         },
         {
           "shot": "S24",
@@ -395,7 +614,7 @@
             "tino",
             "ppulli"
           ],
-          "ratio": 0.5
+          "ratio": 0.47
         },
         {
           "shot": "S24",
@@ -405,15 +624,42 @@
             "ppulli",
             "karo"
           ],
-          "ratio": 0.55
+          "ratio": 0.5
         },
         {
           "shot": "S24",
           "kind": "exiting-to-edge",
           "severity": "info",
           "character": "seongun",
-          "at": 1,
-          "cutRatio": 0.13,
+          "at": "group@60",
+          "cutRatio": 0.194,
+          "headOutTop": false
+        },
+        {
+          "shot": "S24",
+          "kind": "exiting-to-edge",
+          "severity": "info",
+          "character": "seongun",
+          "at": "wide@61",
+          "cutRatio": 0.026,
+          "headOutTop": false
+        },
+        {
+          "shot": "S24",
+          "kind": "exiting-to-edge",
+          "severity": "info",
+          "character": "seongun",
+          "at": "wide@78",
+          "cutRatio": 0.126,
+          "headOutTop": false
+        },
+        {
+          "shot": "S24",
+          "kind": "exiting-to-edge",
+          "severity": "info",
+          "character": "seongun",
+          "at": "wide@95",
+          "cutRatio": 0.138,
           "headOutTop": false
         },
         {
@@ -427,7 +673,7 @@
           "shot": "S28",
           "kind": "board-partly-hidden-by-character",
           "severity": "warn",
-          "coveredWidthRatio": 0.98
+          "coveredWidthRatio": 1
         }
       ]
     },
@@ -474,7 +720,7 @@
   "outputs": {
     "preview": {
       "file": "out/dino-playground-preview-silent.mp4",
-      "sizeBytes": 18216446,
+      "sizeBytes": 20206541,
       "duration": 120,
       "video": {
         "codec": "h264",

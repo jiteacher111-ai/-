@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T06:10:50.818Z",
+  "generatedAt": "2026-10-06T12:29:44.701Z",
   "note": "누락 오디오는 생성·다운로드·무음 파일로 대체하지 않았다. 아래 경로(작업공간 루트 기준)에 파일을 넣고 npm run sync → validate → render:final 을 실행한다.",
   "requiredInputs": [],
   "images": [],

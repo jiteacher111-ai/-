@@ -9,6 +9,7 @@ import path from 'node:path';
 import {EXPECTED, OUT_DIR, PUBLIC_DIR, REQUIRED_FILES, exists, readJson, sourcePath, writeJson} from './lib/paths.mjs';
 import {computeMissingAudio, generateProjectData} from './lib/generate.mjs';
 import {probe} from './lib/probe.mjs';
+import {charBox as worldBox} from './lib/director.mjs';
 
 const data = generateProjectData();
 const checks = [];
@@ -47,6 +48,7 @@ add('character-cutouts-exist', missingSprites.length ? 'fail' : 'pass', {missing
 const pre = exists(path.join(OUT_DIR, 'preprocess-report.json')) ? readJson(path.join(OUT_DIR, 'preprocess-report.json')) : null;
 add('cutout-contact-sheet', pre?.written && exists(path.join(OUT_DIR, 'contact-sheets', 'character-cutouts.png')) ? (pre.flagged ? 'warn' : 'pass') : 'fail', {cutouts: pre?.written ?? 0, flagged: (pre?.results ?? []).filter((r) => r.flags.length).map((r) => ({id: r.id, flags: r.flags})), file: 'out/contact-sheets/character-cutouts.png'});
 const resolved = data.shots.flatMap((s) => s.characters.filter((c) => c.pose !== c.spriteName).map((c) => ({shot: s.id, character: c.id, resolution: c.resolution})));
+add('multi-shot-cuts', 'pass', {note: '숏 시간은 그대로, 카메라 컷만 추가 (scripts/lib/director.mjs)', totalCuts: data.shots.reduce((n, s) => n + s.cuts.length, 0), shots: data.shots.map((s) => ({shot: s.id, transitionIn: s.transitionIn, cuts: s.cuts.map((c) => `${c.from}-${c.to} ${c.kind}: ${c.label}`)}))});
 add('pose-name-resolution', 'pass', {note: '타임라인 pose 이름 → 컷아웃 해석 (crops fallbacks + production.config.json expressionBodyPose)', items: resolved});
 const audio = computeMissingAudio(data);
 add('audio-exists', audio.allAudioPresent ? 'pass' : 'warn', {voiceFilesMissing: audio.voice.length, musicMissing: audio.music, sfxMissing: audio.sfx, report: 'out/missing-assets.json'});
@@ -59,18 +61,20 @@ const cam = (c, t) => {
   const ty = Math.min(0, Math.max(H * (1 - s), H / 2 - s * cy * H));
   return (x, y) => [tx + s * x, ty + s * y];
 };
-const charBox = (c, t) => {
+// 캐릭터 상자(px): director 와 같은 규칙 (시트 기준 키 refHeight, 발밑 중앙)
+const charBox = (c, lf, D) => {
   const meta = data.spriteMeta[c.sprite];
   if (!meta) return null;
   const bust = c.spriteKind === 'expression';
-  const sc = c.scaleFrom + (c.scaleTo - c.scaleFrom) * t;
-  const oh = sc * H * (bust ? data.config.bustScaleMultiplier ?? 1 : 1);
-  const k = oh / (meta.height - meta.padTop - meta.padBottom);
-  const w = (meta.width - 12) * k;
-  const x = (c.xFrom + (c.xTo - c.xFrom) * t) * W;
-  const yy = c.yFrom + (c.yTo - c.yFrom) * t;
-  const foot = bust ? Math.max(yy, 1) * H + data.config.bustBottomOverhang * H : yy * H;
-  return {l: x - w / 2, r: x + w / 2, t: foot - oh, b: foot, foot: [x, yy * H], bust};
+  if (bust) {
+    const sc = c.scaleFrom;
+    const oh = sc * H * (data.config.bustScaleMultiplier ?? 1);
+    const w = ((meta.width - 12) * oh) / (meta.height - meta.padTop - meta.padBottom);
+    const foot = Math.max(c.yFrom, 1) * H + data.config.bustBottomOverhang * H;
+    return {l: c.xFrom * W - w / 2, r: c.xFrom * W + w / 2, t: foot - oh, b: foot, foot: [c.xFrom * W, c.yFrom * H], bust};
+  }
+  const wb = worldBox(c, lf, D, data.spriteMeta, W, H);
+  return {l: wb.l * W, r: wb.r * W, t: wb.t * H, b: wb.b * H, foot: [wb.x * W, wb.y * H], bust: false};
 };
 const toScreen = (box, f) => {
   const [l, t] = f(box.l, box.t), [r, b] = f(box.r, box.b);
@@ -82,20 +86,25 @@ if (data.available)
   for (const s of data.shots) {
     if (!s.backgroundExists) layout.push({shot: s.id, kind: 'empty-frame', severity: 'fail'});
     const hasSub = data.subtitles.some((c) => c.from < s.from + s.durationInFrames && c.to > s.from);
-    for (const t of [0, 0.5, 1]) {
-      const f = cam(s.camera, t);
-      const boxes = s.characters.map((c) => ({c, b: charBox(c, t)})).filter((x) => x.b);
+    // 멀티샷: 각 컷의 시작·중간·끝을 그 컷 카메라로 검사
+    for (const cutObj of s.cuts) for (const tt of [0, 0.5, 1]) {
+      const f = cam(cutObj.camera, tt);
+      const lf = Math.round(cutObj.from + tt * (cutObj.to - cutObj.from - 1));
+      const t = `${cutObj.kind}@${lf}`;
+      const once = cutObj === s.cuts[0] && tt === 0.5;
+      const boxes = s.characters.map((c) => ({c, b: charBox(c, lf, s.durationInFrames)})).filter((x) => x.b);
       for (const {c, b} of boxes) {
         const sb = toScreen(b, f);
         const moving = c.xFrom !== c.xTo;
-        const entering = moving && t === 0 && (c.xFrom < 0.12 || c.xFrom > 0.88);
-        const exiting = moving && t === 1 && (c.xTo < 0.12 || c.xTo > 0.88);
+        const entering = moving && lf < 20 && (c.xFrom < 0.12 || c.xFrom > 0.88);
+        const exiting = moving && lf >= s.durationInFrames * 0.4 && (c.xTo < 0.12 || c.xTo > 0.88);
         const outL = Math.max(0, -sb.l), outR = Math.max(0, sb.r - W), outT = Math.max(0, -sb.t);
         const cut = Math.max(outL, outR) / (sb.r - sb.l);
-        if (!b.bust && (cut > 0.02 || outT > 0)) layout.push({shot: s.id, kind: entering ? 'entering-from-edge' : exiting ? 'exiting-to-edge' : 'clipping', severity: entering || exiting ? 'info' : 'warn', character: c.id, at: t, cutRatio: Number(cut.toFixed(3)), headOutTop: outT > 0});
+        // 잘림은 그 컷이 담으려는 캐릭터(subjects)만 검사 — 미디엄 컷 가장자리에 걸친 다른 캐릭터는 정상적인 구도
+        if (!b.bust && cutObj.subjects.includes(c.id) && (cut > 0.02 || outT > 0)) layout.push({shot: s.id, kind: entering ? 'entering-from-edge' : exiting ? 'exiting-to-edge' : 'clipping', severity: entering || exiting ? 'info' : 'warn', character: c.id, at: t, cutRatio: Number(cut.toFixed(3)), headOutTop: outT > 0});
         // 클로즈업 흉상: 얼굴(위 65%)이 자막 띠와 겹치는지
-        if (b.bust && hasSub) {
-          const faceBottom = sb.t + (sb.b - sb.t) * 0.65;
+        if ((b.bust || (cutObj.kind !== 'wide' && cutObj.subjects.includes(c.id))) && hasSub) {
+          const faceBottom = sb.t + (sb.b - sb.t) * (b.bust ? 0.65 : 0.4); // 전신은 위 40% 가 머리
           if (faceBottom > subTop) layout.push({shot: s.id, kind: 'subtitle-over-face', severity: 'warn', character: c.id, at: t, faceBottom: Math.round(faceBottom), subtitleTop: Math.round(subTop)});
         }
       }
@@ -105,7 +114,7 @@ if (data.available)
           const a = boxes[i].b, bb = boxes[j].b;
           const ov = Math.min(a.r, bb.r) - Math.max(a.l, bb.l);
           const ratio = ov / Math.min(a.r - a.l, bb.r - bb.l);
-          if (ratio > 0.45 && t === 0.5) layout.push({shot: s.id, kind: 'character-overlap', severity: 'info', pair: [boxes[i].c.id, boxes[j].c.id], ratio: Number(ratio.toFixed(2))});
+          if (ratio > 0.45 && once) layout.push({shot: s.id, kind: 'character-overlap', severity: 'info', pair: [boxes[i].c.id, boxes[j].c.id], ratio: Number(ratio.toFixed(2))});
         }
       // 그네 안전경계: 모든 캐릭터 발이 (바닥 압축된) 점선 타원 밖
       for (const p of s.props.filter((p) => p.kind === 'boundary')) {
@@ -127,11 +136,11 @@ if (data.available)
         const visR = cx - w / 2 + (1514 / 1536) * w, visL = cx - w / 2 + (22 / 1536) * w;
         const shifted = visR > W * (1 - SAFE) ? visR - W * (1 - SAFE) : visL < W * SAFE ? visL - W * SAFE : 0;
         cx -= shifted;
-        if (shifted && t === 0) layout.push({shot: s.id, kind: 'board-moved-into-safe-area', severity: 'info', shiftPx: Math.round(shifted), xPercent: Number(((cx / W) * 100).toFixed(1))});
+        if (shifted && once) layout.push({shot: s.id, kind: 'board-moved-into-safe-area', severity: 'info', shiftPx: Math.round(shifted), xPercent: Number(((cx / W) * 100).toFixed(1))});
         const bl = cx - w / 2, br = cx + w / 2;
         const front = boxes.filter(({b}) => b.foot[1] > p.y * H);
         const covered = front.reduce((acc, {b}) => acc + Math.max(0, Math.min(br, b.r) - Math.max(bl, b.l)), 0) / w;
-        if (covered > 0.3 && t === 0.5) layout.push({shot: s.id, kind: 'board-partly-hidden-by-character', severity: 'warn', coveredWidthRatio: Number(Math.min(1, covered).toFixed(2))});
+        if (covered > 0.3 && once) layout.push({shot: s.id, kind: 'board-partly-hidden-by-character', severity: 'warn', coveredWidthRatio: Number(Math.min(1, covered).toFixed(2))});
       }
     }
   }

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T06:02:40.520Z",
+  "generatedAt": "2026-10-06T12:14:28.120Z",
   "config": {
     "softStart": 18,
     "fullAlpha": 42,
@@ -34,8 +34,8 @@
       }
     }
   },
-  "total": 52,
-  "written": 52,
+  "total": 84,
+  "written": 84,
   "flagged": 0,
   "results": [
     {
@@ -2285,6 +2285,646 @@
         "width": 277,
         "height": 354
       }
+    },
+    {
+      "id": "karo-action-ready",
+      "character": "karo",
+      "kind": "action",
+      "name": "ready",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 23,
+        "y": 208,
+        "w": 377,
+        "h": 266
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-ready.png",
+      "size": {
+        "width": 389,
+        "height": 278
+      },
+      "facing": "right"
+    },
+    {
+      "id": "karo-action-run-a",
+      "character": "karo",
+      "kind": "action",
+      "name": "run-a",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 413,
+        "y": 159,
+        "w": 383,
+        "h": 332
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-run-a.png",
+      "size": {
+        "width": 395,
+        "height": 344
+      },
+      "facing": "right"
+    },
+    {
+      "id": "karo-action-run-b",
+      "character": "karo",
+      "kind": "action",
+      "name": "run-b",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 812,
+        "y": 149,
+        "w": 376,
+        "h": 342
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-run-b.png",
+      "size": {
+        "width": 388,
+        "height": 354
+      },
+      "facing": "right"
+    },
+    {
+      "id": "karo-action-jump",
+      "character": "karo",
+      "kind": "action",
+      "name": "jump",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1197,
+        "y": 71,
+        "w": 316,
+        "h": 394
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-jump.png",
+      "size": {
+        "width": 328,
+        "height": 406
+      },
+      "facing": "front"
+    },
+    {
+      "id": "karo-action-laugh-crouch",
+      "character": "karo",
+      "kind": "action",
+      "name": "laugh-crouch",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 23,
+        "y": 651,
+        "w": 404,
+        "h": 288
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-laugh-crouch.png",
+      "size": {
+        "width": 416,
+        "height": 300
+      },
+      "facing": "right"
+    },
+    {
+      "id": "karo-action-present",
+      "character": "karo",
+      "kind": "action",
+      "name": "present",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 435,
+        "y": 556,
+        "w": 360,
+        "h": 394
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-present.png",
+      "size": {
+        "width": 372,
+        "height": 406
+      },
+      "facing": "right"
+    },
+    {
+      "id": "karo-action-proud",
+      "character": "karo",
+      "kind": "action",
+      "name": "proud",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 794,
+        "y": 554,
+        "w": 314,
+        "h": 397
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-proud.png",
+      "size": {
+        "width": 372,
+        "height": 406
+      },
+      "facing": "front"
+    },
+    {
+      "id": "karo-action-surprised",
+      "character": "karo",
+      "kind": "action",
+      "name": "surprised",
+      "source": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1125,
+        "y": 567,
+        "w": 401,
+        "h": 385
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/karo/action-surprised.png",
+      "size": {
+        "width": 413,
+        "height": 397
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-ready",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "ready",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 41,
+        "y": 197,
+        "w": 352,
+        "h": 322
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-ready.png",
+      "size": {
+        "width": 364,
+        "height": 334
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-run-a",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "run-a",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 426,
+        "y": 144,
+        "w": 340,
+        "h": 375
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-run-a.png",
+      "size": {
+        "width": 352,
+        "height": 387
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-run-b",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "run-b",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 797,
+        "y": 135,
+        "w": 355,
+        "h": 380
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-run-b.png",
+      "size": {
+        "width": 367,
+        "height": 392
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-jump",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "jump",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1209,
+        "y": 79,
+        "w": 304,
+        "h": 415
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-jump.png",
+      "size": {
+        "width": 316,
+        "height": 427
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-laugh-crouch",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "laugh-crouch",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 32,
+        "y": 626,
+        "w": 360,
+        "h": 326
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-laugh-crouch.png",
+      "size": {
+        "width": 372,
+        "height": 338
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-happy",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "happy",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 472,
+        "y": 571,
+        "w": 304,
+        "h": 387
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-happy.png",
+      "size": {
+        "width": 316,
+        "height": 399
+      },
+      "facing": "front"
+    },
+    {
+      "id": "ppulli-action-present",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "present",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 823,
+        "y": 580,
+        "w": 313,
+        "h": 377
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-present.png",
+      "size": {
+        "width": 325,
+        "height": 389
+      },
+      "facing": "right"
+    },
+    {
+      "id": "ppulli-action-surprised",
+      "character": "ppulli",
+      "kind": "action",
+      "name": "surprised",
+      "source": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1170,
+        "y": 575,
+        "w": 339,
+        "h": 374
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/ppulli/action-surprised.png",
+      "size": {
+        "width": 351,
+        "height": 386
+      },
+      "facing": "right"
+    },
+    {
+      "id": "tino-action-ready",
+      "character": "tino",
+      "kind": "action",
+      "name": "ready",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 37,
+        "y": 197,
+        "w": 358,
+        "h": 287
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-ready.png",
+      "size": {
+        "width": 370,
+        "height": 299
+      },
+      "facing": "right"
+    },
+    {
+      "id": "tino-action-run-a",
+      "character": "tino",
+      "kind": "action",
+      "name": "run-a",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 410,
+        "y": 124,
+        "w": 357,
+        "h": 365
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-run-a.png",
+      "size": {
+        "width": 369,
+        "height": 377
+      },
+      "facing": "right"
+    },
+    {
+      "id": "tino-action-run-b",
+      "character": "tino",
+      "kind": "action",
+      "name": "run-b",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 787,
+        "y": 121,
+        "w": 399,
+        "h": 372
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-run-b.png",
+      "size": {
+        "width": 411,
+        "height": 384
+      },
+      "facing": "right"
+    },
+    {
+      "id": "tino-action-jump",
+      "character": "tino",
+      "kind": "action",
+      "name": "jump",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1217,
+        "y": 80,
+        "w": 293,
+        "h": 396
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-jump.png",
+      "size": {
+        "width": 305,
+        "height": 408
+      },
+      "facing": "front"
+    },
+    {
+      "id": "tino-action-laugh-crouch",
+      "character": "tino",
+      "kind": "action",
+      "name": "laugh-crouch",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 51,
+        "y": 644,
+        "w": 377,
+        "h": 292
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-laugh-crouch.png",
+      "size": {
+        "width": 389,
+        "height": 304
+      },
+      "facing": "right"
+    },
+    {
+      "id": "tino-action-present",
+      "character": "tino",
+      "kind": "action",
+      "name": "present",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 472,
+        "y": 540,
+        "w": 288,
+        "h": 414
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-present.png",
+      "size": {
+        "width": 300,
+        "height": 426
+      },
+      "facing": "right"
+    },
+    {
+      "id": "tino-action-calm",
+      "character": "tino",
+      "kind": "action",
+      "name": "calm",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 818,
+        "y": 553,
+        "w": 284,
+        "h": 399
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-calm.png",
+      "size": {
+        "width": 296,
+        "height": 411
+      },
+      "facing": "front"
+    },
+    {
+      "id": "tino-action-surprised",
+      "character": "tino",
+      "kind": "action",
+      "name": "surprised",
+      "source": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1173,
+        "y": 568,
+        "w": 331,
+        "h": 382
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/tino/action-surprised.png",
+      "size": {
+        "width": 343,
+        "height": 394
+      },
+      "facing": "right"
+    },
+    {
+      "id": "seongun-action-ready",
+      "character": "seongun",
+      "kind": "action",
+      "name": "ready",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 67,
+        "y": 99,
+        "w": 319,
+        "h": 404
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-ready.png",
+      "size": {
+        "width": 331,
+        "height": 416
+      },
+      "facing": "right"
+    },
+    {
+      "id": "seongun-action-run-a",
+      "character": "seongun",
+      "kind": "action",
+      "name": "run-a",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 432,
+        "y": 41,
+        "w": 325,
+        "h": 469
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-run-a.png",
+      "size": {
+        "width": 337,
+        "height": 481
+      },
+      "facing": "right"
+    },
+    {
+      "id": "seongun-action-run-b",
+      "character": "seongun",
+      "kind": "action",
+      "name": "run-b",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 783,
+        "y": 34,
+        "w": 339,
+        "h": 480
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-run-b.png",
+      "size": {
+        "width": 351,
+        "height": 492
+      },
+      "facing": "right"
+    },
+    {
+      "id": "seongun-action-jump",
+      "character": "seongun",
+      "kind": "action",
+      "name": "jump",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1164,
+        "y": 17,
+        "w": 346,
+        "h": 454
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-jump.png",
+      "size": {
+        "width": 358,
+        "height": 466
+      },
+      "facing": "front"
+    },
+    {
+      "id": "seongun-action-balance",
+      "character": "seongun",
+      "kind": "action",
+      "name": "balance",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 30,
+        "y": 572,
+        "w": 363,
+        "h": 407
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-balance.png",
+      "size": {
+        "width": 375,
+        "height": 419
+      },
+      "facing": "front"
+    },
+    {
+      "id": "seongun-action-present",
+      "character": "seongun",
+      "kind": "action",
+      "name": "present",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 459,
+        "y": 521,
+        "w": 304,
+        "h": 478
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-present.png",
+      "size": {
+        "width": 316,
+        "height": 490
+      },
+      "facing": "right"
+    },
+    {
+      "id": "seongun-action-point-up",
+      "character": "seongun",
+      "kind": "action",
+      "name": "point-up",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 813,
+        "y": 525,
+        "w": 283,
+        "h": 470
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-point-up.png",
+      "size": {
+        "width": 295,
+        "height": 482
+      },
+      "facing": "front"
+    },
+    {
+      "id": "seongun-action-surprised",
+      "character": "seongun",
+      "kind": "action",
+      "name": "surprised",
+      "source": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "cell": {
+        "x": 1188,
+        "y": 522,
+        "w": 312,
+        "h": 473
+      },
+      "flags": [],
+      "output": "assets/characters/cutouts/seongun/action-surprised.png",
+      "size": {
+        "width": 324,
+        "height": 485
+      },
+      "facing": "front"
     }
   ]
 }

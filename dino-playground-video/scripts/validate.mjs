@@ -32,6 +32,9 @@ const jsonChecks = [...walkFiles(path.join(WORKSPACE_ROOT, 'data')), ...walkFile
 // 3) 이미지 크기·알파 (manifest 선언과 비교)
 const manifest = exists(sourcePath('assets/manifest.json')) ? readJson(sourcePath('assets/manifest.json')) : {};
 const declared = Object.fromEntries((manifest.existingAssets ?? []).map((a) => [a.path, a]));
+// v2 동작 시트는 data/character-action-crops-v2.json 에 등록 (원본 manifest 는 수정하지 않음)
+const actionCrops = exists(sourcePath('data/character-action-crops-v2.json')) ? readJson(sourcePath('data/character-action-crops-v2.json')) : {characters: {}};
+for (const d of Object.values(actionCrops.characters ?? {})) declared[d.sheet] = {path: d.sheet, width: actionCrops.sourceSize?.width, height: actionCrops.sourceSize?.height, alpha: true};
 const images = {};
 for (const f of walkFiles(path.join(WORKSPACE_ROOT, 'assets')).filter((f) => /\.(png|jpe?g|webp)$/i.test(f))) {
   const r = rel(f);

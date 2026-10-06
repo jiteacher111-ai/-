@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-04T06:10:50.818Z",
+  "generatedAt": "2026-10-06T12:29:44.701Z",
   "ok": true,
   "errors": [],
   "warnings": [
@@ -55,6 +55,10 @@
   ],
   "jsonChecks": [
     {
+      "file": "data/character-action-crops-v2.json",
+      "valid": true
+    },
+    {
       "file": "data/character-crops-v1.json",
       "valid": true
     },
@@ -93,6 +97,13 @@
       "hasAlpha": false,
       "alphaUsed": false
     },
+    "assets/characters/karo/karo-action-pose-sheet-v2.webp": {
+      "width": 1536,
+      "height": 1024,
+      "format": "webp",
+      "hasAlpha": true,
+      "alphaUsed": true
+    },
     "assets/characters/karo/karo-expression-pose-sheet-v1.png": {
       "width": 1774,
       "height": 887,
@@ -106,6 +117,13 @@
       "format": "png",
       "hasAlpha": false,
       "alphaUsed": false
+    },
+    "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp": {
+      "width": 1536,
+      "height": 1024,
+      "format": "webp",
+      "hasAlpha": true,
+      "alphaUsed": true
     },
     "assets/characters/ppulli/ppulli-expression-pose-sheet-v1.png": {
       "width": 1774,
@@ -121,6 +139,13 @@
       "hasAlpha": false,
       "alphaUsed": false
     },
+    "assets/characters/seongun/seongun-action-pose-sheet-v2.webp": {
+      "width": 1536,
+      "height": 1024,
+      "format": "webp",
+      "hasAlpha": true,
+      "alphaUsed": true
+    },
     "assets/characters/seongun/seongun-expression-pose-sheet-v1.png": {
       "width": 1774,
       "height": 887,
@@ -134,6 +159,13 @@
       "format": "png",
       "hasAlpha": false,
       "alphaUsed": false
+    },
+    "assets/characters/tino/tino-action-pose-sheet-v2.webp": {
+      "width": 1536,
+      "height": 1024,
+      "format": "webp",
+      "hasAlpha": true,
+      "alphaUsed": true
     },
     "assets/characters/tino/tino-expression-pose-sheet-v1.png": {
       "width": 1774,

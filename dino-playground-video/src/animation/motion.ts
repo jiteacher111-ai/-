@@ -61,12 +61,7 @@ export const characterMotion = (c: ShotCharacter, f: number, D: number, fps: num
     dy -= ((Math.sin(((f + offset * 11 + delay * 5) / period) * Math.PI * 2) + 1) / 2) * IDLE.amp;
   }
 
-  if (/^pop-in/.test(base)) {
-    const s = spring({frame: t, fps, config: {damping: 18, mass: 0.7}});
-    opacity *= t < 0 ? 0 : clamp01(s * 1.4);
-    pop = 0.9 + 0.1 * s;
-    dy += (1 - s) * 0.04;
-  }
+  // pop-in(등장)은 perform.ts 에서 웅크림 → 점프 → 착지로 처리
   if (/chant-bounce/.test(base) && t >= 0) dy -= Math.abs(Math.sin((t / 12) * Math.PI)) * 0.018;
   if (/head-tilt/.test(base)) rotate += interpolate(t, [6, 20], [0, 3], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
   if (/pause-and-look/.test(base)) rotate += interpolate(t, [10, 24], [0, -2], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});

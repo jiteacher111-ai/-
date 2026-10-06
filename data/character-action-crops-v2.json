@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "description": "역동적 동작용 추가 포즈 시트 v2 (투명 배경 1536×1024, 2행×4열). 박스는 알파 연결 요소에서 실측. 각 박스의 픽셀은 해당 요소에만 귀속시켜 이웃 침범을 막는다.",
+  "sourceSize": {"width": 1536, "height": 1024},
+  "background": "transparent",
+  "characters": {
+    "karo": {
+      "sheet": "assets/characters/karo/karo-action-pose-sheet-v2.webp",
+      "reference": "proud",
+      "poses": [
+        {"name": "ready", "box": [23, 208, 399, 473], "facing": "right"},
+        {"name": "run-a", "box": [413, 159, 795, 490], "facing": "right"},
+        {"name": "run-b", "box": [812, 149, 1187, 490], "facing": "right"},
+        {"name": "jump", "box": [1197, 71, 1512, 464], "facing": "front"},
+        {"name": "laugh-crouch", "box": [23, 651, 426, 938], "facing": "right"},
+        {"name": "present", "box": [435, 556, 794, 949], "facing": "right"},
+        {"name": "proud", "box": [794, 554, 1107, 950], "facing": "front"},
+        {"name": "surprised", "box": [1125, 567, 1525, 951], "facing": "right"}
+      ]
+    },
+    "ppulli": {
+      "sheet": "assets/characters/ppulli/ppulli-action-pose-sheet-v2.webp",
+      "reference": "happy",
+      "poses": [
+        {"name": "ready", "box": [41, 197, 392, 518], "facing": "right"},
+        {"name": "run-a", "box": [426, 144, 765, 518], "facing": "right"},
+        {"name": "run-b", "box": [797, 135, 1151, 514], "facing": "right"},
+        {"name": "jump", "box": [1209, 79, 1512, 493], "facing": "right"},
+        {"name": "laugh-crouch", "box": [32, 626, 391, 951], "facing": "right"},
+        {"name": "happy", "box": [472, 571, 775, 957], "facing": "front"},
+        {"name": "present", "box": [823, 580, 1135, 956], "facing": "right"},
+        {"name": "surprised", "box": [1170, 575, 1508, 948], "facing": "right"}
+      ]
+    },
+    "tino": {
+      "sheet": "assets/characters/tino/tino-action-pose-sheet-v2.webp",
+      "reference": "calm",
+      "poses": [
+        {"name": "ready", "box": [37, 197, 394, 483], "facing": "right"},
+        {"name": "run-a", "box": [410, 124, 766, 488], "facing": "right"},
+        {"name": "run-b", "box": [787, 121, 1185, 492], "facing": "right"},
+        {"name": "jump", "box": [1217, 80, 1509, 475], "facing": "front"},
+        {"name": "laugh-crouch", "box": [51, 644, 427, 935], "facing": "right"},
+        {"name": "present", "box": [472, 540, 759, 953], "facing": "right"},
+        {"name": "calm", "box": [818, 553, 1101, 951], "facing": "front"},
+        {"name": "surprised", "box": [1173, 568, 1503, 949], "facing": "right"}
+      ]
+    },
+    "seongun": {
+      "sheet": "assets/characters/seongun/seongun-action-pose-sheet-v2.webp",
+      "reference": "present",
+      "poses": [
+        {"name": "ready", "box": [67, 99, 385, 502], "facing": "right"},
+        {"name": "run-a", "box": [432, 41, 756, 509], "facing": "right"},
+        {"name": "run-b", "box": [783, 34, 1121, 513], "facing": "right"},
+        {"name": "jump", "box": [1164, 17, 1509, 470], "facing": "front"},
+        {"name": "balance", "box": [30, 572, 392, 978], "facing": "front"},
+        {"name": "present", "box": [459, 521, 762, 998], "facing": "right"},
+        {"name": "point-up", "box": [813, 525, 1095, 994], "facing": "front"},
+        {"name": "surprised", "box": [1188, 522, 1499, 994], "facing": "front"}
+      ]
+    }
+  }
+}

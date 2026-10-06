@@ -14,7 +14,7 @@ export type ShotCharacter = {
   facing: 'left' | 'right' | 'front' | string;
   animation: Anim;
   sprite: string | null; // public/ 기준 컷아웃 경로
-  spriteKind: 'pose' | 'expression' | null;
+  spriteKind: 'pose' | 'expression' | 'action' | null;
   spriteName: string;
   resolution: string;
   flip: boolean;
@@ -38,6 +38,8 @@ export type ShotProp = {
 
 export type Camera = {type: string; scaleFrom: number; scaleTo: number; xFrom: number; xTo: number; yFrom: number; yTo: number};
 
+export type Cut = {from: number; to: number; kind: 'wide' | 'speaker' | 'group' | 'reaction' | 'subject'; label: string; subjects: string[]; camera: Camera};
+
 export type Shot = {
   id: string;
   scene: number | null;
@@ -51,6 +53,8 @@ export type Shot = {
   props: ShotProp[];
   dialogue: string[];
   notes: string;
+  cuts: Cut[];
+  transitionIn: 'none' | 'cut' | 'dissolve';
 };
 
 export type VoiceLine = {
@@ -75,6 +79,7 @@ export type ProductionConfig = {
   keepInSafeArea: string[];
   endFade: {fromSec: number; color: string};
   contactShadow: {opacity: number; widthRatio: number; heightRatio: number};
+  acting: {runCycleFrames: number; walkCycleFrames: number; hopFrames: number; hopHeight: number; popInFrames: number; presentWhileSpeaking: boolean; neutralPoses: string[]};
 };
 
 export type ProjectData = {
@@ -87,7 +92,9 @@ export type ProjectData = {
   voiceLines: VoiceLine[];
   subtitles: SubtitleCue[];
   audioCues: AudioCue[];
-  spriteMeta: Record<string, {width: number; height: number; padTop: number; padBottom: number; kind: string}>;
+  spriteMeta: Record<string, {width: number; height: number; padTop: number; padBottom: number; kind: string; refHeight?: number; facing?: string}>;
+  spriteIndex: Record<string, string>; // "<character>/<kind>-<name>" → 경로
+  spriteFacing: Record<string, string>; // 경로 → 원본 방향
   propMeta: Record<string, {width: number; height: number}>;
   speakerLabels: Record<string, string>;
 };

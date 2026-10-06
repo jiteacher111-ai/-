@@ -11,11 +11,38 @@
 | `out/dino-playground-preview-silent.mp4` | ✅ 960×540, 2,880프레임, 120.000초, 오디오 없음, 검은 프레임 0 |
 | `out/dino-playground-final.mp4` | ⏸ 외부 오디오(음성 46개, 음악 1개, 효과음 8개)가 없어서 렌더하지 않음 |
 | `out/keyframes/*.png` | ✅ 레이아웃 확인용 스틸 8장 (S03, S07, S09, S10, S16, S22, S27, S28) |
-| `out/contact-sheets/character-cutouts.png` | ✅ 컷아웃 52장 검수 시트 (4캐릭터 × 표정 7 + 포즈 6) |
+| `out/contact-sheets/character-cutouts.png` | ✅ 컷아웃 84장 검수 시트 (4캐릭터 × 표정 7 + 포즈 6 + 동작 8) |
 | `out/subtitles.ko.srt` | ✅ 원본 SRT를 바꾸지 않고 복사 |
 | `out/missing-assets.json` | 누락 오디오 목록 |
-| `out/qa-report.json` | QA 결과: pass 15 / fail 0 / warn 4 / skip 1 (최종본) |
+| `out/qa-report.json` | QA 결과: pass 16 / fail 0 / warn 4 / skip 1 (최종본) |
 | `out/validation-report.json`, `out/preprocess-report.json` | 입력 검증, 전처리 상세 |
+
+## v2 — 역동 동작 + 멀티샷 (2026-10-06)
+
+새 동작 포즈 시트 4장(캐릭터당 8포즈, 투명 배경)을 추가해 캐릭터가 실제로 움직이고, 숏마다 여러 카메라 컷으로 장면을 보여 주도록 바꿨습니다.
+
+- **원본 추가 (기존 파일 수정 없음)**
+  - `assets/characters/<캐릭터>/<캐릭터>-action-pose-sheet-v2.webp`
+  - `data/character-action-crops-v2.json` (포즈 이름·박스·방향·기준 포즈)
+- **동작 컷아웃 32장** `cutouts/<캐릭터>/action-*.png`: ready(웅크림), run-a/run-b(달리기·걷기 2프레임), jump, laugh-crouch, present(손 내밀기), surprised, 그리고 캐릭터별 서 있는 포즈(proud/happy/calm/point-up/balance)
+- **크기 일관성**: 같은 시트의 서 있는 기준 포즈 키(`refHeight`)를 timeline `scale` 에 맞춘다. 그래서 웅크림·점프가 서 있는 포즈와 같은 비율로 보인다 (v1 포즈도 wait 기준).
+- **역동 연기** `src/animation/perform.ts` (`production.config.json` → `acting`)
+  - 이동: run-a ↔ run-b 교대(달리기 5프레임, 걷기 7프레임) + 보폭 바운스, 기울기 ±6° 이내
+  - 등장(pop-in): 웅크림 → 점프 → 착지 찌그러짐 → 인사 포즈, 캐릭터마다 지연
+  - 합창 구호: 쉼표 구절마다 웅크림 → 점프 → 착지 (지연을 두어 물결처럼)
+  - 혼자 설명하는 대사: 서 있는 기본 포즈면 present 포즈
+  - 놀람: action-surprised + 뒤로 살짝 튀는 반응. 미끄럼틀 내려오기(S18)는 웅크린 laugh-crouch
+- **멀티샷 연출** `scripts/lib/director.mjs` (`production.config.json` → `multiShot`)
+  - 28숏을 컷 49개로 나눔. 숏 시작·끝 프레임과 대사 시간은 그대로
+  - 숏 첫 컷: 설정 와이드 (장소가 바뀌면 40프레임)
+  - 대사: 화자 미디엄 (1.18~1.45배). 발자국·화살표·안전선·표지판이 있는 숏은 소품까지 담는 투샷
+  - 합창(all) 대사: 그룹 샷. 등장 장면은 모두 착지할 때까지 그룹 샷
+  - 화자가 화면에 없는 대사(예: S14 성운의 "잠깐!", S20 뿔리의 "멈춰!"): 듣는 캐릭터의 리액션 샷
+  - 대사 없는 긴 숏: 와이드 → 주인공 미디엄
+  - S25~S27: 화자+표지판 → 빛나는 패널 인서트 클로즈업
+  - 장소가 바뀔 때만 12프레임 디졸브, 같은 장소 안은 컷 편집. 구도가 거의 같은 연속 컷은 합쳐서 점프 컷을 막음
+  - 컷 목록은 `out/qa-report.json` 의 `multi-shot-cuts` 에 있음
+- QA 는 컷마다 해당 컷 카메라로 검사합니다. 잘림은 그 컷이 담는 캐릭터만 보고, 미디엄에서 화자 얼굴이 자막 띠를 피하는지도 확인합니다.
 
 ## 1. 설치
 
@@ -117,5 +144,5 @@ preprocess.config.json   ★ 배경 제거·그림자 제거·크롭 확장 조�
   - 해결 방법 ①: 숏 경계를 대사에 맞춥니다 (timeline 수정).
   - 해결 방법 ②: voice-lines와 SRT의 start/end를 배정 숏 안으로 옮깁니다.
   - 기준 문서 우선순위상 timeline이 1순위라서, ②가 원칙에 맞습니다.
-- **S18 `slide-seated`**: crops `fallbacks`에 따라 `karo.wait`(서 있는 포즈)로 미끄럼틀을 내려옵니다. 앉은 포즈 크롭이 추가되면 `character-crops-v1.json`에 넣으면 됩니다.
+- **S18 `slide-seated`**: 앉은 포즈가 없어서 v2 의 웅크린 `laugh-crouch` 로 대신합니다 (`poseOverrides`). 앉은 포즈가 생기면 그 이름으로 바꾸면 됩니다.
 - **S28 표지판**: 오른쪽 끝(x 91%)이라 카로 뒤에 일부 가려집니다. 깊이 정렬 때문인데, 세 패널 중 둘은 보입니다.

@@ -3,6 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {EXPECTED, PROJECT_DATA_FILE, PROJECT_DIR, PUBLIC_DIR, REQUIRED_FILES, exists, readJson, sourcePath, writeJson} from './paths.mjs';
+import {directShot} from './director.mjs';
 import {cropFallbacks, extractCrops, normalizeTimeline, normalizeVoiceLines, parseSrt, voiceProfiles} from './normalize.mjs';
 
 export const CUTOUT_INDEX = path.join(PUBLIC_DIR, 'assets', 'characters', 'cutouts', 'index.json');
@@ -31,7 +32,10 @@ export const resolveSprite = ({character, pose, closeUp, cropsJson, cutouts, con
   const trail = [pose];
   if (!def) return {file: null, kind: null, name: pose, trail, reason: `crops 에 캐릭터 ${character} 없음`};
   const fallbacks = cropFallbacks(cropsJson);
-  const has = (kind, n) => (def[`${kind}s`] ?? []).includes(n);
+  const has = (kind, n) => (kind === 'action' ? Boolean(cutouts?.sprites?.[`${character}/action-${n}`]) : (def[`${kind}s`] ?? []).includes(n));
+  // v2 동작 포즈 우선 지정 (예: karo.slide-seated → action:laugh-crouch — 낮게 웅크린 자세가 앉아서 내려오기에 가장 가깝다)
+  const ov = config.poseOverrides?.[`${character}.${pose}`];
+  if (ov && ov.startsWith('action:') && has('action', ov.slice(7))) return {file: cutouts.sprites[`${character}/action-${ov.slice(7)}`], kind: 'action', name: ov.slice(7), trail: [pose, `${ov}(poseOverrides)`], expression: null};
   let name = pose;
   for (let guard = 0; guard < 6; guard++) {
     if (has('pose', name) || has('expression', name)) break;
@@ -58,14 +62,17 @@ export const resolveSprite = ({character, pose, closeUp, cropsJson, cutouts, con
     const isEmotion = has('expression', name) || trail.some((n) => map[n]);
     if (isEmotion) {
       const candidates = [...trail.flatMap((n) => map[n] ?? []), ...(map.default ?? ['wait'])];
-      const body = candidates.find((c) => has('pose', c));
+      // "action:<이름>" 후보는 v2 동작 시트, 그 외는 v1 포즈
+      const body = candidates.find((c) => (c.startsWith('action:') ? has('action', c.slice(7)) : has('pose', c)));
+      if (body?.startsWith('action:')) return {file: file('action', body.slice(7)), kind: 'action', name: body.slice(7), trail: [...trail, `${body}(전신 숏)`], expression: name};
       if (body) return {file: file('pose', body), kind: 'pose', name: body, trail: [...trail, `${body}(전신 숏)`], expression: name};
     }
   }
   return {file: null, kind: null, name, trail, reason: `포즈/표정 ${pose} 를 해석하지 못함`};
 };
 
-export const nativeFacing = (config, character, kind, name) => {
+export const nativeFacing = (config, character, kind, name, cutouts) => {
+  if (kind === 'action') return cutouts?.meta?.[cutouts.sprites?.[`${character}/action-${name}`]]?.facing ?? 'front';
   const nf = config.nativeFacing ?? {};
   return nf[`${character}/${kind}-${name}`] ?? nf[`${character}/*`] ?? nf['*'] ?? 'front';
 };
@@ -127,7 +134,7 @@ export const generateProjectData = () => {
       c.spriteKind = r.kind;
       c.spriteName = r.name;
       c.resolution = r.trail.join(' → ') + (r.reason ? ` (${r.reason})` : '');
-      c.flip = r.kind ? (c.facing === 'left' && nativeFacing(config, c.id, r.kind, r.name) === 'right') || (c.facing === 'right' && nativeFacing(config, c.id, r.kind, r.name) === 'left') : false;
+      c.flip = r.kind ? (c.facing === 'left' && nativeFacing(config, c.id, r.kind, r.name, cutouts) === 'right') || (c.facing === 'right' && nativeFacing(config, c.id, r.kind, r.name, cutouts) === 'left') : false;
     }
     for (const p of s.props) p.exists = p.asset ? publicExists(p.asset) : p.kind === 'swing';
   }
@@ -156,6 +163,19 @@ export const generateProjectData = () => {
     }
   }
 
+  // 스프라이트별 원본 방향 (동작 중 포즈가 바뀌어도 좌우 반전을 다시 계산하기 위해)
+  const spriteFacing = {};
+  for (const [key, rel] of Object.entries(cutouts.sprites ?? {})) {
+    const [character, kn] = key.split('/');
+    const kind = kn.split('-')[0];
+    spriteFacing[rel] = nativeFacing(config, character, kind, kn.slice(kind.length + 1), cutouts);
+  }
+  // 멀티샷 컷 + 숏 사이 전환 (배경이 바뀔 때만 디졸브, 같은 장소는 컷)
+  shots.forEach((s, i) => {
+    s.transitionIn = i === 0 ? 'none' : shots[i - 1].background !== s.background || config.multiShot?.dissolveSameLocation ? 'dissolve' : 'cut';
+    s.cuts = directShot(s, voiceLines, {spriteMeta: cutouts.meta ?? {}, propMeta, config, W: meta.width, H: meta.height});
+  });
+
   const data = {
     available: shots.length > 0,
     missingRequired,
@@ -170,6 +190,8 @@ export const generateProjectData = () => {
     propMeta,
     speakerLabels: voice ? voiceProfiles(voice) : {},
     layoutFixesApplied,
+    spriteIndex: cutouts.sprites ?? {},
+    spriteFacing,
   };
   writeJson(PROJECT_DATA_FILE, data);
   return data;

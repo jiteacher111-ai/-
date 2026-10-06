@@ -284,14 +284,112 @@ for (const crop of crops) {
   index.sprites[`${crop.character}/${crop.kind}-${crop.name}`] = rel;
   index.meta[rel] = {...size, padTop: pad, padBottom: crop.openBottom ? 0 : pad, kind: crop.kind};
 }
+
+// ---------------------------------------------------------------- v2 동작 포즈 시트 (투명 배경)
+// data/character-action-crops-v2.json: 박스 안의 알파 연결 요소 중 박스에 가장 많이 걸친 덩어리만 그 포즈로 귀속시킨다.
+const actionFile = sourcePath('data/character-action-crops-v2.json');
+if (exists(actionFile) && !only) {
+  const act = readJson(actionFile);
+  for (const [character, def] of Object.entries(act.characters ?? {})) {
+    const file = sourcePath(def.sheet);
+    if (!exists(file)) {
+      results.push({id: `${character}-action-*`, character, kind: 'action', name: '*', flags: [`원본 시트 없음: ${def.sheet}`]});
+      continue;
+    }
+    const {data, info} = await sharp(file).ensureAlpha().raw().toBuffer({resolveWithObject: true});
+    const W = info.width, H = info.height, N = W * H;
+    // 연결 요소 (알파 ≥ 40)
+    const lab = new Int32Array(N).fill(-1);
+    const comps = [];
+    for (let k = 0; k < N; k++) {
+      if (data[k * 4 + 3] < 40 || lab[k] >= 0) continue;
+      const id = comps.length;
+      const c = {area: 0, x0: W, y0: H, x1: 0, y1: 0};
+      const st = [k];
+      lab[k] = id;
+      while (st.length) {
+        const j = st.pop();
+        c.area++;
+        const x = j % W, y = (j - x) / W;
+        if (x < c.x0) c.x0 = x;
+        if (x > c.x1) c.x1 = x;
+        if (y < c.y0) c.y0 = y;
+        if (y > c.y1) c.y1 = y;
+        for (const n of [x > 0 ? j - 1 : -1, x < W - 1 ? j + 1 : -1, y > 0 ? j - W : -1, y < H - 1 ? j + W : -1]) if (n >= 0 && lab[n] < 0 && data[n * 4 + 3] >= 40) (lab[n] = id, st.push(n));
+      }
+      comps.push(c);
+    }
+    for (const pose of def.poses) {
+      const [bx0, by0, bx1, by1] = pose.box;
+      const r = {id: `${character}-action-${pose.name}`, character, kind: 'action', name: pose.name, source: def.sheet, cell: {x: bx0, y: by0, w: bx1 - bx0 + 1, h: by1 - by0 + 1}, flags: []};
+      results.push(r);
+      // 박스 중심에 가장 가까운 큰 덩어리 = 주인
+      const main = comps
+        .map((c, id) => ({c, id}))
+        .filter(({c}) => c.area > 2000 && c.x0 <= bx1 && c.x1 >= bx0 && c.y0 <= by1 && c.y1 >= by0)
+        .sort((a, b) => b.c.area - a.c.area)[0];
+      if (!main) {
+        r.flags.push('박스 안에 캐릭터 없음');
+        continue;
+      }
+      const pad = 10;
+      const x0 = Math.max(0, main.c.x0 - pad), y0 = Math.max(0, main.c.y0 - pad), x1 = Math.min(W - 1, main.c.x1 + pad), y1 = Math.min(H - 1, main.c.y1 + pad);
+      const w = x1 - x0 + 1, h = y1 - y0 + 1;
+      const out = Buffer.alloc(w * h * 4);
+      for (let y = 0; y < h; y++)
+        for (let x = 0; x < w; x++) {
+          const j = (y0 + y) * W + (x0 + x);
+          const l = lab[j];
+          const a = data[j * 4 + 3];
+          // 주 덩어리 픽셀 + 주인 없는 옅은 가장자리(머리카락 끝)만. 다른 큰 덩어리(이웃 포즈)는 제외
+          const keep = l === main.id || (l < 0 && a > 0) || (l >= 0 && comps[l].area < 400);
+          if (!keep) continue;
+          const o = (y * w + x) * 4;
+          out[o] = data[j * 4];
+          out[o + 1] = data[j * 4 + 1];
+          out[o + 2] = data[j * 4 + 2];
+          out[o + 3] = a;
+        }
+      const rel = `assets/characters/cutouts/${character}/action-${pose.name}.png`;
+      ensureDir(path.dirname(path.join(PUBLIC_DIR, rel)));
+      const opad = config.outputPadding;
+      const ow = main.c.x1 - main.c.x0 + 1, oh = main.c.y1 - main.c.y0 + 1;
+      // 주 덩어리 박스 + outputPadding 으로 다시 자름 (아래쪽 = 발바닥)
+      await sharp(out, {raw: {width: w, height: h, channels: 4}})
+        .extract({left: main.c.x0 - x0, top: main.c.y0 - y0, width: ow, height: oh})
+        .extend({top: opad, bottom: opad, left: opad, right: opad, background: {r: 0, g: 0, b: 0, alpha: 0}})
+        .png({compressionLevel: 9})
+        .toFile(path.join(PUBLIC_DIR, rel));
+      r.output = rel;
+      r.size = {width: ow + opad * 2, height: oh + opad * 2};
+      r.facing = pose.facing;
+      index.sprites[`${character}/action-${pose.name}`] = rel;
+      index.meta[rel] = {...r.size, padTop: opad, padBottom: opad, kind: 'action', facing: pose.facing, sheet: def.sheet};
+    }
+    // 기준 높이: 같은 시트의 reference(서 있는) 포즈 불투명 높이
+    const refRel = index.sprites[`${character}/action-${def.reference}`];
+    const refH = refRel ? index.meta[refRel].height - index.meta[refRel].padTop - index.meta[refRel].padBottom : null;
+    for (const pose of def.poses) {
+      const rel = index.sprites[`${character}/action-${pose.name}`];
+      if (rel && refH) index.meta[rel].refHeight = refH;
+    }
+  }
+}
+// v1 시트 포즈의 기준 높이 = 같은 캐릭터 wait 포즈 높이 (포즈마다 따로 늘리지 않고 시트 비율 유지)
+for (const [key, rel] of Object.entries(index.sprites)) {
+  const [character, kn] = key.split('/');
+  if (!kn.startsWith('pose-')) continue;
+  const ref = index.meta[index.sprites[`${character}/pose-wait`]];
+  if (ref) index.meta[rel].refHeight = ref.height - ref.padTop - ref.padBottom;
+}
 index.generatedAt = new Date().toISOString();
 writeJson(CUTOUT_INDEX, index);
 
 // ---------------------------------------------------------------- contact sheet
 const allResults = only ? [...prevReport.filter((p) => !results.some((r) => r.id === p.id)), ...results] : results;
-const order = (r) => `${r.character}|${r.kind === 'expression' ? 0 : 1}`;
+const order = (r) => `${r.character}|${r.kind === 'expression' ? 0 : r.kind === 'pose' ? 1 : 2}`;
 const sorted = [...allResults].sort((a, b) => order(a).localeCompare(order(b)));
-const TILE_W = 240, IMG_H = 300, TILE_H = 360, COLS = 13;
+const TILE_W = 240, IMG_H = 300, TILE_H = 360, COLS = 21;
 const rows = Math.ceil(sorted.length / COLS);
 const checker = await sharp(Buffer.from(`<svg xmlns="http://www.w3.org/2000/svg" width="${TILE_W}" height="${IMG_H}"><defs><pattern id="p" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#5f6b73"/><rect width="8" height="8" fill="#7d8a93"/><rect x="8" y="8" width="8" height="8" fill="#7d8a93"/></pattern></defs><rect width="100%" height="100%" fill="url(#p)"/></svg>`))
   .png()
@@ -308,7 +406,7 @@ for (const [i, r] of sorted.entries()) {
   const bad = r.flags.length > 0;
   layers.push({
     input: Buffer.from(
-      `<svg xmlns="http://www.w3.org/2000/svg" width="${TILE_W}" height="${TILE_H}"><rect x="1" y="1" width="${TILE_W - 2}" height="${TILE_H - 2}" fill="none" stroke="${bad ? '#e0242b' : '#9a9a9a'}" stroke-width="${bad ? 6 : 1}"/><rect y="${IMG_H}" width="${TILE_W}" height="${TILE_H - IMG_H}" fill="${bad ? '#ffe3e3' : '#f4f4f4'}"/><text x="8" y="${IMG_H + 22}" font-family="WenQuanYi Zen Hei, sans-serif" font-size="16" fill="#222">${esc(`${r.character} ${r.kind === 'pose' ? '포즈' : '표정'} ${r.name}`)}</text><text x="8" y="${IMG_H + 40}" font-family="WenQuanYi Zen Hei, sans-serif" font-size="12" fill="#555">${r.size ? `${r.size.width}×${r.size.height}` : '—'}${r.autoExpanded ? ' 확장' : ''}${r.shadowRemovedPx ? ` 그림자-${r.shadowRemovedPx}` : ''}</text><text x="8" y="${IMG_H + 55}" font-family="WenQuanYi Zen Hei, sans-serif" font-size="11" fill="#c01818">${esc(r.flags.join(' / ')).slice(0, 40)}</text></svg>`,
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${TILE_W}" height="${TILE_H}"><rect x="1" y="1" width="${TILE_W - 2}" height="${TILE_H - 2}" fill="none" stroke="${bad ? '#e0242b' : '#9a9a9a'}" stroke-width="${bad ? 6 : 1}"/><rect y="${IMG_H}" width="${TILE_W}" height="${TILE_H - IMG_H}" fill="${bad ? '#ffe3e3' : '#f4f4f4'}"/><text x="8" y="${IMG_H + 22}" font-family="WenQuanYi Zen Hei, sans-serif" font-size="16" fill="#222">${esc(`${r.character} ${r.kind === 'pose' ? '포즈' : r.kind === 'action' ? '동작' : '표정'} ${r.name}`)}</text><text x="8" y="${IMG_H + 40}" font-family="WenQuanYi Zen Hei, sans-serif" font-size="12" fill="#555">${r.size ? `${r.size.width}×${r.size.height}` : '—'}${r.autoExpanded ? ' 확장' : ''}${r.shadowRemovedPx ? ` 그림자-${r.shadowRemovedPx}` : ''}</text><text x="8" y="${IMG_H + 55}" font-family="WenQuanYi Zen Hei, sans-serif" font-size="11" fill="#c01818">${esc(r.flags.join(' / ')).slice(0, 40)}</text></svg>`,
     ),
     left,
     top,

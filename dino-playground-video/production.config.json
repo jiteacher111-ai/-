@@ -4,16 +4,19 @@
     "close-up"
   ],
   "expressionBodyPose": {
-    "_comment": "일반(전신) 숏에서 pose 자리에 표정 이름이 오면, 흉상 대신 같은 캐릭터의 이 전신 포즈를 쓴다 (앞쪽 후보부터 존재하는 것).",
+    "_comment": "일반(전신) 숏에서 pose 자리에 표정·감정 이름이 오면 쓸 전신 포즈 (앞 후보부터). action:<이름> = v2 동작 시트",
     "default": [
       "wait"
     ],
     "happy": [
+      "action:happy",
       "greet",
       "wave",
       "wait"
     ],
     "friendly": [
+      "action:calm",
+      "action:happy",
       "wait"
     ],
     "excited": [
@@ -23,6 +26,14 @@
     ],
     "proud": [
       "greet",
+      "wait"
+    ],
+    "surprised": [
+      "action:surprised",
+      "wait"
+    ],
+    "embarrassed": [
+      "action:calm",
       "wait"
     ]
   },
@@ -210,5 +221,40 @@
       },
       "reason": "timeline 위치(42→53%)에서는 티노의 넓은 ready 포즈가 카로(62%)를 가려 '친구에게 접촉하지 않는다'(숏 메모·대본) 위반. 한 걸음 이동 폭(8%)을 유지하고 카로 앞에서 멈추게 보정."
     }
+  },
+  "poseOverrides": {
+    "_comment": "timeline pose 를 v2 동작 포즈로 직접 지정 (crops fallbacks 보다 우선)",
+    "karo.slide-seated": "action:laugh-crouch"
+  },
+  "multiShot": {
+    "_comment": "멀티샷 연출 (scripts/lib/director.mjs). 숏 시간·대사는 그대로, 카메라 컷만 추가",
+    "enabled": true,
+    "minCutFrames": 24,
+    "mediumScaleMin": 1.18,
+    "mediumScaleMax": 1.45,
+    "mediumFill": 0.8,
+    "drift": 0.025,
+    "splitSilentShotsFrom": 96,
+    "keepTimelineCameraFor": [
+      "close-up"
+    ],
+    "dissolveSameLocation": false
+  },
+  "acting": {
+    "_comment": "역동 동작 (src/animation/perform.ts). 프레임 단위",
+    "runCycleFrames": 5,
+    "walkCycleFrames": 7,
+    "hopFrames": 14,
+    "hopHeight": 0.14,
+    "popInFrames": 20,
+    "presentWhileSpeaking": true,
+    "neutralPoses": [
+      "pose-wait",
+      "pose-greet",
+      "pose-sit",
+      "action-calm",
+      "action-happy",
+      "action-proud"
+    ]
   }
 }
