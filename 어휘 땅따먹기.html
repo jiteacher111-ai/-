@@ -138,6 +138,7 @@
   .stu-table{width:100%;border-collapse:collapse;font-size:13px;}
   .stu-table th{font-size:11px;color:var(--ink-muted);text-align:left;padding:6px 4px;border-bottom:1.5px solid var(--parchment2);}
   .stu-table td{padding:7px 4px;border-bottom:1px solid var(--parchment2);}
+  .stu-table th,.stu-table td{white-space:nowrap;}
   .given-btn{font-size:11px;padding:5px 9px;border-radius:8px;border:1.5px solid var(--ok);background:#fff;color:var(--ok);cursor:pointer;font-weight:700;white-space:nowrap;}
   .given-btn.on{background:var(--ok);color:#fff;}
 
@@ -157,7 +158,8 @@
   <div id="title" class="screen pad center">
     <div class="title-sub">초등 5학년 어휘 개척 모험</div>
     <div class="title-main jua">어휘 개척단</div>
-    <div class="title-desc">낱말을 풀어 미지의 땅을 개척하고, 우리 반 미션을 함께 완수해요!</div>
+    <div class="title-desc">낱말을 풀어 미지의 땅을 개척하고, 나만의 미션을 완수해 보상을 받아요!</div>
+    <div class="load-err" id="configWarn" style="display:none;">⚠️ Supabase 연결 정보가 아직 설정되지 않았어요.<br>파일 위쪽 <b>SUPABASE</b>의 URL과 ANON_KEY를 채워주세요.</div>
     <div class="card">
       <h2 class="jua">🧭 개척 시작</h2>
       <div class="field"><label>학급 코드</label><input id="joinCode" class="code-input" maxlength="4" placeholder="4자리"></div>
@@ -181,7 +183,7 @@
   <div id="createScreen" class="screen pad center">
     <div class="card">
       <h2 class="jua">🏫 학급 미션 설정</h2>
-      <div style="font-size:12px;color:var(--ink-muted);line-height:1.5;">우리 반 학생들이 개척한 땅을 모두 합친 수가 목표에 도달하면 미션이 완료돼요. 보상은 자유롭게 적어주세요.</div>
+      <div style="font-size:12px;color:var(--ink-muted);line-height:1.5;">학생 한 명 한 명이 개척한 땅의 수가 목표에 도달하면 그 학생의 미션이 완료돼요. 보상은 자유롭게 적어주세요. (지도는 본진을 빼고 60칸이에요)</div>
       <div id="missionEditor" style="display:flex;flex-direction:column;gap:8px;"></div>
       <button class="btn btn-plain" id="addMissionBtn">＋ 미션 추가</button>
       <button class="btn btn-gold btn-wide" id="createBtn">학급 만들기</button>
@@ -198,11 +200,16 @@
     <div class="dash-code">
       <div style="font-size:12px;opacity:.8;">학생들에게 알려주세요 · 학급 코드</div>
       <div class="big" id="dashCodeBig">----</div>
-      <div class="jua" style="font-size:16px;">우리 반 개척한 땅 <span id="dashTotal" style="color:var(--gold);font-size:22px;">0</span>칸 · 참여 <span id="dashCount">0</span>명</div>
+      <div class="jua" style="font-size:16px;">참여 <span id="dashCount" style="color:var(--gold);font-size:22px;">0</span>명 · 보상 지급 대기 <span id="dashPending" style="color:var(--gold);font-size:22px;">0</span>건</div>
     </div>
-    <div class="panel"><h3>🎯 학급 미션</h3><div id="dashMissions"></div></div>
-    <div class="panel"><h3>🧑‍🎓 학생 현황</h3>
-      <table class="stu-table"><thead><tr><th>이름</th><th>과목</th><th>개척</th><th>정답률</th><th>최근 접속</th></tr></thead><tbody id="dashStudents"></tbody></table>
+    <div class="panel"><h3>🎯 미션 (학생별)</h3><div id="dashMissions"></div></div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px;">
+        <h3 style="margin:0;">🧑‍🎓 학생 현황</h3>
+        <button class="btn btn-plain" id="dashRefresh">🔄 새로고침</button>
+      </div>
+      <div style="overflow-x:auto;"><table class="stu-table"><thead id="dashHead"></thead><tbody id="dashStudents"></tbody></table></div>
+      <div style="font-size:11px;color:var(--ink-muted);margin-top:8px;">5초마다 자동으로 갱신돼요. 미션을 달성한 학생에게 보상을 준 뒤 "지급하기"를 눌러주세요.</div>
     </div>
   </div>
 
@@ -243,8 +250,18 @@
   <!-- 미션 목록 -->
   <div class="modal-backdrop" id="missionModal">
     <div class="modal">
-      <div class="modal-top"><div class="modal-title jua">🎯 우리 반 미션</div><button class="modal-close" id="missionClose">✕</button></div>
+      <div class="modal-top"><div class="modal-title jua">🎯 나의 미션</div><button class="modal-close" id="missionClose">✕</button></div>
       <div id="missionList"></div>
+    </div>
+  </div>
+
+  <!-- 미션 달성 -->
+  <div class="modal-backdrop" id="celebrateModal">
+    <div class="modal" style="max-width:340px;text-align:center;">
+      <div style="font-size:56px;">🎉</div>
+      <div class="jua" style="font-size:22px;margin:6px 0 10px;">미션 달성!</div>
+      <div id="celebrateText" style="font-size:14px;line-height:1.7;margin-bottom:16px;"></div>
+      <button class="btn btn-gold btn-wide" id="celebrateOk">좋아요!</button>
     </div>
   </div>
 
@@ -259,24 +276,23 @@
 </div>
 
 <script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get, update, onValue, off, runTransaction }
-  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
 /* ========================================================================
    설정
+   - SUPABASE: Supabase 대시보드 → Project Settings → API 에서
+     Project URL 과 anon(public) 또는 publishable 키를 복사해 넣으세요.
+     (service_role / secret 키는 절대 넣지 마세요)
+   - 테이블은 supabase/pioneer_schema.sql 을 SQL Editor에서 한 번 실행하면 만들어져요.
    ======================================================================== */
+const SUPABASE = {
+  URL: 'YOUR-SUPABASE-URL',
+  ANON_KEY: 'YOUR-SUPABASE-ANON-KEY',
+};
 const CONFIG = {
   SPREADSHEET_ID: '1s3Oc7TbPo6BmMhR2-NVKzSePpossJMUQjydLOdZisGs',
   SHEETS: { 국어: '국어', 사회: '사회', 과학: '과학' },
 };
-const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAyCKv6g2o8r6uch11QKdqb13KTDNRC55k",
-  authDomain: "alien-9d8d4.firebaseapp.com",
-  databaseURL: "https://alien-9d8d4-default-rtdb.firebaseio.com",
-  projectId: "alien-9d8d4",
-};
-const ROOT = 'pioneer';
 const GRID_RADIUS = 4;
 const HEX_SIZE = 32;
 const NEI = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
@@ -291,19 +307,20 @@ const TERRAIN = {
 // 중심에서 멀어질수록 어려운 땅이 많아짐: [들판, 숲, 산, 유적] 누적 확률
 const TERRAIN_ODDS = { 1:[.7,1,1,1], 2:[.4,.85,1,1], 3:[.2,.6,.95,1], 4:[.1,.4,.85,1] };
 const DEFAULT_MISSIONS = [
-  { goal: 20,  reward: '칭찬 도장 1개' },
-  { goal: 50,  reward: '쉬는 시간 5분 추가' },
-  { goal: 100, reward: '자리 바꾸기 찬스' },
-  { goal: 200, reward: '학급 영화 관람' },
+  { goal: 5,  reward: '칭찬 도장 1개' },
+  { goal: 12, reward: '간식 쿠폰' },
+  { goal: 20, reward: '자리 선택권' },
+  { goal: 35, reward: '숙제 면제권' },
 ];
+const DASH_POLL_MS = 5000;
 
 let DB = {};
-let db = null, roomRef = null;
-let roomCode = null, playerKey = null, isTeacher = false;
-let room = { meta:{}, missions:{}, players:{} };
-let me = null;
+let sb = null;
+let roomCode = null, playerKey = null;
+let room = { code:null, seed:0, missions:[] };
+let me = null, myGiven = {};
+let dashPlayers = [], dashTimer = null;
 let terrainMap = {}, zoneMap = {};
-let seenAchieved = null;
 let wrongQueue = {}, recentAsked = [];
 let quiz = null;
 
@@ -379,7 +396,7 @@ function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const 
 function sample(arr,n){ return shuffle(arr).slice(0,n); }
 function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function genCode(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from({length:4},()=>c[Math.floor(Math.random()*c.length)]).join(''); }
-function nameKey(name){ return name.trim().replace(/[.#$\[\]\/]/g,'_'); }
+function nameKey(name){ return name.trim().replace(/\s+/g,' '); }
 function hashStr(s){ let h=1779033703^s.length; for(let i=0;i<s.length;i++){ h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return h>>>0; }
 function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
@@ -390,7 +407,8 @@ function toast(msg, bad){
   el.textContent = msg; el.className = 'show' + (bad ? ' bad' : '');
   clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ el.className = bad ? 'bad' : ''; }, 2600);
 }
-function timeAgo(ts){
+function timeAgo(iso){
+  const ts = iso ? Date.parse(iso) : 0;
   if (!ts) return '-';
   const m = Math.floor((Date.now()-ts)/60000);
   if (m < 1) return '방금'; if (m < 60) return `${m}분 전`;
@@ -425,85 +443,93 @@ function buildTerrain(seed){
   });
 }
 
-/* ---------- Firebase ---------- */
-async function initFirebase(){
-  if (db) return true;
-  try { db = getDatabase(initializeApp(FIREBASE_CONFIG)); return true; }
-  catch(e){ console.warn('firebase init fail', e); return false; }
+/* ---------- Supabase ---------- */
+function isConfigured(){ return !SUPABASE.URL.startsWith('YOUR-') && !SUPABASE.ANON_KEY.startsWith('YOUR-'); }
+function initDb(){
+  if (sb) return true;
+  if (!isConfigured()) return false;
+  try { sb = createClient(SUPABASE.URL, SUPABASE.ANON_KEY); return true; }
+  catch(e){ console.warn('supabase init fail', e); return false; }
 }
-function listenRoom(code){
-  roomRef = ref(db, `${ROOT}/${code}`);
-  return new Promise(resolve => {
-    onValue(roomRef, snap => {
-      const data = snap.val() || {};
-      room = { meta: data.meta || {}, missions: data.missions || {}, players: data.players || {} };
-      resolve();
-      onRoomUpdate();
-    });
-  });
+function dbErrMsg(error){
+  console.warn(error);
+  if (error && /relation|does not exist|schema cache/i.test(error.message||'')) return '테이블이 없어요. supabase/pioneer_schema.sql 을 먼저 실행해주세요.';
+  if (error && /row-level security|permission/i.test(error.message||'')) return '권한이 없어요. pioneer_schema.sql 의 정책(policy)이 적용됐는지 확인해주세요.';
+  return '서버와 통신하지 못했어요. 인터넷 연결이나 Supabase 설정을 확인해주세요.';
 }
+async function fetchRoom(code){
+  const { data, error } = await sb.from('pioneer_rooms').select('*').eq('code', code).maybeSingle();
+  if (error) throw new Error(dbErrMsg(error));
+  return data;
+}
+async function createRoomRow(missions){
+  for (let i=0;i<5;i++){
+    const code = genCode();
+    const { error } = await sb.from('pioneer_rooms').insert({ code, seed: hashStr(code), missions });
+    if (!error) return code;
+    if (error.code !== '23505') throw new Error(dbErrMsg(error));
+  }
+  throw new Error('학급 코드를 만들지 못했어요. 다시 시도해주세요.');
+}
+let saveChain = Promise.resolve();
 function savePlayer(){
-  me.updatedAt = Date.now();
-  set(ref(db, `${ROOT}/${roomCode}/players/${playerKey}`), me).catch(e=>console.warn(e));
+  const row = {
+    room_code: roomCode, name_key: playerKey, name: me.name, subject: me.subject,
+    owned: me.owned, progress: me.progress, correct: me.correct, wrong: me.wrong,
+    achieved: me.achieved, updated_at: new Date().toISOString(),
+  };
+  saveChain = saveChain
+    .then(() => sb.from('pioneer_players').upsert(row, { onConflict: 'room_code,name_key' }))
+    .then(res => { if (res && res.error){ dbErrMsg(res.error); toast('⚠️ 저장하지 못했어요. 인터넷 연결을 확인해주세요.', true); } })
+    .catch(e => console.warn(e));
+}
+async function fetchMyGiven(){
+  const { data } = await sb.from('pioneer_players').select('given').eq('room_code', roomCode).eq('name_key', playerKey).maybeSingle();
+  myGiven = (data && data.given) || {};
 }
 
-/* ---------- missions ---------- */
+/* ---------- 개인 미션 ---------- */
 function ownedCount(p){ return p && p.owned ? Object.keys(p.owned).length : 0; }
-function classTotal(){
-  let t = 0;
-  for (const [k,p] of Object.entries(room.players)) t += (k === playerKey && me) ? ownedCount(me) : ownedCount(p);
-  if (me && !room.players[playerKey]) t += ownedCount(me);
-  return t;
-}
-function missionList(){
-  return Object.entries(room.missions).map(([id,m])=>({ id, ...m })).sort((a,b)=>a.goal-b.goal);
-}
+function missionList(){ return (room.missions || []).slice().sort((a,b)=>a.goal-b.goal); }
 function checkMissions(){
-  const total = classTotal();
-  const list = missionList();
-  list.forEach(m=>{
-    if (total >= m.goal && !m.achievedAt){
-      runTransaction(ref(db, `${ROOT}/${roomCode}/missions/${m.id}/achievedAt`), cur => cur || Date.now()).catch(()=>{});
-    }
-  });
-  const achieved = new Set(list.filter(m=>m.achievedAt).map(m=>m.id));
-  if (seenAchieved){
-    list.forEach(m=>{ if (achieved.has(m.id) && !seenAchieved.has(m.id)) toast(`🎉 학급 미션 달성! "${m.reward}" 보상을 받아요!`); });
-  }
-  seenAchieved = achieved;
+  const n = ownedCount(me);
+  const newly = [];
+  missionList().forEach(m=>{ if (n >= m.goal && !me.achieved[m.id]){ me.achieved[m.id] = Date.now(); newly.push(m); } });
+  return newly;
 }
-function onRoomUpdate(){
-  if (!roomCode) return;
-  checkMissions();
-  if (document.getElementById('board').classList.contains('active')) renderMissionBar();
-  if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
-  if (document.getElementById('missionModal').classList.contains('active')) renderMissionList();
+function celebrate(m){
+  document.getElementById('celebrateText').innerHTML =
+    `<b>내 땅 ${m.goal}칸 개척</b> 미션을 완료했어요!<br>🎁 <b>${escapeHtml(m.reward)}</b><br><span style="color:var(--ink-muted);font-size:12px;">선생님께 말씀드리면 보상을 받을 수 있어요.</span>`;
+  document.getElementById('celebrateModal').classList.add('active');
 }
 function renderMissionBar(){
   const bar = document.getElementById('missionBar');
   const list = missionList();
-  const total = classTotal();
-  const next = list.find(m=>!m.achievedAt);
-  if (!list.length){ bar.innerHTML = `<div class="mb-title">학급 미션이 없어요</div>`; return; }
+  const n = ownedCount(me);
+  if (!list.length){ bar.innerHTML = `<div class="mb-title">미션이 없어요</div>`; return; }
+  const next = list.find(m=>!me.achieved[m.id]);
   if (!next){
-    bar.innerHTML = `<div class="mb-top"><span class="mb-title">🎉 모든 학급 미션 완료!</span><span class="mb-reward">우리 반 땅 ${total}칸</span></div>`;
+    bar.innerHTML = `<div class="mb-top"><span class="mb-title">🎉 모든 미션 완료!</span><span class="mb-reward">내 땅 ${n}칸</span></div>`;
     return;
   }
-  const doneCount = list.length - list.filter(m=>!m.achievedAt).length;
-  const pct = Math.min(100, Math.round(total/next.goal*100));
+  const done = list.filter(m=>me.achieved[m.id]).length;
+  const pct = Math.min(100, Math.round(n/next.goal*100));
   bar.innerHTML = `<div class="mb-top">
-      <span class="mb-title">🎯 학급 미션 ${doneCount+1}/${list.length} · 우리 반 땅 ${total} / ${next.goal}칸</span>
+      <span class="mb-title">🎯 나의 미션 ${done+1}/${list.length} · 내 땅 ${n} / ${next.goal}칸</span>
       <span class="mb-reward">🎁 ${escapeHtml(next.reward)}</span>
     </div><div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>`;
 }
 function renderMissionList(){
-  const total = classTotal();
-  document.getElementById('missionList').innerHTML = missionList().map(m=>`
-    <div class="mission-row ${m.achievedAt?'done':''}">
-      <span class="mi">${m.achievedAt ? '✅' : '🎯'}</span>
-      <span class="mt"><b>우리 반 땅 ${m.goal}칸 개척</b><br>🎁 ${escapeHtml(m.reward)}</span>
-      <span class="ms">${m.achievedAt ? (m.given ? '보상 받음' : '달성!') : `${Math.min(total,m.goal)}/${m.goal}`}</span>
-    </div>`).join('') || '<div style="text-align:center;color:var(--ink-muted);">미션이 없어요</div>';
+  const n = ownedCount(me);
+  document.getElementById('missionList').innerHTML = missionList().map(m=>{
+    const done = !!me.achieved[m.id];
+    const status = done ? (myGiven[m.id] ? '🎁 보상 받음' : '달성! 보상 대기') : `${Math.min(n,m.goal)}/${m.goal}`;
+    return `<div class="mission-row ${done?'done':''}">
+      <span class="mi">${done ? '✅' : '🎯'}</span>
+      <span class="mt"><b>내 땅 ${m.goal}칸 개척</b><br>🎁 ${escapeHtml(m.reward)}</span>
+      <span class="ms">${status}</span>
+    </div>`;
+  }).join('') || '<div style="text-align:center;color:var(--ink-muted);">미션이 없어요</div>';
 }
 
 /* ---------- 시작 화면 ---------- */
@@ -513,6 +539,7 @@ function initTitle(){
   document.getElementById('settingsSubject').innerHTML = subjOpts;
   document.getElementById('joinCode').value = lsGet('pioneer_code') || '';
   document.getElementById('joinName').value = lsGet('pioneer_name') || '';
+  document.getElementById('configWarn').style.display = isConfigured() ? 'none' : 'block';
 
   document.getElementById('joinBtn').onclick = joinAsStudent;
   document.getElementById('goCreateBtn').onclick = openCreate;
@@ -520,14 +547,17 @@ function initTitle(){
     const code = document.getElementById('dashCode').value.trim().toUpperCase();
     const err = document.getElementById('dashErr');
     if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
-    if (!await initFirebase()){ err.textContent = '서버 연결에 실패했어요.'; return; }
-    const snap = await get(ref(db, `${ROOT}/${code}/meta`));
-    if (!snap.exists()){ err.textContent = '학급을 찾을 수 없어요.'; return; }
-    err.textContent = '';
-    openDashboard(code);
+    if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
+    try {
+      const r = await fetchRoom(code);
+      if (!r){ err.textContent = '학급을 찾을 수 없어요.'; return; }
+      err.textContent = '';
+      openDashboard(r);
+    } catch(e){ err.textContent = e.message; }
   };
   document.getElementById('backFromCreate').onclick = () => showScreen('title');
   document.getElementById('dashBack').onclick = goHome;
+  document.getElementById('celebrateOk').onclick = () => document.getElementById('celebrateModal').classList.remove('active');
 }
 async function joinAsStudent(){
   const code = document.getElementById('joinCode').value.trim().toUpperCase();
@@ -537,25 +567,29 @@ async function joinAsStudent(){
   if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
   if (!name){ err.textContent = '이름을 입력해주세요.'; return; }
   if (!subject){ err.textContent = '불러온 어휘가 있는 과목이 없어요.'; return; }
-  if (!await initFirebase()){ err.textContent = '서버 연결에 실패했어요.'; return; }
-  const snap = await get(ref(db, `${ROOT}/${code}/meta`));
-  if (!snap.exists()){ err.textContent = '학급을 찾을 수 없어요. 코드를 확인해주세요.'; return; }
-  err.textContent = '';
-  lsSet('pioneer_code', code); lsSet('pioneer_name', name);
-
-  roomCode = code; playerKey = nameKey(name); isTeacher = false;
-  const pSnap = await get(ref(db, `${ROOT}/${code}/players/${playerKey}`));
-  const prev = pSnap.exists() ? pSnap.val() : {};
-  me = { name, subject, owned: prev.owned || {}, progress: prev.progress || {}, correct: prev.correct || 0, wrong: prev.wrong || 0 };
-  await listenRoom(code);
-  buildTerrain(room.meta.seed || hashStr(code));
-  savePlayer();
-  enterBoard(!pSnap.exists());
+  if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
+  try {
+    const r = await fetchRoom(code);
+    if (!r){ err.textContent = '학급을 찾을 수 없어요. 코드를 확인해주세요.'; return; }
+    const key = nameKey(name);
+    const { data: prev, error } = await sb.from('pioneer_players').select('*').eq('room_code', code).eq('name_key', key).maybeSingle();
+    if (error) throw new Error(dbErrMsg(error));
+    err.textContent = '';
+    lsSet('pioneer_code', code); lsSet('pioneer_name', name);
+    room = r; roomCode = code; playerKey = key;
+    const p = prev || {};
+    me = { name, subject, owned: p.owned || {}, progress: p.progress || {}, correct: p.correct || 0, wrong: p.wrong || 0, achieved: p.achieved || {} };
+    myGiven = p.given || {};
+    buildTerrain(Number(r.seed) || hashStr(code));
+    checkMissions();
+    savePlayer();
+    enterBoard(!prev);
+  } catch(e){ err.textContent = e.message; }
 }
 function goHome(){
-  if (roomRef) off(roomRef);
-  roomRef = null; roomCode = null; playerKey = null; me = null; seenAchieved = null; isTeacher = false;
-  ['quizModal','missionModal','settingsModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  clearInterval(dashTimer); dashTimer = null;
+  roomCode = null; playerKey = null; me = null; quiz = null;
+  ['quizModal','missionModal','settingsModal','celebrateModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
   clearTimeout(toastTimer); document.getElementById('toast').className = '';
   showScreen('title');
 }
@@ -567,7 +601,7 @@ function openCreate(){
   const addRow = (goal, reward) => {
     const row = document.createElement('div');
     row.className = 'mission-edit';
-    row.innerHTML = `<input class="goal" type="number" min="1" placeholder="칸"><input class="reward" maxlength="30" placeholder="보상 (예: 쉬는 시간 5분)"><button class="rm" title="삭제">✕</button>`;
+    row.innerHTML = `<input class="goal" type="number" min="1" max="60" placeholder="칸"><input class="reward" maxlength="30" placeholder="보상 (예: 칭찬 도장)"><button class="rm" title="삭제">✕</button>`;
     row.querySelector('.goal').value = goal ?? '';
     row.querySelector('.reward').value = reward ?? '';
     row.querySelector('.rm').onclick = () => row.remove();
@@ -581,49 +615,77 @@ function openCreate(){
       goal: parseInt(r.querySelector('.goal').value,10), reward: r.querySelector('.reward').value.trim()
     })).filter(m=>m.goal>0 && m.reward);
     if (!rows.length){ err.textContent = '미션을 1개 이상 입력해주세요 (목표 칸 수와 보상).'; return; }
-    if (!await initFirebase()){ err.textContent = '서버 연결에 실패했어요.'; return; }
+    if (rows.some(m=>m.goal>60)){ err.textContent = '목표는 60칸 이하로 정해주세요.'; return; }
+    if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
     err.textContent = '';
-    const code = genCode();
-    const missions = {};
-    rows.sort((a,b)=>a.goal-b.goal).forEach((m,i)=>{ missions['m'+i] = { goal:m.goal, reward:m.reward }; });
-    await set(ref(db, `${ROOT}/${code}`), { meta:{ createdAt: Date.now(), seed: hashStr(code) }, missions });
-    openDashboard(code);
+    const missions = rows.sort((a,b)=>a.goal-b.goal).map((m,i)=>({ id:'m'+i, goal:m.goal, reward:m.reward }));
+    try {
+      const code = await createRoomRow(missions);
+      openDashboard({ code, seed: hashStr(code), missions });
+    } catch(e){ err.textContent = e.message; }
   };
   showScreen('createScreen');
 }
-async function openDashboard(code){
-  roomCode = code; isTeacher = true; playerKey = null; me = null;
-  document.getElementById('dashCode').value = code;
+function openDashboard(r){
+  room = r; roomCode = r.code; playerKey = null; me = null;
+  document.getElementById('dashCode').value = r.code;
+  document.getElementById('dashCodeBig').textContent = r.code;
+  document.getElementById('dashRefresh').onclick = refreshDashboard;
   showScreen('dashboard');
-  await listenRoom(code);
+  dashPlayers = [];
+  renderDashboard();
+  refreshDashboard();
+  clearInterval(dashTimer);
+  dashTimer = setInterval(refreshDashboard, DASH_POLL_MS);
+}
+async function refreshDashboard(){
+  if (!roomCode || playerKey) return;
+  const code = roomCode;
+  const { data, error } = await sb.from('pioneer_players').select('*').eq('room_code', code);
+  if (code !== roomCode) return;
+  if (error){ toast(dbErrMsg(error), true); return; }
+  dashPlayers = data || [];
   renderDashboard();
 }
 function renderDashboard(){
-  document.getElementById('dashCodeBig').textContent = roomCode;
-  const players = Object.values(room.players);
-  document.getElementById('dashTotal').textContent = classTotal();
-  document.getElementById('dashCount').textContent = players.length;
-  const total = classTotal();
-  const mWrap = document.getElementById('dashMissions');
-  mWrap.innerHTML = missionList().map(m=>`
-    <div class="mission-row ${m.achievedAt?'done':''}">
-      <span class="mi">${m.achievedAt ? '✅' : '🎯'}</span>
-      <span class="mt"><b>땅 ${m.goal}칸</b> · 🎁 ${escapeHtml(m.reward)}<br>
-        <span style="font-size:11px;color:var(--ink-muted);">${m.achievedAt ? `${new Date(m.achievedAt).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})} 달성` : `진행 ${Math.min(total,m.goal)} / ${m.goal}`}</span></span>
-      ${m.achievedAt ? `<button class="given-btn ${m.given?'on':''}" data-id="${m.id}">${m.given?'지급 완료':'보상 지급'}</button>` : ''}
-    </div>`).join('');
-  mWrap.querySelectorAll('.given-btn').forEach(b=>{
-    b.onclick = () => {
-      const m = room.missions[b.dataset.id];
-      update(ref(db, `${ROOT}/${roomCode}/missions/${b.dataset.id}`), { given: !m.given });
-    };
-  });
-  const rows = players.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko'));
-  document.getElementById('dashStudents').innerHTML = rows.map(p=>{
+  const list = missionList();
+  let pending = 0;
+  dashPlayers.forEach(p=>list.forEach(m=>{ if ((p.achieved||{})[m.id] && !(p.given||{})[m.id]) pending++; }));
+  document.getElementById('dashCount').textContent = dashPlayers.length;
+  document.getElementById('dashPending').textContent = pending;
+  document.getElementById('dashMissions').innerHTML = list.map((m,i)=>{
+    const cnt = dashPlayers.filter(p=>(p.achieved||{})[m.id]).length;
+    return `<div class="mission-row ${cnt?'done':''}">
+      <span class="mi">🎯</span>
+      <span class="mt"><b>미션 ${i+1} · 내 땅 ${m.goal}칸</b><br>🎁 ${escapeHtml(m.reward)}</span>
+      <span class="ms">달성 ${cnt}명</span>
+    </div>`;
+  }).join('');
+  document.getElementById('dashHead').innerHTML = `<tr><th>이름</th><th>과목</th><th>개척</th><th>정답률</th><th>최근</th>${list.map((m,i)=>`<th title="${escapeHtml(m.reward)}">미션${i+1}<br>${m.goal}칸</th>`).join('')}</tr>`;
+  const rows = dashPlayers.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko'));
+  const tbody = document.getElementById('dashStudents');
+  tbody.innerHTML = rows.map(p=>{
     const tries = (p.correct||0)+(p.wrong||0);
     const acc = tries ? Math.round((p.correct||0)/tries*100)+'%' : '-';
-    return `<tr><td><b>${escapeHtml(p.name||'')}</b></td><td>${escapeHtml(p.subject||'')}</td><td>${ownedCount(p)}칸</td><td>${acc}</td><td style="color:var(--ink-muted);font-size:11px;">${timeAgo(p.updatedAt)}</td></tr>`;
-  }).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--ink-muted);padding:16px;">아직 참여한 학생이 없어요</td></tr>`;
+    const n = ownedCount(p);
+    const cells = list.map(m=>{
+      if (!(p.achieved||{})[m.id]) return `<td style="color:var(--ink-muted);font-size:11px;">${Math.min(n,m.goal)}/${m.goal}</td>`;
+      const given = !!(p.given||{})[m.id];
+      return `<td><button class="given-btn ${given?'on':''}" data-key="${escapeHtml(p.name_key)}" data-mid="${m.id}">${given?'✅ 지급':'지급하기'}</button></td>`;
+    }).join('');
+    return `<tr><td><b>${escapeHtml(p.name||'')}</b></td><td>${escapeHtml(p.subject||'')}</td><td>${n}칸</td><td>${acc}</td><td style="color:var(--ink-muted);font-size:11px;">${timeAgo(p.updated_at)}</td>${cells}</tr>`;
+  }).join('') || `<tr><td colspan="${5+list.length}" style="text-align:center;color:var(--ink-muted);padding:16px;">아직 참여한 학생이 없어요</td></tr>`;
+  tbody.querySelectorAll('.given-btn').forEach(b=>{ b.onclick = () => toggleGiven(b.dataset.key, b.dataset.mid); });
+}
+async function toggleGiven(key, mid){
+  const p = dashPlayers.find(x=>x.name_key===key);
+  if (!p) return;
+  const given = { ...(p.given||{}) };
+  if (given[mid]) delete given[mid]; else given[mid] = true;
+  p.given = given;
+  renderDashboard();
+  const { error } = await sb.from('pioneer_players').update({ given }).eq('room_code', roomCode).eq('name_key', key);
+  if (error) toast(dbErrMsg(error), true);
 }
 
 /* ---------- 학생 개척 화면 ---------- */
@@ -645,7 +707,12 @@ function enterBoard(isNew){
   document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
   document.getElementById('settingsClose').onclick = () => document.getElementById('settingsModal').classList.remove('active');
   document.getElementById('leaveBtn').onclick = goHome;
-  document.getElementById('missionBar').onclick = () => { renderMissionList(); document.getElementById('missionModal').classList.add('active'); };
+  document.getElementById('missionBar').onclick = async () => {
+    renderMissionList();
+    document.getElementById('missionModal').classList.add('active');
+    await fetchMyGiven().catch(()=>{});
+    if (me) renderMissionList();
+  };
   document.getElementById('missionClose').onclick = () => document.getElementById('missionModal').classList.remove('active');
   document.getElementById('qClose').onclick = closeQuiz;
   document.getElementById('zoomInBtn').onclick = () => setZoom(zoomLevel+0.2);
@@ -747,6 +814,7 @@ function openQuiz(id, mode){
   nextQuestion();
 }
 function renderQuizStatus(){
+  if (!quiz) return;
   const { id, mode } = quiz;
   const t = TERRAIN[terrainMap[id]];
   const tags = document.getElementById('qTags');
@@ -795,8 +863,12 @@ function answer(btn, chosen){
         delete me.progress[id];
         me.owned[id] = { hp: START_HP };
         fb.textContent = `🎉 ${t.name} 개척 성공!`; fb.className = 'q-feedback ok';
-        afterAnswer();
-        setTimeout(()=>{ closeQuiz(); toast(`🚩 ${zoneMap[id]}구역 ${t.icon}${t.name}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`); }, 1200);
+        const newly = afterAnswer();
+        setTimeout(()=>{
+          closeQuiz();
+          if (newly.length) celebrate(newly[newly.length-1]);
+          else toast(`🚩 ${zoneMap[id]}구역 ${t.icon}${t.name}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
+        }, 1200);
         return;
       }
       me.progress[id] = p;
@@ -845,9 +917,10 @@ function aiAttack(){
   return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 공격했어요! (🛡 ${before}→${before-1})` };
 }
 function afterAnswer(){
+  const newly = checkMissions();
   savePlayer();
   renderMap(); renderHeader(); renderMissionBar(); renderQuizStatus();
-  checkMissions();
+  return newly;
 }
 function closeQuiz(){ quiz = null; document.getElementById('quizModal').classList.remove('active'); }
 
