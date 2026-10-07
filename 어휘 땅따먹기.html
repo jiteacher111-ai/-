@@ -291,7 +291,8 @@ const SUPABASE = {
 };
 const CONFIG = {
   SPREADSHEET_ID: '1s3Oc7TbPo6BmMhR2-NVKzSePpossJMUQjydLOdZisGs',
-  SHEETS: { 국어: '국어', 사회: '사회', 과학: '과학' },
+  SHEET_NAME: '낱말 집계',
+  SUBJECTS: ['국어', '사회', '과학'],
 };
 const GRID_RADIUS = 4;
 const HEX_SIZE = 32;
@@ -349,40 +350,45 @@ function normalizeDifficulty(v){
   if (v.includes('쉬운')) return 'easy';
   return 'normal';
 }
-async function fetchSheet(subject, sheetName){
+// gviz는 없는 시트 이름을 주면 첫 탭을 돌려주므로, 헤더로 올바른 탭인지 확인한다.
+async function fetchVocab(){
+  const sheetName = CONFIG.SHEET_NAME;
   const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`"${sheetName}" 시트를 불러오지 못했어요 (${res.status})`);
   const text = await res.text();
   if (/^<!DOCTYPE html/i.test(text.trim())) throw new Error(`"${sheetName}" 시트에 접근할 수 없어요 (공유 설정을 확인해주세요)`);
   const rows = parseCSV(text);
-  if (!rows.length) return [];
-  const header = rows[0].map(h => (h||'').trim());
-  const idx = { word: header.indexOf('날말'), diff: header.indexOf('난이도'), meaning: header.indexOf('뜻') };
-  if (idx.word === -1 || idx.meaning === -1) throw new Error(`"${sheetName}" 시트에 "날말" 또는 "뜻" 열을 찾을 수 없어요`);
-  const words = []; const seen = new Set();
+  const header = (rows[0] || []).map(h => (h||'').trim());
+  const idx = { word: header.indexOf('낱말'), diff: header.indexOf('난이도'), subject: header.indexOf('과목'), meaning: header.indexOf('뜻') };
+  if (idx.word === -1 || idx.meaning === -1 || idx.subject === -1) throw new Error(`"${sheetName}" 시트에 "낱말", "과목", "뜻" 열을 찾을 수 없어요`);
+  const bySubject = Object.fromEntries(CONFIG.SUBJECTS.map(s => [s, []]));
+  const seen = new Set();
   for (let i=1;i<rows.length;i++){
     const r = rows[i]; if (!r) continue;
+    const subject = (r[idx.subject]||'').trim();
     const word = (r[idx.word]||'').trim(), meaning = (r[idx.meaning]||'').trim();
-    if (!word || !meaning || seen.has(word+'|'+meaning)) continue;
-    seen.add(word+'|'+meaning);
-    words.push({ word, meaning, subject, difficulty: normalizeDifficulty(idx.diff>-1 ? r[idx.diff] : '') });
+    if (!bySubject[subject] || !word || !meaning) continue;
+    const key = subject+'|'+word+'|'+meaning;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    bySubject[subject].push({ word, meaning, subject, difficulty: normalizeDifficulty(idx.diff>-1 ? r[idx.diff] : '') });
   }
-  return words;
+  return bySubject;
 }
 async function loadAllData(){
   const errBox = document.getElementById('loadErrBox');
   errBox.innerHTML = '';
-  const subjects = Object.keys(CONFIG.SHEETS);
-  DB = {};
-  for (const subj of subjects){
-    try { DB[subj] = { all: await fetchSheet(subj, CONFIG.SHEETS[subj]) }; }
-    catch (e){ DB[subj] = { all: [], error: e.message }; }
-  }
-  if (subjects.every(s => DB[s].all.length === 0)){
-    const firstErr = subjects.map(s=>DB[s].error).find(Boolean) || '어휘를 하나도 불러오지 못했어요.';
+  DB = Object.fromEntries(CONFIG.SUBJECTS.map(s => [s, { all: [] }]));
+  let errMsg = null;
+  try {
+    const bySubject = await fetchVocab();
+    CONFIG.SUBJECTS.forEach(s => { DB[s].all = bySubject[s]; });
+  } catch (e){ errMsg = e.message; }
+  if (CONFIG.SUBJECTS.every(s => DB[s].all.length === 0)){
+    const firstErr = errMsg || `"${CONFIG.SHEET_NAME}" 시트에 과목이 국어/사회/과학인 낱말이 없어요.`;
     errBox.innerHTML = `<div class="load-err">⚠️ ${escapeHtml(firstErr)}<br><br>
-      스프레드시트 공유 설정(링크가 있는 모든 사용자-뷰어)과 시트 이름(국어/사회/과학)을 확인해주세요.</div>
+      스프레드시트 공유 설정(링크가 있는 모든 사용자-뷰어)과 시트(탭) 이름("${escapeHtml(CONFIG.SHEET_NAME)}")을 확인해주세요.</div>
       <button class="btn btn-wide" id="retryBtn" style="margin-top:14px;">다시 시도</button>`;
     document.getElementById('retryBtn').onclick = boot;
     return false;
@@ -534,7 +540,7 @@ function renderMissionList(){
 
 /* ---------- 시작 화면 ---------- */
 function initTitle(){
-  const subjOpts = Object.keys(CONFIG.SHEETS).filter(s=>DB[s].all.length>=4).map(s=>`<option value="${s}">${s} (${DB[s].all.length}개)</option>`).join('');
+  const subjOpts = CONFIG.SUBJECTS.filter(s=>DB[s].all.length>=4).map(s=>`<option value="${s}">${s} (${DB[s].all.length}개)</option>`).join('');
   document.getElementById('joinSubject').innerHTML = subjOpts;
   document.getElementById('settingsSubject').innerHTML = subjOpts;
   document.getElementById('joinCode').value = lsGet('pioneer_code') || '';
