@@ -170,6 +170,7 @@
     </div>
     <div class="card teacher">
       <h2 class="jua" style="font-size:15px;">👩‍🏫 선생님</h2>
+      <div class="field" style="margin:0;"><label>선생님 비밀번호</label><input id="teacherPw" type="password" placeholder="비밀번호" autocomplete="off"></div>
       <button class="btn btn-wide" id="goCreateBtn">새 학급 만들기</button>
       <div class="row">
         <div class="field grow" style="margin:0;"><input id="dashCode" class="code-input" maxlength="4" placeholder="학급 코드"></div>
@@ -314,6 +315,8 @@ const DEFAULT_MISSIONS = [
   { goal: 35, reward: '숙제 면제권' },
 ];
 const DASH_POLL_MS = 5000;
+// 선생님 비밀번호의 SHA-256 값. 바꾸려면 새 비밀번호의 SHA-256을 넣으세요.
+const TEACHER_PW_SHA256 = '34707c3f40dfa20c3902b807b627d420d6d474d9d98066ba637953d1cfd6b914';
 
 let DB = {};
 let sb = null;
@@ -538,6 +541,24 @@ function renderMissionList(){
   }).join('') || '<div style="text-align:center;color:var(--ink-muted);">미션이 없어요</div>';
 }
 
+/* ---------- 선생님 비밀번호 ---------- */
+async function sha256Hex(s){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function passTeacherGate(){
+  const input = document.getElementById('teacherPw');
+  const err = document.getElementById('dashErr');
+  if (!input.value){ err.textContent = '선생님 비밀번호를 입력해주세요.'; input.focus(); return false; }
+  let ok = false;
+  try { ok = (await sha256Hex(input.value)) === TEACHER_PW_SHA256; }
+  catch(e){ err.textContent = '이 브라우저에서는 비밀번호를 확인할 수 없어요. https 주소로 접속해주세요.'; return false; }
+  if (!ok){ err.textContent = '비밀번호가 맞지 않아요.'; input.select(); return false; }
+  input.value = '';
+  err.textContent = '';
+  return true;
+}
+
 /* ---------- 시작 화면 ---------- */
 function initTitle(){
   const subjOpts = CONFIG.SUBJECTS.filter(s=>DB[s].all.length>=4).map(s=>`<option value="${s}">${s} (${DB[s].all.length}개)</option>`).join('');
@@ -548,11 +569,15 @@ function initTitle(){
   document.getElementById('configWarn').style.display = isConfigured() ? 'none' : 'block';
 
   document.getElementById('joinBtn').onclick = joinAsStudent;
-  document.getElementById('goCreateBtn').onclick = openCreate;
+  document.getElementById('goCreateBtn').onclick = async () => {
+    if (!await passTeacherGate()) return;
+    openCreate();
+  };
   document.getElementById('openDashBtn').onclick = async () => {
     const code = document.getElementById('dashCode').value.trim().toUpperCase();
     const err = document.getElementById('dashErr');
     if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
+    if (!await passTeacherGate()) return;
     if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
     try {
       const r = await fetchRoom(code);
