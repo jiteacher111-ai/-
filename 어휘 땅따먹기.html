@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>어휘 땅따먹기 — 우리 반의 영토 전쟁</title>
+<title>어휘 개척단 — 우리 반 땅 개척 모험</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -13,293 +13,255 @@
     --ink:#3a2a1a; --ink-muted:#8a7355;
     --teal:#1aa6a6; --teal-dark:#0d7373;
     --gold:#f0b429; --gold-dark:#b9821a;
-    --danger:#d9453d; --ok:#2fa860;
+    --danger:#d9453d; --ok:#2fa860; --fog:#1d3445;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html,body{height:100%;}
-  body{
-    background:radial-gradient(circle at 50% 0%,var(--sea),var(--sea2) 75%);
-    color:var(--ink);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;
-  }
+  body{background:radial-gradient(circle at 50% 0%,var(--sea),var(--sea2) 75%);color:var(--ink);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
   .jua{font-family:'Jua',sans-serif;}
   #app{position:relative;max-width:900px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
   .screen{display:none;flex:1;flex-direction:column;}
   .screen.active{display:flex;}
-  .pad{padding:20px 18px 40px;}
+  .pad{padding:20px 16px 40px;}
+  .center{align-items:center;justify-content:center;}
 
-  .btn{
-    font-family:'Jua',sans-serif;font-size:15px;color:#fff;background:linear-gradient(180deg,#2bc4c4,var(--teal));
-    border:none;border-radius:12px;padding:13px 18px;cursor:pointer;box-shadow:0 4px 0 var(--teal-dark),0 6px 14px rgba(0,0,0,.3);
-    transition:transform .12s;letter-spacing:.3px;
-  }
+  .btn{font-family:'Jua',sans-serif;font-size:15px;color:#fff;background:linear-gradient(180deg,#2bc4c4,var(--teal));border:none;border-radius:12px;padding:13px 18px;cursor:pointer;box-shadow:0 4px 0 var(--teal-dark),0 6px 14px rgba(0,0,0,.3);transition:transform .12s;}
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--teal-dark);}
   .btn:disabled{opacity:.45;cursor:not-allowed;}
   .btn-gold{background:linear-gradient(180deg,#ffd873,var(--gold));color:#3a2a10;box-shadow:0 4px 0 var(--gold-dark),0 6px 14px rgba(0,0,0,.3);}
-  .btn-ghost{background:transparent;border:1.5px solid var(--parchment2);color:var(--parchment);box-shadow:none;font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:13px;padding:9px 14px;}
+  .btn-danger{background:linear-gradient(180deg,#ff8a85,var(--danger));box-shadow:0 4px 0 #8a1f1f;}
+  .btn-plain{background:#fffdf5;color:var(--ink);border:1.5px solid var(--parchment2);box-shadow:none;font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:12px;padding:8px 12px;}
   .btn-wide{width:100%;}
-  .btn-sm{padding:8px 12px;font-size:12px;}
 
-  /* ── LOADING ── */
-  #loading{align-items:center;justify-content:center;text-align:center;gap:16px;color:var(--parchment);}
+  #loading{gap:16px;color:var(--parchment);text-align:center;}
   .spinner{width:50px;height:50px;border-radius:50%;border:5px solid rgba(255,255,255,.2);border-top-color:var(--gold);animation:spin 1s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .load-err{color:#ffd0ce;font-size:13px;max-width:480px;line-height:1.6;background:rgba(217,69,61,.18);border:1px solid rgba(217,69,61,.5);border-radius:10px;padding:16px;text-align:left;}
 
-  /* ── TITLE / LOBBY ── */
-  #title{align-items:center;justify-content:center;text-align:center;gap:10px;}
+  /* title */
+  #title{gap:14px;text-align:center;}
   .title-sub{color:var(--parchment);font-size:12px;letter-spacing:2px;opacity:.8;}
-  .title-main{font-size:clamp(40px,10vw,64px);color:var(--gold);text-shadow:0 4px 0 var(--gold-dark),0 8px 20px rgba(0,0,0,.4);}
-  .title-desc{color:var(--parchment2);font-size:13px;margin-bottom:10px;}
-  .card{background:var(--parchment);border:3px solid var(--wood);border-radius:18px;padding:24px 22px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:16px;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+  .title-main{font-size:clamp(40px,10vw,60px);color:var(--gold);text-shadow:0 4px 0 var(--gold-dark),0 8px 20px rgba(0,0,0,.4);}
+  .title-desc{color:var(--parchment2);font-size:13px;}
+  .card{background:var(--parchment);border:3px solid var(--wood);border-radius:18px;padding:22px 20px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:left;}
   .card h2{font-size:18px;text-align:center;}
+  .card.teacher{background:rgba(243,230,200,.12);border-color:rgba(243,230,200,.35);color:var(--parchment);}
+  .card.teacher .field label{color:var(--parchment2);}
   .field label{display:block;font-size:11px;color:var(--ink-muted);margin-bottom:6px;font-weight:700;}
-  .field input, .field select{
-    width:100%;background:#fffdf5;border:1.5px solid var(--parchment2);color:var(--ink);font-family:'Jua',sans-serif;
-    font-size:17px;padding:11px 12px;border-radius:10px;outline:none;text-align:center;
-  }
-  .field input:focus, .field select:focus{border-color:var(--teal);}
-  .row-gap{display:flex;gap:10px;}
-  .row-gap > *{flex:1;}
-  .hint{font-size:11px;color:var(--ink-muted);text-align:center;}
+  .field input,.field select{width:100%;background:#fffdf5;border:1.5px solid var(--parchment2);color:var(--ink);font-family:'Jua',sans-serif;font-size:17px;padding:10px 12px;border-radius:10px;outline:none;text-align:center;}
+  .field input:focus,.field select:focus{border-color:var(--teal);}
+  .row{display:flex;gap:8px;align-items:center;}
+  .row > .grow{flex:1;}
   .err-msg{font-size:12px;color:var(--danger);text-align:center;min-height:16px;}
-  .divider{display:flex;align-items:center;gap:10px;color:var(--ink-muted);font-size:11px;}
-  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--parchment2);}
-  .back-link{color:var(--parchment2);font-size:12px;text-align:center;cursor:pointer;text-decoration:underline;}
+  .card.teacher .err-msg{color:#ffb3ae;}
+  .back-link{color:var(--ink-muted);font-size:12px;text-align:center;cursor:pointer;text-decoration:underline;}
+  .code-input{letter-spacing:6px;text-transform:uppercase;}
 
-  .team-pick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-  .team-opt{
-    border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;border:2.5px solid transparent;
-    font-family:'Jua',sans-serif;font-size:12px;color:#fff;opacity:.55;
-  }
-  .team-opt.picked{opacity:1;border-color:var(--wood);transform:scale(1.04);}
-  .team-opt .cnt{display:block;font-size:10px;font-weight:400;opacity:.85;margin-top:2px;}
+  /* mission editor */
+  .mission-edit{display:flex;gap:6px;align-items:center;}
+  .mission-edit input{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:8px;padding:8px;font-size:13px;color:var(--ink);font-family:'Noto Sans KR',sans-serif;}
+  .mission-edit .goal{width:64px;text-align:center;font-family:'Jua',sans-serif;}
+  .mission-edit .reward{flex:1;min-width:0;}
+  .mission-edit .rm{background:none;border:none;color:var(--danger);font-size:16px;cursor:pointer;}
 
-  /* ── BOARD HEADER ── */
-  #boardHeader{
-    background:var(--wood-dark);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-    border-bottom:3px solid var(--wood);
-  }
-  .room-chip{font-family:'Jua',sans-serif;color:var(--gold);font-size:13px;letter-spacing:2px;cursor:pointer;}
-  .timer-chip{font-family:'Jua',sans-serif;color:#fff;font-size:14px;background:rgba(0,0,0,.25);padding:5px 12px;border-radius:20px;}
-  .timer-chip.low{color:#ffb3b3;animation:pulse 1s infinite;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-  .online-chip{color:var(--parchment2);font-size:11px;margin-left:auto;}
-  .gear-btn{background:none;border:none;color:var(--parchment);font-size:18px;cursor:pointer;}
+  /* header */
+  .topbar{background:var(--wood-dark);padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--wood);color:var(--parchment);}
+  .chip{font-family:'Jua',sans-serif;font-size:13px;}
+  .chip.code{color:var(--gold);letter-spacing:2px;}
+  .chip.me{margin-left:auto;font-size:12px;}
+  .icon-btn{background:none;border:none;color:var(--parchment);font-size:18px;cursor:pointer;}
 
-  .score-bar{display:flex;height:22px;border-radius:12px;overflow:hidden;margin:0 14px 8px;border:2px solid var(--wood-dark);background:#2a2015;}
-  .score-seg{display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-family:'Jua',sans-serif;transition:width .4s;white-space:nowrap;overflow:hidden;}
+  .mission-bar{margin:10px 14px 4px;background:var(--parchment);border:2px solid var(--wood);border-radius:12px;padding:10px 12px;cursor:pointer;}
+  .mission-bar .mb-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;gap:8px;}
+  .mission-bar .mb-title{font-family:'Jua',sans-serif;font-size:13px;}
+  .mission-bar .mb-reward{color:var(--ink-muted);text-align:right;}
+  .prog{height:10px;background:var(--parchment2);border-radius:6px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,#7fd4a0,var(--ok));transition:width .4s;}
 
-  .my-team-chip{display:flex;align-items:center;gap:8px;margin:0 14px 10px;font-size:12px;color:var(--parchment);}
-  .dot{width:12px;height:12px;border-radius:50%;display:inline-block;border:2px solid rgba(255,255,255,.6);}
-
-  /* ── MAP ── */
-  #mapWrap{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:10px;touch-action:pan-x pan-y;}
-  #mapInner{transition:transform .15s;transform-origin:top center;}
-  .hex{cursor:pointer;stroke:#2a2015;stroke-width:1.5;}
-  .hex.mine{cursor:default;}
-  .hex.home{stroke:var(--gold);stroke-width:3;}
-  .hex-label{font-family:'Jua',sans-serif;font-size:9px;fill:#fff;pointer-events:none;text-shadow:0 1px 2px rgba(0,0,0,.6);}
+  /* map */
+  #mapWrap{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:8px;touch-action:pan-x pan-y;}
+  .hex{stroke:#2a2015;stroke-width:1.5;}
+  .hex.frontier{cursor:pointer;stroke:#fff6d8;stroke-width:2;stroke-dasharray:4 3;}
+  .hex.owned{cursor:pointer;stroke:var(--gold);stroke-width:2.5;}
+  .hex.home{stroke:var(--gold);stroke-width:3.5;}
+  .hex.fog{cursor:not-allowed;}
+  .hex.attacked{animation:flash .9s ease 2;}
+  @keyframes flash{50%{fill:#ff3b3b;}}
+  .hex-icon{font-size:14px;pointer-events:none;}
+  .hex-sub{font-family:'Jua',sans-serif;font-size:9px;fill:#fff;pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:2px;}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:11px;color:var(--parchment2);padding:4px 12px 2px;}
   .zoom-ctrl{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:30;}
-  .zoom-ctrl button{
-    width:42px;height:42px;border-radius:50%;background:var(--wood);color:var(--parchment);border:2px solid var(--gold);
-    font-size:18px;cursor:pointer;
-  }
+  .zoom-ctrl button{width:42px;height:42px;border-radius:50%;background:var(--wood);color:var(--parchment);border:2px solid var(--gold);font-size:18px;cursor:pointer;}
 
-  /* ── MODAL (quiz / settings / end) ── */
-  .modal-backdrop{position:fixed;inset:0;background:rgba(10,10,20,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:16px;}
+  /* toast */
+  #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-120%);background:var(--parchment);border:2.5px solid var(--wood);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;z-index:80;transition:transform .3s;max-width:92vw;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.35);}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+  #toast.bad{border-color:var(--danger);color:#8a1f1f;}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(10,10,20,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:14px;}
   .modal-backdrop.active{display:flex;}
-  .modal{background:var(--parchment);border:3px solid var(--wood);border-radius:18px;padding:22px 20px;width:100%;max-width:420px;max-height:88vh;overflow:auto;}
-  .modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-  .modal-title{font-size:16px;}
-  .modal-close{background:var(--danger);color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:14px;cursor:pointer;}
-  .zone-name{font-size:13px;color:var(--ink-muted);margin-bottom:4px;}
-  .zone-owner{display:flex;align-items:center;gap:8px;font-size:14px;margin-bottom:14px;font-weight:700;}
-  .defense-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
-  .shield{
-    background:var(--wood);color:var(--parchment);border-radius:10px;padding:6px 12px;font-family:'Jua',sans-serif;font-size:15px;
-    display:flex;align-items:center;gap:4px;
-  }
-  .defense-desc{font-size:12px;color:var(--ink-muted);}
-  .point-badge{background:var(--teal);color:#fff;font-family:'Jua',sans-serif;font-size:12px;padding:5px 10px;border-radius:8px;display:inline-block;margin-bottom:10px;}
-
-  .q-word-box{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:12px;padding:18px;text-align:center;margin-bottom:14px;}
-  .q-word{font-family:'Jua',sans-serif;font-size:28px;color:var(--ink);}
+  .modal{background:var(--parchment);border:3px solid var(--wood);border-radius:18px;padding:20px 18px;width:100%;max-width:430px;max-height:90vh;overflow:auto;}
+  .modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .modal-title{font-size:17px;}
+  .modal-close{background:var(--danger);color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:14px;cursor:pointer;flex-shrink:0;}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .tag{font-family:'Jua',sans-serif;font-size:12px;padding:4px 10px;border-radius:8px;background:var(--wood);color:var(--parchment);}
+  .tag.teal{background:var(--teal);color:#fff;}
+  .dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;}
+  .dots span{width:16px;height:16px;border-radius:50%;background:var(--parchment2);border:2px solid var(--wood);}
+  .dots span.on{background:var(--ok);}
+  .q-word-box{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:12px;padding:16px;text-align:center;margin-bottom:12px;}
+  .q-word{font-family:'Jua',sans-serif;font-size:28px;}
   .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-  .opt-btn{
-    background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:10px;padding:11px 9px;font-size:13px;
-    line-height:1.4;cursor:pointer;text-align:left;color:var(--ink);min-height:58px;display:flex;align-items:center;
-  }
+  .opt-btn{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:10px;padding:11px 9px;font-size:13px;line-height:1.4;cursor:pointer;text-align:left;color:var(--ink);min-height:58px;display:flex;align-items:center;}
   .opt-btn.correct{border-color:var(--ok);background:rgba(47,168,96,.18);}
   .opt-btn.wrong{border-color:var(--danger);background:rgba(217,69,61,.18);}
   .opt-btn[disabled]{cursor:default;}
   @media (max-width:420px){.opt-grid{grid-template-columns:1fr;}}
-  .q-feedback{min-height:20px;text-align:center;font-size:13px;font-family:'Jua',sans-serif;margin-top:10px;}
+  .q-feedback{min-height:20px;text-align:center;font-size:13px;font-family:'Jua',sans-serif;margin-top:10px;line-height:1.5;}
   .q-feedback.ok{color:var(--ok);}
   .q-feedback.bad{color:var(--danger);}
-  .record-line{font-size:11px;color:var(--ink-muted);text-align:center;margin-top:12px;}
 
-  /* ── END OVERLAY ── */
-  .rank-row{display:flex;align-items:center;gap:10px;background:#fffdf5;border-radius:10px;padding:10px 12px;margin-bottom:8px;}
-  .rank-no{font-family:'Jua',sans-serif;width:22px;text-align:center;}
-  .rank-bar-wrap{flex:1;height:10px;background:var(--parchment2);border-radius:6px;overflow:hidden;}
-  .rank-bar{height:100%;}
-  .rank-pct{font-family:'Jua',sans-serif;font-size:12px;width:44px;text-align:right;}
+  .mission-row{display:flex;align-items:center;gap:10px;background:#fffdf5;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1.5px solid var(--parchment2);}
+  .mission-row.done{border-color:var(--ok);background:#eef8ef;}
+  .mission-row .mi{font-size:20px;}
+  .mission-row .mt{flex:1;font-size:13px;line-height:1.4;}
+  .mission-row .mt b{font-family:'Jua',sans-serif;font-weight:400;font-size:14px;}
+  .mission-row .ms{font-size:11px;color:var(--ink-muted);white-space:nowrap;}
 
-  footer{text-align:center;color:var(--parchment2);font-size:11px;padding:10px;opacity:.7;}
+  /* dashboard */
+  .dash-code{text-align:center;color:var(--parchment);}
+  .dash-code .big{font-family:'Jua',sans-serif;font-size:52px;letter-spacing:10px;color:var(--gold);}
+  .panel{background:var(--parchment);border:3px solid var(--wood);border-radius:16px;padding:16px;margin-top:14px;}
+  .panel h3{font-family:'Jua',sans-serif;font-size:16px;margin-bottom:10px;}
+  .stu-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .stu-table th{font-size:11px;color:var(--ink-muted);text-align:left;padding:6px 4px;border-bottom:1.5px solid var(--parchment2);}
+  .stu-table td{padding:7px 4px;border-bottom:1px solid var(--parchment2);}
+  .given-btn{font-size:11px;padding:5px 9px;border-radius:8px;border:1.5px solid var(--ok);background:#fff;color:var(--ok);cursor:pointer;font-weight:700;white-space:nowrap;}
+  .given-btn.on{background:var(--ok);color:#fff;}
+
+  footer{text-align:center;color:var(--parchment2);font-size:11px;padding:8px 10px 14px;opacity:.75;}
 </style>
 </head>
 <body>
 <div id="app">
 
-  <div id="loading" class="screen active pad">
+  <div id="loading" class="screen active pad center">
     <div class="spinner"></div>
-    <div class="jua" style="font-size:18px;">어휘 땅을 불러오는 중...</div>
+    <div class="jua" style="font-size:18px;">개척 지도를 펼치는 중...</div>
     <div id="loadErrBox"></div>
   </div>
 
-  <div id="title" class="screen pad">
-    <div class="title-sub">초등 5학년 어휘 영토 전쟁</div>
-    <div class="title-main jua">어휘땅</div>
-    <div class="title-desc">낱말을 풀고, 우리 모둠의 땅을 넓혀요.</div>
+  <!-- 시작 화면 -->
+  <div id="title" class="screen pad center">
+    <div class="title-sub">초등 5학년 어휘 개척 모험</div>
+    <div class="title-main jua">어휘 개척단</div>
+    <div class="title-desc">낱말을 풀어 미지의 땅을 개척하고, 우리 반 미션을 함께 완수해요!</div>
     <div class="card">
-      <button class="btn btn-gold btn-wide" id="goCreateBtn">🏰 새 전쟁 만들기</button>
-      <div class="divider">또는</div>
-      <div class="field">
-        <label>참가 코드</label>
-        <input id="joinCodeInput" maxlength="4" placeholder="방 코드 4자리" style="letter-spacing:6px;text-transform:uppercase;">
+      <h2 class="jua">🧭 개척 시작</h2>
+      <div class="field"><label>학급 코드</label><input id="joinCode" class="code-input" maxlength="4" placeholder="4자리"></div>
+      <div class="field"><label>이름 (같은 이름으로 들어오면 이어서 할 수 있어요)</label><input id="joinName" maxlength="10" placeholder="이름"></div>
+      <div class="field"><label>과목</label><select id="joinSubject"></select></div>
+      <button class="btn btn-gold btn-wide" id="joinBtn">개척하러 가기!</button>
+      <div class="err-msg" id="joinErr"></div>
+    </div>
+    <div class="card teacher">
+      <h2 class="jua" style="font-size:15px;">👩‍🏫 선생님</h2>
+      <button class="btn btn-wide" id="goCreateBtn">새 학급 만들기</button>
+      <div class="row">
+        <div class="field grow" style="margin:0;"><input id="dashCode" class="code-input" maxlength="4" placeholder="학급 코드"></div>
+        <button class="btn" id="openDashBtn" style="padding:11px 14px;">대시보드</button>
       </div>
-      <button class="btn btn-wide" id="goJoinBtn">⚔️ 참가하기</button>
-      <div class="err-msg" id="titleErr"></div>
+      <div class="err-msg" id="dashErr"></div>
     </div>
   </div>
 
-  <div id="createScreen" class="screen pad" style="align-items:center;justify-content:center;">
+  <!-- 학급 만들기 -->
+  <div id="createScreen" class="screen pad center">
     <div class="card">
-      <h2 class="jua">전쟁 설정</h2>
-      <div class="field">
-        <label>모둠(팀) 수</label>
-        <select id="teamCountSel">
-          <option value="2">2팀</option>
-          <option value="3">3팀</option>
-          <option value="4" selected>4팀</option>
-          <option value="5">5팀</option>
-          <option value="6">6팀</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>게임 시간 (분)</label>
-        <select id="durationSel">
-          <option value="10">10분</option>
-          <option value="15">15분</option>
-          <option value="20" selected>20분</option>
-          <option value="30">30분</option>
-          <option value="40">40분</option>
-        </select>
-      </div>
-      <button class="btn btn-gold btn-wide" id="confirmCreateBtn">만들기</button>
+      <h2 class="jua">🏫 학급 미션 설정</h2>
+      <div style="font-size:12px;color:var(--ink-muted);line-height:1.5;">우리 반 학생들이 개척한 땅을 모두 합친 수가 목표에 도달하면 미션이 완료돼요. 보상은 자유롭게 적어주세요.</div>
+      <div id="missionEditor" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <button class="btn btn-plain" id="addMissionBtn">＋ 미션 추가</button>
+      <button class="btn btn-gold btn-wide" id="createBtn">학급 만들기</button>
+      <div class="err-msg" id="createErr"></div>
       <div class="back-link" id="backFromCreate">← 뒤로</div>
     </div>
   </div>
 
-  <div id="playerScreen" class="screen pad" style="align-items:center;justify-content:center;">
-    <div class="card">
-      <h2 class="jua">모험가 등록</h2>
-      <div class="field">
-        <label>이름</label>
-        <input id="playerNameInput" maxlength="8" placeholder="이름을 입력하세요">
-      </div>
-      <div class="field">
-        <label>과목 선택 (언제든 바꿀 수 있어요)</label>
-        <select id="subjectSel"></select>
-      </div>
-      <div class="field">
-        <label>모둠 선택</label>
-        <div class="team-pick" id="teamPick"></div>
-      </div>
-      <button class="btn btn-gold btn-wide" id="enterBoardBtn">전쟁터로 입장!</button>
-      <div class="err-msg" id="playerErr"></div>
-      <div class="back-link" id="backFromPlayer">← 뒤로</div>
+  <!-- 선생님 대시보드 -->
+  <div id="dashboard" class="screen pad">
+    <div class="row" style="justify-content:space-between;">
+      <div class="back-link" id="dashBack" style="color:var(--parchment2);">← 처음으로</div>
+    </div>
+    <div class="dash-code">
+      <div style="font-size:12px;opacity:.8;">학생들에게 알려주세요 · 학급 코드</div>
+      <div class="big" id="dashCodeBig">----</div>
+      <div class="jua" style="font-size:16px;">우리 반 개척한 땅 <span id="dashTotal" style="color:var(--gold);font-size:22px;">0</span>칸 · 참여 <span id="dashCount">0</span>명</div>
+    </div>
+    <div class="panel"><h3>🎯 학급 미션</h3><div id="dashMissions"></div></div>
+    <div class="panel"><h3>🧑‍🎓 학생 현황</h3>
+      <table class="stu-table"><thead><tr><th>이름</th><th>과목</th><th>개척</th><th>정답률</th><th>최근 접속</th></tr></thead><tbody id="dashStudents"></tbody></table>
     </div>
   </div>
 
+  <!-- 학생 개척 화면 -->
   <div id="board" class="screen">
-    <div id="boardHeader">
-      <span class="room-chip" id="roomChipLabel" title="클릭하여 코드 복사">방 ────</span>
-      <span class="timer-chip" id="timerChip">--:--</span>
-      <span class="online-chip" id="onlineChip">👥 -</span>
-      <button class="gear-btn" id="settingsBtn">⚙️</button>
+    <div class="topbar">
+      <span class="chip code" id="boardCode">----</span>
+      <span class="chip me" id="boardMe"></span>
+      <button class="icon-btn" id="settingsBtn">⚙️</button>
     </div>
-    <div class="score-bar" id="scoreBar"></div>
-    <div class="my-team-chip"><span class="dot" id="myTeamDot"></span><span id="myTeamLabel"></span></div>
+    <div class="mission-bar" id="missionBar"></div>
+    <div class="legend" id="legend"></div>
     <div id="mapWrap"><svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
-    <div class="zoom-ctrl">
-      <button id="zoomInBtn">＋</button>
-      <button id="zoomOutBtn">－</button>
-    </div>
-    <footer>인접한 땅만 도전할 수 있어요 · 오답은 감점 없이 나중에 다시 나와요</footer>
+    <div class="zoom-ctrl"><button id="zoomInBtn">＋</button><button id="zoomOutBtn">－</button></div>
+    <footer>점선 땅을 눌러 개척해요 · 내 땅을 누르면 방어력을 높일 수 있어요 · 틀리면 그림자 군단이 내 땅을 공격해요!</footer>
   </div>
 
-  <!-- quiz modal -->
-  <div class="modal-backdrop" id="quizBackdrop">
+  <div id="toast"></div>
+
+  <!-- 퀴즈 -->
+  <div class="modal-backdrop" id="quizModal">
     <div class="modal">
       <div class="modal-top">
-        <div class="zone-name" id="quizZoneName">구역</div>
-        <button class="modal-close" id="quizCloseBtn">✕</button>
+        <div class="modal-title jua" id="qTitle">구역</div>
+        <button class="modal-close" id="qClose">✕</button>
       </div>
-      <div class="zone-owner" id="quizOwner"></div>
-      <div class="defense-row">
-        <div class="shield" id="quizShield">🛡️ -</div>
-        <div class="defense-desc" id="quizDesc"></div>
-      </div>
-      <div class="point-badge" id="quizPointBadge"></div>
+      <div class="tags" id="qTags"></div>
+      <div class="dots" id="qDots"></div>
       <div class="q-word-box">
         <div style="font-size:11px;color:var(--ink-muted);margin-bottom:6px;">이 낱말의 뜻은?</div>
-        <div class="q-word jua" id="quizWord">단어</div>
+        <div class="q-word" id="qWord"></div>
       </div>
-      <div class="opt-grid" id="quizOptions"></div>
-      <div class="q-feedback" id="quizFeedback"></div>
-      <div class="record-line" id="quizRecord"></div>
+      <div class="opt-grid" id="qOptions"></div>
+      <div class="q-feedback" id="qFeedback"></div>
     </div>
   </div>
 
-  <!-- settings modal -->
-  <div class="modal-backdrop" id="settingsBackdrop">
-    <div class="modal" style="max-width:340px;">
-      <div class="modal-top">
-        <div class="modal-title jua">설정</div>
-        <button class="modal-close" id="settingsCloseBtn">✕</button>
-      </div>
-      <div class="field">
-        <label>과목</label>
-        <select id="subjectSel2"></select>
-      </div>
-      <div class="field" style="margin-top:12px;">
-        <label>닉네임</label>
-        <div style="font-family:'Jua',sans-serif;padding:8px 0;" id="settingsNameLabel"></div>
-      </div>
-      <button class="btn btn-wide" id="leaveRoomBtn" style="margin-top:14px;background:linear-gradient(180deg,#ff8a85,var(--danger));box-shadow:0 4px 0 #8a1f1f;">방 나가기</button>
-    </div>
-  </div>
-
-  <!-- end of game modal -->
-  <div class="modal-backdrop" id="endBackdrop">
+  <!-- 미션 목록 -->
+  <div class="modal-backdrop" id="missionModal">
     <div class="modal">
-      <div class="modal-top">
-        <div class="modal-title jua">🏆 전쟁 결과</div>
-      </div>
-      <div id="rankList"></div>
-      <button class="btn btn-gold btn-wide" id="newRoundBtn" style="margin-top:14px;">새 라운드 시작</button>
-      <button class="btn-ghost btn btn-wide" id="endLeaveBtn" style="margin-top:8px;color:var(--ink);border-color:var(--ink-muted);">방 나가기</button>
+      <div class="modal-top"><div class="modal-title jua">🎯 우리 반 미션</div><button class="modal-close" id="missionClose">✕</button></div>
+      <div id="missionList"></div>
     </div>
   </div>
 
+  <!-- 설정 -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal" style="max-width:340px;">
+      <div class="modal-top"><div class="modal-title jua">설정</div><button class="modal-close" id="settingsClose">✕</button></div>
+      <div class="field"><label>과목</label><select id="settingsSubject"></select></div>
+      <button class="btn btn-danger btn-wide" id="leaveBtn" style="margin-top:16px;">처음으로 나가기</button>
+    </div>
+  </div>
 </div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import {
-  getDatabase, ref, set, get, update, onValue, off, runTransaction, onDisconnect
-} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, get, update, onValue, off, runTransaction }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
 /* ========================================================================
    설정
@@ -314,25 +276,36 @@ const FIREBASE_CONFIG = {
   databaseURL: "https://alien-9d8d4-default-rtdb.firebaseio.com",
   projectId: "alien-9d8d4",
 };
-const TEAM_COLORS = ['#d9453d','#2e7fd9','#2fa860','#e8902c','#8e5bd9','#1aa6a6'];
-const TEAM_NAMES  = ['빨강팀','파랑팀','초록팀','주황팀','보라팀','청록팀'];
+const ROOT = 'pioneer';
 const GRID_RADIUS = 4;
-const HEX_SIZE = 30;
+const HEX_SIZE = 32;
 const NEI = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
-const CAPTURE_RESET_DEFENSE = 3;
-const MAX_DEFENSE = 12;
-const PROTECTION_MS = 45000;
-const DIFF_POINT = { easy: 1, normal: 1.5, hard: 2 };
+const HOME = '0_0';
+const START_HP = 2, MAX_HP = 5;
+const TERRAIN = {
+  plain:    { icon:'🌾', name:'들판',     diff:'easy',   diffLabel:'쉬운 어휘',   need:2, color:'#9cc760' },
+  forest:   { icon:'🌲', name:'숲',       diff:'normal', diffLabel:'보통 어휘',   need:3, color:'#3f9a55' },
+  mountain: { icon:'⛰️', name:'산',       diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#9a7b5a' },
+  ruin:     { icon:'🏛️', name:'고대 유적', diff:'mixed',  diffLabel:'모든 어휘',   need:5, color:'#c9a24a' },
+};
+// 중심에서 멀어질수록 어려운 땅이 많아짐: [들판, 숲, 산, 유적] 누적 확률
+const TERRAIN_ODDS = { 1:[.7,1,1,1], 2:[.4,.85,1,1], 3:[.2,.6,.95,1], 4:[.1,.4,.85,1] };
+const DEFAULT_MISSIONS = [
+  { goal: 20,  reward: '칭찬 도장 1개' },
+  { goal: 50,  reward: '쉬는 시간 5분 추가' },
+  { goal: 100, reward: '자리 바꾸기 찬스' },
+  { goal: 200, reward: '학급 영화 관람' },
+];
 
 let DB = {};
-let db = null, roomRef = null, presenceRef = null;
-let roomCode = null, myTeam = null, myName = null, mySubject = null;
-let cellsCache = {}, teamsCache = {}, metaCache = {};
-let wrongQueue = {};        // { subject: [word,...] }
-let recentAsked = [];
-let currentQuizCellId = null;
-let timerInterval = null;
-let gameEndedShown = false;
+let db = null, roomRef = null;
+let roomCode = null, playerKey = null, isTeacher = false;
+let room = { meta:{}, missions:{}, players:{} };
+let me = null;
+let terrainMap = {}, zoneMap = {};
+let seenAchieved = null;
+let wrongQueue = {}, recentAsked = [];
+let quiz = null;
 
 /* ---------- CSV ---------- */
 function parseCSV(text){
@@ -346,8 +319,7 @@ function parseCSV(text){
       if (c === '"') inQ = true;
       else if (c === ',') { row.push(field); field=''; }
       else if (c === '\n') { row.push(field); rows.push(row); row=[]; field=''; }
-      else if (c === '\r') { /* skip */ }
-      else field += c;
+      else if (c !== '\r') field += c;
     }
   }
   if (field.length || row.length){ row.push(field); rows.push(row); }
@@ -374,12 +346,9 @@ async function fetchSheet(subject, sheetName){
   const words = []; const seen = new Set();
   for (let i=1;i<rows.length;i++){
     const r = rows[i]; if (!r) continue;
-    const word = (r[idx.word]||'').trim();
-    const meaning = (r[idx.meaning]||'').trim();
-    if (!word || !meaning) continue;
-    const key = word+'|'+meaning;
-    if (seen.has(key)) continue;
-    seen.add(key);
+    const word = (r[idx.word]||'').trim(), meaning = (r[idx.meaning]||'').trim();
+    if (!word || !meaning || seen.has(word+'|'+meaning)) continue;
+    seen.add(word+'|'+meaning);
     words.push({ word, meaning, subject, difficulty: normalizeDifficulty(idx.diff>-1 ? r[idx.diff] : '') });
   }
   return words;
@@ -393,8 +362,7 @@ async function loadAllData(){
     try { DB[subj] = { all: await fetchSheet(subj, CONFIG.SHEETS[subj]) }; }
     catch (e){ DB[subj] = { all: [], error: e.message }; }
   }
-  const allFailed = subjects.every(s => DB[s].all.length === 0);
-  if (allFailed){
+  if (subjects.every(s => DB[s].all.length === 0)){
     const firstErr = subjects.map(s=>DB[s].error).find(Boolean) || '어휘를 하나도 불러오지 못했어요.';
     errBox.innerHTML = `<div class="load-err">⚠️ ${escapeHtml(firstErr)}<br><br>
       스프레드시트 공유 설정(링크가 있는 모든 사용자-뷰어)과 시트 이름(국어/사회/과학)을 확인해주세요.</div>
@@ -411,222 +379,255 @@ function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const 
 function sample(arr,n){ return shuffle(arr).slice(0,n); }
 function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 function genCode(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from({length:4},()=>c[Math.floor(Math.random()*c.length)]).join(''); }
+function nameKey(name){ return name.trim().replace(/[.#$\[\]\/]/g,'_'); }
+function hashStr(s){ let h=1779033703^s.length; for(let i=0;i<s.length;i++){ h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return h>>>0; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+let toastTimer = null;
+function toast(msg, bad){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show' + (bad ? ' bad' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ el.className = bad ? 'bad' : ''; }, 2600);
+}
+function timeAgo(ts){
+  if (!ts) return '-';
+  const m = Math.floor((Date.now()-ts)/60000);
+  if (m < 1) return '방금'; if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m/60); if (h < 24) return `${h}시간 전`;
+  return `${Math.floor(h/24)}일 전`;
+}
 
-/* ---------- hex grid ---------- */
+/* ---------- hex map ---------- */
 function axialToPixel(q,r,s){ return { x: s*Math.sqrt(3)*(q+r/2), y: s*1.5*r }; }
 function hexCorners(cx,cy,s){
   const pts=[];
-  for(let i=0;i<6;i++){
-    const ang = Math.PI/180*(60*i-30);
-    pts.push(`${(cx+s*Math.cos(ang)).toFixed(1)},${(cy+s*Math.sin(ang)).toFixed(1)}`);
-  }
+  for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i-30); pts.push(`${(cx+s*Math.cos(a)).toFixed(1)},${(cy+s*Math.sin(a)).toFixed(1)}`); }
   return pts.join(' ');
 }
 function generateAxialCoords(N){
   const list=[];
-  for(let q=-N;q<=N;q++){
-    const r1=Math.max(-N,-q-N), r2=Math.min(N,-q+N);
-    for(let r=r1;r<=r2;r++) list.push([q,r]);
-  }
+  for(let q=-N;q<=N;q++){ const r1=Math.max(-N,-q-N), r2=Math.min(N,-q+N); for(let r=r1;r<=r2;r++) list.push([q,r]); }
   return list;
 }
-function pickCorners(k,N){
-  const corners=[[N,0],[N,-N],[0,-N],[-N,0],[-N,N],[0,N]];
-  const used=new Set(); const result=[];
-  for(let i=0;i<k;i++){
-    let idx=Math.round(i*6/k)%6;
-    while(used.has(idx)) idx=(idx+1)%6;
-    used.add(idx); result.push(corners[idx]);
-  }
-  return result;
-}
-function buildInitialCells(teamCount){
-  const coords = generateAxialCoords(GRID_RADIUS);
-  const cells = {};
-  let zi = 0;
-  coords.forEach(([q,r])=>{
-    zi++;
-    cells[`${q}_${r}`] = { owner:null, defense:3+Math.floor(Math.random()*3), home:false, capturedAt:0, totalCorrect:0, zone: zi };
+function hexDist(q,r){ return (Math.abs(q)+Math.abs(r)+Math.abs(q+r))/2; }
+function neighborsOf(id){ const [q,r]=id.split('_').map(Number); return NEI.map(([dq,dr])=>`${q+dq}_${r+dr}`); }
+function buildTerrain(seed){
+  const rng = mulberry32(seed);
+  terrainMap = {}; zoneMap = {};
+  generateAxialCoords(GRID_RADIUS).forEach(([q,r], i)=>{
+    const id = `${q}_${r}`;
+    zoneMap[id] = i+1;
+    if (id === HOME) return;
+    const odds = TERRAIN_ODDS[hexDist(q,r)];
+    const x = rng();
+    terrainMap[id] = x < odds[0] ? 'plain' : x < odds[1] ? 'forest' : x < odds[2] ? 'mountain' : 'ruin';
   });
-  const homes = pickCorners(teamCount, GRID_RADIUS);
-  homes.forEach(([hq,hr], teamIdx)=>{
-    const key = `${hq}_${hr}`;
-    cells[key] = { owner:teamIdx, defense:MAX_DEFENSE, home:true, capturedAt:0, totalCorrect:0, zone: cells[key].zone };
-    NEI.forEach(([dq,dr])=>{
-      const nk = `${hq+dq}_${hr+dr}`;
-      if (cells[nk] && !cells[nk].home){
-        cells[nk] = { owner:teamIdx, defense:6, home:false, capturedAt:0, totalCorrect:0, zone: cells[nk].zone };
-      }
-    });
-  });
-  return cells;
 }
-function neighborsOf(q,r){ return NEI.map(([dq,dr])=>`${q+dq}_${r+dr}`); }
 
 /* ---------- Firebase ---------- */
 async function initFirebase(){
   if (db) return true;
-  try { const app = initializeApp(FIREBASE_CONFIG); db = getDatabase(app); return true; }
+  try { db = getDatabase(initializeApp(FIREBASE_CONFIG)); return true; }
   catch(e){ console.warn('firebase init fail', e); return false; }
 }
-async function createRoom(teamCount, durationMin){
-  const code = genCode();
-  const teams = {};
-  for (let i=0;i<teamCount;i++) teams[i] = { name: TEAM_NAMES[i], color: TEAM_COLORS[i] };
-  const now = Date.now();
-  const state = {
-    meta: { teamCount, durationMin, startedAt: now, endsAt: now + durationMin*60000, gridRadius: GRID_RADIUS },
-    teams,
-    cells: buildInitialCells(teamCount),
-  };
-  await set(ref(db, `ddang/${code}`), state);
-  return code;
-}
-async function roomExists(code){
-  const snap = await get(ref(db, `ddang/${code}/meta`));
-  return snap.exists();
-}
 function listenRoom(code){
-  roomRef = ref(db, `ddang/${code}`);
+  roomRef = ref(db, `${ROOT}/${code}`);
   return new Promise(resolve => {
     onValue(roomRef, snap => {
-      const data = snap.val();
-      if (!data) return;
-      metaCache = data.meta || {};
-      teamsCache = data.teams || {};
-      cellsCache = data.cells || {};
+      const data = snap.val() || {};
+      room = { meta: data.meta || {}, missions: data.missions || {}, players: data.players || {} };
       resolve();
-      if (document.getElementById('board').classList.contains('active')) renderBoard();
+      onRoomUpdate();
     });
   });
 }
-const hasOwner = c => c.owner !== null && c.owner !== undefined;
-function presenceJoin(code, name){
-  const pRef = ref(db, `ddang/${code}/players/${Date.now()}_${Math.random().toString(36).slice(2,7)}`);
-  set(pRef, { name, ts: Date.now() });
-  onDisconnect(pRef).remove();
-  presenceRef = ref(db, `ddang/${code}/players`);
-  onValue(presenceRef, snap => {
-    const n = snap.exists() ? Object.keys(snap.val()).length : 0;
-    document.getElementById('onlineChip').textContent = `👥 ${n}`;
-  });
+function savePlayer(){
+  me.updatedAt = Date.now();
+  set(ref(db, `${ROOT}/${roomCode}/players/${playerKey}`), me).catch(e=>console.warn(e));
 }
 
-/* capture/defend transaction */
-function applyAnswer(cellId, pointValue){
-  const cRef = ref(db, `ddang/${roomCode}/cells/${cellId}`);
-  return runTransaction(cRef, (cell) => {
-    if (!cell) return cell;
-    if (cell.home) return;
-    if (cell.owner === myTeam){
-      cell.defense = Math.min(MAX_DEFENSE, (cell.defense||0) + pointValue);
-      cell.totalCorrect = (cell.totalCorrect||0) + 1;
-      return cell;
+/* ---------- missions ---------- */
+function ownedCount(p){ return p && p.owned ? Object.keys(p.owned).length : 0; }
+function classTotal(){
+  let t = 0;
+  for (const [k,p] of Object.entries(room.players)) t += (k === playerKey && me) ? ownedCount(me) : ownedCount(p);
+  if (me && !room.players[playerKey]) t += ownedCount(me);
+  return t;
+}
+function missionList(){
+  return Object.entries(room.missions).map(([id,m])=>({ id, ...m })).sort((a,b)=>a.goal-b.goal);
+}
+function checkMissions(){
+  const total = classTotal();
+  const list = missionList();
+  list.forEach(m=>{
+    if (total >= m.goal && !m.achievedAt){
+      runTransaction(ref(db, `${ROOT}/${roomCode}/missions/${m.id}/achievedAt`), cur => cur || Date.now()).catch(()=>{});
     }
-    // attacking neutral or enemy
-    if (cell.capturedAt && Date.now() - cell.capturedAt < PROTECTION_MS) return;
-    cell.defense = (cell.defense||0) - pointValue;
-    cell.totalCorrect = (cell.totalCorrect||0) + 1;
-    if (cell.defense <= 0){
-      cell.owner = myTeam;
-      cell.defense = CAPTURE_RESET_DEFENSE;
-      cell.capturedAt = Date.now();
-    }
-    return cell;
   });
+  const achieved = new Set(list.filter(m=>m.achievedAt).map(m=>m.id));
+  if (seenAchieved){
+    list.forEach(m=>{ if (achieved.has(m.id) && !seenAchieved.has(m.id)) toast(`🎉 학급 미션 달성! "${m.reward}" 보상을 받아요!`); });
+  }
+  seenAchieved = achieved;
+}
+function onRoomUpdate(){
+  if (!roomCode) return;
+  checkMissions();
+  if (document.getElementById('board').classList.contains('active')) renderMissionBar();
+  if (document.getElementById('dashboard').classList.contains('active')) renderDashboard();
+  if (document.getElementById('missionModal').classList.contains('active')) renderMissionList();
+}
+function renderMissionBar(){
+  const bar = document.getElementById('missionBar');
+  const list = missionList();
+  const total = classTotal();
+  const next = list.find(m=>!m.achievedAt);
+  if (!list.length){ bar.innerHTML = `<div class="mb-title">학급 미션이 없어요</div>`; return; }
+  if (!next){
+    bar.innerHTML = `<div class="mb-top"><span class="mb-title">🎉 모든 학급 미션 완료!</span><span class="mb-reward">우리 반 땅 ${total}칸</span></div>`;
+    return;
+  }
+  const doneCount = list.length - list.filter(m=>!m.achievedAt).length;
+  const pct = Math.min(100, Math.round(total/next.goal*100));
+  bar.innerHTML = `<div class="mb-top">
+      <span class="mb-title">🎯 학급 미션 ${doneCount+1}/${list.length} · 우리 반 땅 ${total} / ${next.goal}칸</span>
+      <span class="mb-reward">🎁 ${escapeHtml(next.reward)}</span>
+    </div><div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>`;
+}
+function renderMissionList(){
+  const total = classTotal();
+  document.getElementById('missionList').innerHTML = missionList().map(m=>`
+    <div class="mission-row ${m.achievedAt?'done':''}">
+      <span class="mi">${m.achievedAt ? '✅' : '🎯'}</span>
+      <span class="mt"><b>우리 반 땅 ${m.goal}칸 개척</b><br>🎁 ${escapeHtml(m.reward)}</span>
+      <span class="ms">${m.achievedAt ? (m.given ? '보상 받음' : '달성!') : `${Math.min(total,m.goal)}/${m.goal}`}</span>
+    </div>`).join('') || '<div style="text-align:center;color:var(--ink-muted);">미션이 없어요</div>';
 }
 
-/* ---------- lobby flow ---------- */
+/* ---------- 시작 화면 ---------- */
 function initTitle(){
-  document.getElementById('goCreateBtn').onclick = () => showScreen('createScreen');
-  document.getElementById('goJoinBtn').onclick = async () => {
-    const code = document.getElementById('joinCodeInput').value.trim().toUpperCase();
-    const errEl = document.getElementById('titleErr');
-    if (code.length !== 4){ errEl.textContent = '방 코드는 4자리입니다.'; return; }
-    errEl.textContent = '';
-    const ok = await initFirebase();
-    if (!ok){ errEl.textContent = '서버 연결에 실패했어요.'; return; }
-    const exists = await roomExists(code);
-    if (!exists){ errEl.textContent = '방을 찾을 수 없습니다. 코드를 확인해주세요.'; return; }
-    roomCode = code;
-    await listenRoom(code);
-    openPlayerScreen();
+  const subjOpts = Object.keys(CONFIG.SHEETS).filter(s=>DB[s].all.length>=4).map(s=>`<option value="${s}">${s} (${DB[s].all.length}개)</option>`).join('');
+  document.getElementById('joinSubject').innerHTML = subjOpts;
+  document.getElementById('settingsSubject').innerHTML = subjOpts;
+  document.getElementById('joinCode').value = lsGet('pioneer_code') || '';
+  document.getElementById('joinName').value = lsGet('pioneer_name') || '';
+
+  document.getElementById('joinBtn').onclick = joinAsStudent;
+  document.getElementById('goCreateBtn').onclick = openCreate;
+  document.getElementById('openDashBtn').onclick = async () => {
+    const code = document.getElementById('dashCode').value.trim().toUpperCase();
+    const err = document.getElementById('dashErr');
+    if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
+    if (!await initFirebase()){ err.textContent = '서버 연결에 실패했어요.'; return; }
+    const snap = await get(ref(db, `${ROOT}/${code}/meta`));
+    if (!snap.exists()){ err.textContent = '학급을 찾을 수 없어요.'; return; }
+    err.textContent = '';
+    openDashboard(code);
   };
   document.getElementById('backFromCreate').onclick = () => showScreen('title');
-  document.getElementById('confirmCreateBtn').onclick = async () => {
-    const teamCount = parseInt(document.getElementById('teamCountSel').value,10);
-    const durationMin = parseInt(document.getElementById('durationSel').value,10);
-    const ok = await initFirebase();
-    if (!ok){ alert('서버 연결에 실패했어요.'); return; }
-    roomCode = await createRoom(teamCount, durationMin);
-    await listenRoom(roomCode);
-    openPlayerScreen();
-  };
-  document.getElementById('backFromPlayer').onclick = () => { showScreen('title'); };
+  document.getElementById('dashBack').onclick = goHome;
 }
+async function joinAsStudent(){
+  const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  const name = document.getElementById('joinName').value.trim();
+  const subject = document.getElementById('joinSubject').value;
+  const err = document.getElementById('joinErr');
+  if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
+  if (!name){ err.textContent = '이름을 입력해주세요.'; return; }
+  if (!subject){ err.textContent = '불러온 어휘가 있는 과목이 없어요.'; return; }
+  if (!await initFirebase()){ err.textContent = '서버 연결에 실패했어요.'; return; }
+  const snap = await get(ref(db, `${ROOT}/${code}/meta`));
+  if (!snap.exists()){ err.textContent = '학급을 찾을 수 없어요. 코드를 확인해주세요.'; return; }
+  err.textContent = '';
+  lsSet('pioneer_code', code); lsSet('pioneer_name', name);
 
-function openPlayerScreen(){
-  const subjSel = document.getElementById('subjectSel');
-  subjSel.innerHTML = Object.keys(CONFIG.SHEETS).map(s=>`<option value="${s}">${s}</option>`).join('');
-  showScreen('playerScreen');
-  const pick = document.getElementById('teamPick');
-  pick.innerHTML = Object.keys(teamsCache).map(tid => {
-    const t = teamsCache[tid];
-    const cnt = Object.values(cellsCache).filter(c=>String(c.owner)===String(tid)).length;
-    return `<div class="team-opt" data-team="${tid}" style="background:${t.color}">${escapeHtml(t.name)}<span class="cnt">${cnt}칸</span></div>`;
-  }).join('');
-  pick.querySelectorAll('.team-opt').forEach((el,i)=>{
-    if (i===0) el.classList.add('picked');
-    el.onclick = () => { pick.querySelectorAll('.team-opt').forEach(x=>x.classList.remove('picked')); el.classList.add('picked'); };
-  });
-  document.getElementById('enterBoardBtn').onclick = () => {
-    const name = document.getElementById('playerNameInput').value.trim();
-    const errEl = document.getElementById('playerErr');
-    if (!name){ errEl.textContent = '이름을 입력해주세요.'; return; }
-    const picked = document.querySelector('#teamPick .team-opt.picked');
-    if (!picked){ errEl.textContent = '모둠을 선택해주세요.'; return; }
-    myName = name; myTeam = parseInt(picked.dataset.team,10); mySubject = subjSel.value;
-    presenceJoin(roomCode, name);
-    enterBoard();
-  };
+  roomCode = code; playerKey = nameKey(name); isTeacher = false;
+  const pSnap = await get(ref(db, `${ROOT}/${code}/players/${playerKey}`));
+  const prev = pSnap.exists() ? pSnap.val() : {};
+  me = { name, subject, owned: prev.owned || {}, progress: prev.progress || {}, correct: prev.correct || 0, wrong: prev.wrong || 0 };
+  await listenRoom(code);
+  buildTerrain(room.meta.seed || hashStr(code));
+  savePlayer();
+  enterBoard(!pSnap.exists());
 }
-
-/* ---------- board ---------- */
-function enterBoard(){
-  showScreen('board');
-  document.getElementById('roomChipLabel').textContent = `방 ${roomCode}`;
-  document.getElementById('roomChipLabel').onclick = () => {
-    navigator.clipboard?.writeText(roomCode).catch(()=>{});
-  };
-  const subjSel2 = document.getElementById('subjectSel2');
-  subjSel2.innerHTML = Object.keys(CONFIG.SHEETS).map(s=>`<option value="${s}">${s}</option>`).join('');
-  subjSel2.value = mySubject;
-  subjSel2.onchange = () => { mySubject = subjSel2.value; };
-  document.getElementById('settingsNameLabel').textContent = `${myName} (${teamsCache[myTeam]?.name||''})`;
-  document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsBackdrop').classList.add('active');
-  document.getElementById('settingsCloseBtn').onclick = () => document.getElementById('settingsBackdrop').classList.remove('active');
-  document.getElementById('leaveRoomBtn').onclick = leaveRoom;
-  document.getElementById('endLeaveBtn').onclick = leaveRoom;
-  document.getElementById('quizCloseBtn').onclick = closeQuiz;
-  document.getElementById('zoomInBtn').onclick = () => setZoom(zoomLevel+0.2);
-  document.getElementById('zoomOutBtn').onclick = () => setZoom(zoomLevel-0.2);
-  document.getElementById('newRoundBtn').onclick = startNewRound;
-
-  buildSvgSkeleton();
-  renderBoard();
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(tickTimer, 1000);
-  tickTimer();
-}
-function leaveRoom(){
+function goHome(){
   if (roomRef) off(roomRef);
-  if (presenceRef) off(presenceRef);
-  roomRef = null; roomCode = null; myTeam = null;
-  document.getElementById('settingsBackdrop').classList.remove('active');
-  document.getElementById('endBackdrop').classList.remove('active');
-  location.reload();
+  roomRef = null; roomCode = null; playerKey = null; me = null; seenAchieved = null; isTeacher = false;
+  ['quizModal','missionModal','settingsModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  clearTimeout(toastTimer); document.getElementById('toast').className = '';
+  showScreen('title');
 }
 
+/* ---------- 학급 만들기 / 대시보드 ---------- */
+function openCreate(){
+  const ed = document.getElementById('missionEditor');
+  ed.innerHTML = '';
+  const addRow = (goal, reward) => {
+    const row = document.createElement('div');
+    row.className = 'mission-edit';
+    row.innerHTML = `<input class="goal" type="number" min="1" placeholder="칸"><input class="reward" maxlength="30" placeholder="보상 (예: 쉬는 시간 5분)"><button class="rm" title="삭제">✕</button>`;
+    row.querySelector('.goal').value = goal ?? '';
+    row.querySelector('.reward').value = reward ?? '';
+    row.querySelector('.rm').onclick = () => row.remove();
+    ed.appendChild(row);
+  };
+  DEFAULT_MISSIONS.forEach(m=>addRow(m.goal, m.reward));
+  document.getElementById('addMissionBtn').onclick = () => addRow('', '');
+  document.getElementById('createBtn').onclick = async () => {
+    const err = document.getElementById('createErr');
+    const rows = [...ed.querySelectorAll('.mission-edit')].map(r=>({
+      goal: parseInt(r.querySelector('.goal').value,10), reward: r.querySelector('.reward').value.trim()
+    })).filter(m=>m.goal>0 && m.reward);
+    if (!rows.length){ err.textContent = '미션을 1개 이상 입력해주세요 (목표 칸 수와 보상).'; return; }
+    if (!await initFirebase()){ err.textContent = '서버 연결에 실패했어요.'; return; }
+    err.textContent = '';
+    const code = genCode();
+    const missions = {};
+    rows.sort((a,b)=>a.goal-b.goal).forEach((m,i)=>{ missions['m'+i] = { goal:m.goal, reward:m.reward }; });
+    await set(ref(db, `${ROOT}/${code}`), { meta:{ createdAt: Date.now(), seed: hashStr(code) }, missions });
+    openDashboard(code);
+  };
+  showScreen('createScreen');
+}
+async function openDashboard(code){
+  roomCode = code; isTeacher = true; playerKey = null; me = null;
+  document.getElementById('dashCode').value = code;
+  showScreen('dashboard');
+  await listenRoom(code);
+  renderDashboard();
+}
+function renderDashboard(){
+  document.getElementById('dashCodeBig').textContent = roomCode;
+  const players = Object.values(room.players);
+  document.getElementById('dashTotal').textContent = classTotal();
+  document.getElementById('dashCount').textContent = players.length;
+  const total = classTotal();
+  const mWrap = document.getElementById('dashMissions');
+  mWrap.innerHTML = missionList().map(m=>`
+    <div class="mission-row ${m.achievedAt?'done':''}">
+      <span class="mi">${m.achievedAt ? '✅' : '🎯'}</span>
+      <span class="mt"><b>땅 ${m.goal}칸</b> · 🎁 ${escapeHtml(m.reward)}<br>
+        <span style="font-size:11px;color:var(--ink-muted);">${m.achievedAt ? `${new Date(m.achievedAt).toLocaleString('ko-KR',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})} 달성` : `진행 ${Math.min(total,m.goal)} / ${m.goal}`}</span></span>
+      ${m.achievedAt ? `<button class="given-btn ${m.given?'on':''}" data-id="${m.id}">${m.given?'지급 완료':'보상 지급'}</button>` : ''}
+    </div>`).join('');
+  mWrap.querySelectorAll('.given-btn').forEach(b=>{
+    b.onclick = () => {
+      const m = room.missions[b.dataset.id];
+      update(ref(db, `${ROOT}/${roomCode}/missions/${b.dataset.id}`), { given: !m.given });
+    };
+  });
+  const rows = players.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko'));
+  document.getElementById('dashStudents').innerHTML = rows.map(p=>{
+    const tries = (p.correct||0)+(p.wrong||0);
+    const acc = tries ? Math.round((p.correct||0)/tries*100)+'%' : '-';
+    return `<tr><td><b>${escapeHtml(p.name||'')}</b></td><td>${escapeHtml(p.subject||'')}</td><td>${ownedCount(p)}칸</td><td>${acc}</td><td style="color:var(--ink-muted);font-size:11px;">${timeAgo(p.updatedAt)}</td></tr>`;
+  }).join('') || `<tr><td colspan="5" style="text-align:center;color:var(--ink-muted);padding:16px;">아직 참여한 학생이 없어요</td></tr>`;
+}
+
+/* ---------- 학생 개척 화면 ---------- */
+let hexNodes = {};
 let zoomLevel = 1, mapBaseW = 0, mapBaseH = 0;
 function setZoom(v){
   zoomLevel = Math.max(0.6, Math.min(2.2, v));
@@ -634,219 +635,226 @@ function setZoom(v){
   svg.setAttribute('width', mapBaseW*zoomLevel);
   svg.setAttribute('height', mapBaseH*zoomLevel);
 }
-
-let hexNodes = {}; // id -> {poly, label}
+function enterBoard(isNew){
+  showScreen('board');
+  document.getElementById('boardCode').textContent = roomCode;
+  document.getElementById('legend').innerHTML = Object.values(TERRAIN).map(t=>`<span>${t.icon} ${t.name} · ${t.diffLabel} ${t.need}문제</span>`).join('');
+  const ss = document.getElementById('settingsSubject');
+  ss.value = me.subject;
+  ss.onchange = () => { me.subject = ss.value; savePlayer(); renderHeader(); };
+  document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
+  document.getElementById('settingsClose').onclick = () => document.getElementById('settingsModal').classList.remove('active');
+  document.getElementById('leaveBtn').onclick = goHome;
+  document.getElementById('missionBar').onclick = () => { renderMissionList(); document.getElementById('missionModal').classList.add('active'); };
+  document.getElementById('missionClose').onclick = () => document.getElementById('missionModal').classList.remove('active');
+  document.getElementById('qClose').onclick = closeQuiz;
+  document.getElementById('zoomInBtn').onclick = () => setZoom(zoomLevel+0.2);
+  document.getElementById('zoomOutBtn').onclick = () => setZoom(zoomLevel-0.2);
+  buildSvgSkeleton();
+  renderMap(); renderHeader(); renderMissionBar();
+  toast(isNew ? '🏠 본진에서 출발! 점선으로 된 땅을 눌러 개척해 보세요.' : `다시 왔군요, ${me.name}! 개척을 이어가요.`);
+}
+function renderHeader(){
+  const tries = me.correct + me.wrong;
+  const acc = tries ? Math.round(me.correct/tries*100) : 0;
+  document.getElementById('boardMe').textContent = `${me.name} · ${me.subject} · 내 땅 ${ownedCount(me)}칸 · 정답률 ${acc}%`;
+}
 function buildSvgSkeleton(){
   const svg = document.getElementById('mapSvg');
   const coords = generateAxialCoords(GRID_RADIUS);
   const pts = coords.map(([q,r])=>axialToPixel(q,r,HEX_SIZE));
-  const xs = pts.map(p=>p.x), ys = pts.map(p=>p.y);
-  const pad = HEX_SIZE*1.2;
-  const minX=Math.min(...xs)-pad, maxX=Math.max(...xs)+pad, minY=Math.min(...ys)-pad, maxY=Math.max(...ys)+pad;
-  const w = maxX-minX, h = maxY-minY;
-  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-  mapBaseW = w; mapBaseH = h;
+  const pad = HEX_SIZE*1.1;
+  const minX=Math.min(...pts.map(p=>p.x))-pad, maxX=Math.max(...pts.map(p=>p.x))+pad;
+  const minY=Math.min(...pts.map(p=>p.y))-pad, maxY=Math.max(...pts.map(p=>p.y))+pad;
+  mapBaseW = maxX-minX; mapBaseH = maxY-minY;
+  svg.setAttribute('viewBox', `0 0 ${mapBaseW} ${mapBaseH}`);
   svg.innerHTML = '';
-  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
-  svg.appendChild(g);
   hexNodes = {};
+  const NS = 'http://www.w3.org/2000/svg';
   coords.forEach(([q,r])=>{
     const id = `${q}_${r}`;
     const {x,y} = axialToPixel(q,r,HEX_SIZE);
     const cx = x-minX, cy = y-minY;
-    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-    poly.setAttribute('points', hexCorners(cx,cy,HEX_SIZE-1));
-    poly.classList.add('hex');
-    poly.dataset.id = id; poly.dataset.q=q; poly.dataset.r=r;
-    poly.onclick = () => onCellClick(id, q, r);
-    const label = document.createElementNS('http://www.w3.org/2000/svg','text');
-    label.setAttribute('x', cx); label.setAttribute('y', cy+3);
-    label.setAttribute('text-anchor','middle');
-    label.classList.add('hex-label');
-    g.appendChild(poly); g.appendChild(label);
-    hexNodes[id] = { poly, label };
+    const poly = document.createElementNS(NS,'polygon');
+    poly.setAttribute('points', hexCorners(cx,cy,HEX_SIZE-1.5));
+    poly.classList.add('hex'); poly.dataset.id = id;
+    poly.onclick = () => onCellClick(id);
+    const icon = document.createElementNS(NS,'text');
+    icon.setAttribute('x', cx); icon.setAttribute('y', cy+1); icon.setAttribute('text-anchor','middle');
+    icon.classList.add('hex-icon');
+    const sub = document.createElementNS(NS,'text');
+    sub.setAttribute('x', cx); sub.setAttribute('y', cy+15); sub.setAttribute('text-anchor','middle');
+    sub.classList.add('hex-sub');
+    svg.appendChild(poly); svg.appendChild(icon); svg.appendChild(sub);
+    hexNodes[id] = { poly, icon, sub };
   });
-  const fit = Math.min(1.6, (document.getElementById('mapWrap').clientWidth - 20) / w);
-  setZoom(fit > 0 ? fit : 1);
+  const fit = (document.getElementById('mapWrap').clientWidth - 16) / mapBaseW;
+  setZoom(Math.min(1.7, fit > 0 ? fit : 1));
 }
-function isAdjacentToMine(q,r){
-  return neighborsOf(q,r).some(nk => cellsCache[nk] && String(cellsCache[nk].owner)===String(myTeam));
-}
-function renderBoard(){
-  if (!Object.keys(hexNodes).length) return;
-  // score bar
-  const total = Object.keys(cellsCache).length || 1;
-  const teamIds = Object.keys(teamsCache);
-  const counts = {}; teamIds.forEach(t=>counts[t]=0);
-  Object.values(cellsCache).forEach(c=>{ if (c.owner!==null && c.owner!==undefined && counts[c.owner]!==undefined) counts[c.owner]++; });
-  const scoreBar = document.getElementById('scoreBar');
-  scoreBar.innerHTML = teamIds.map(t=>{
-    const pct = Math.round(counts[t]/total*100);
-    return `<div class="score-seg" style="width:${pct}%;background:${teamsCache[t].color}">${pct>7?teamsCache[t].name:''}</div>`;
-  }).join('');
-  if (myTeam!==null && teamsCache[myTeam]){
-    document.getElementById('myTeamDot').style.background = teamsCache[myTeam].color;
-    document.getElementById('myTeamLabel').textContent = `나: ${myName} · ${teamsCache[myTeam].name} (${counts[myTeam]||0}칸)`;
-  }
-  // hexes
-  Object.entries(hexNodes).forEach(([id, node])=>{
-    const cell = cellsCache[id];
-    if (!cell) return;
-    const [q,r] = id.split('_').map(Number);
-    let fill = '#d8cdb0';
-    if (hasOwner(cell) && teamsCache[cell.owner]) fill = teamsCache[cell.owner].color;
-    node.poly.setAttribute('fill', fill);
-    node.poly.classList.toggle('home', !!cell.home);
-    const mine = String(cell.owner)===String(myTeam);
-    node.poly.classList.toggle('mine', mine);
-    const protectedNow = cell.capturedAt && (Date.now()-cell.capturedAt < PROTECTION_MS);
-    const targetable = !cell.home && !mine && isAdjacentToMine(q,r) && !protectedNow;
-    node.poly.style.opacity = (mine || targetable) ? '1' : '0.55';
-    node.label.textContent = cell.home ? '★' : (protectedNow ? '🛡' : fmt(cell.defense));
+function isOwned(id){ return id === HOME || !!me.owned[id]; }
+function isFrontier(id){ return !isOwned(id) && neighborsOf(id).some(isOwned); }
+function cellState(id){ return id === HOME ? 'home' : me.owned[id] ? 'owned' : isFrontier(id) ? 'frontier' : 'fog'; }
+function renderMap(){
+  Object.entries(hexNodes).forEach(([id, n])=>{
+    const st = cellState(id);
+    const t = TERRAIN[terrainMap[id]];
+    n.poly.classList.remove('home','owned','frontier','fog');
+    n.poly.classList.add(st);
+    n.poly.style.opacity = '1';
+    if (st === 'home'){
+      n.poly.setAttribute('fill', '#f0b429'); n.icon.textContent = '🏠'; n.sub.textContent = '본진';
+    } else if (st === 'owned'){
+      n.poly.setAttribute('fill', t.color); n.icon.textContent = t.icon; n.sub.textContent = `🛡${me.owned[id].hp}`;
+    } else if (st === 'frontier'){
+      n.poly.setAttribute('fill', t.color); n.poly.style.opacity = '.55';
+      n.icon.textContent = t.icon; n.sub.textContent = `${me.progress[id]||0}/${t.need}`;
+    } else {
+      n.poly.setAttribute('fill', '#1d3445'); n.icon.textContent = '☁️'; n.sub.textContent = '';
+    }
   });
 }
-function fmt(n){ return n === undefined || n === null ? '' : String(Math.round(n*10)/10); }
-function isOver(){ return metaCache.endsAt && Date.now() >= metaCache.endsAt; }
-function tickTimer(){
-  if (!metaCache.endsAt) return;
-  const remain = metaCache.endsAt - Date.now();
-  const chip = document.getElementById('timerChip');
-  if (remain > 0 && gameEndedShown){
-    gameEndedShown = false;
-    document.getElementById('endBackdrop').classList.remove('active');
-  }
-  renderBoard();
-  if (remain <= 0){
-    chip.textContent = '종료!';
-    chip.classList.add('low');
-    if (!gameEndedShown){ gameEndedShown = true; showEndOverlay(); }
-    return;
-  }
-  const m = Math.floor(remain/60000), s = Math.floor((remain%60000)/1000);
-  chip.textContent = `⏱ ${m}:${String(s).padStart(2,'0')}`;
-  chip.classList.toggle('low', remain < 60000);
-}
-function showEndOverlay(){
-  const total = Object.keys(cellsCache).length || 1;
-  const teamIds = Object.keys(teamsCache);
-  const counts = {}; teamIds.forEach(t=>counts[t]=0);
-  Object.values(cellsCache).forEach(c=>{ if (counts[c.owner]!==undefined) counts[c.owner]++; });
-  const ranked = teamIds.map(t=>({t, name:teamsCache[t].name, color:teamsCache[t].color, cnt:counts[t]||0}))
-    .sort((a,b)=>b.cnt-a.cnt);
-  document.getElementById('rankList').innerHTML = ranked.map((r,i)=>{
-    const pct = Math.round(r.cnt/total*100);
-    return `<div class="rank-row"><span class="rank-no">${i+1}</span>
-      <span class="dot" style="background:${r.color}"></span>
-      <span style="flex:1;font-weight:700;">${escapeHtml(r.name)}</span>
-      <div class="rank-bar-wrap"><div class="rank-bar" style="width:${pct}%;background:${r.color}"></div></div>
-      <span class="rank-pct">${pct}%</span></div>`;
-  }).join('');
-  document.getElementById('endBackdrop').classList.add('active');
-}
-async function startNewRound(){
-  const teamCount = Object.keys(teamsCache).length;
-  const durationMin = metaCache.durationMin || 20;
-  const now = Date.now();
-  await update(ref(db, `ddang/${roomCode}`), {
-    meta: { teamCount, durationMin, startedAt: now, endsAt: now + durationMin*60000, gridRadius: GRID_RADIUS },
-    cells: buildInitialCells(teamCount),
-  });
-  gameEndedShown = false;
-  document.getElementById('endBackdrop').classList.remove('active');
+function flashCell(id){
+  const n = hexNodes[id]; if (!n) return;
+  n.poly.classList.remove('attacked'); void n.poly.getBBox(); n.poly.classList.add('attacked');
+  setTimeout(()=>n.poly.classList.remove('attacked'), 1900);
 }
 
-/* ---------- quiz ---------- */
-function pickWord(){
-  const pool = (DB[mySubject] && DB[mySubject].all) || [];
-  if (!pool.length) return null;
-  const wq = wrongQueue[mySubject] || [];
-  if (wq.length && Math.random() < 0.4){
-    const w = wq.shift();
-    return pool.find(x=>x.word===w.word) || w;
-  }
-  const candidates = pool.filter(w=>!recentAsked.includes(w.word));
-  const chosen = sample(candidates.length ? candidates : pool, 1)[0];
+/* ---------- 퀴즈 ---------- */
+function onCellClick(id){
+  const st = cellState(id);
+  if (st === 'home'){ toast('🏠 우리 본진이에요. 그림자 군단도 본진은 빼앗을 수 없어요!'); return; }
+  if (st === 'fog'){ toast('☁️ 아직 갈 수 없는 땅이에요. 맞닿은 땅부터 개척해요!'); return; }
+  if (st === 'owned' && me.owned[id].hp >= MAX_HP){ toast(`🛡 이미 방어력이 최대(${MAX_HP})예요!`); return; }
+  openQuiz(id, st === 'owned' ? 'fortify' : 'pioneer');
+}
+function pickWord(diff){
+  const all = DB[me.subject].all;
+  let pool = diff === 'mixed' ? all : all.filter(w=>w.difficulty===diff);
+  if (!pool.length) pool = all;
+  const wq = wrongQueue[me.subject] || [];
+  if (wq.length && Math.random() < 0.35) return wq.shift();
+  const fresh = pool.filter(w=>!recentAsked.includes(w.word));
+  const chosen = sample(fresh.length ? fresh : pool, 1)[0];
   recentAsked.push(chosen.word);
-  if (recentAsked.length > 12) recentAsked.shift();
+  if (recentAsked.length > 15) recentAsked.shift();
   return chosen;
 }
-function onCellClick(id, q, r){
-  const cell = cellsCache[id];
-  if (!cell || cell.home || isOver()) return;
-  const mine = String(cell.owner)===String(myTeam);
-  if (!mine && !isAdjacentToMine(q,r)) return;
-  const protectedNow = cell.capturedAt && (Date.now()-cell.capturedAt < PROTECTION_MS);
-  if (!mine && protectedNow) { return; }
-  if (!(DB[mySubject] && DB[mySubject].all && DB[mySubject].all.length>=4)){ alert('이 과목은 어휘가 부족해요. 다른 과목을 선택해주세요.'); return; }
-  openQuiz(id, mine);
+function openQuiz(id, mode){
+  quiz = { id, mode };
+  const t = TERRAIN[terrainMap[id]];
+  document.getElementById('qTitle').textContent = `${zoneMap[id]}구역 · ${t.icon} ${t.name} ${mode==='pioneer'?'개척하기':'방어 강화'}`;
+  document.getElementById('quizModal').classList.add('active');
+  nextQuestion();
 }
-function openQuiz(cellId, mine){
-  currentQuizCellId = cellId;
-  const cell = cellsCache[cellId];
-  const w = pickWord();
-  if (!w) return;
-  document.getElementById('quizZoneName').textContent = `${cell.zone}구역`;
-  const owned = hasOwner(cell) && teamsCache[cell.owner];
-  document.getElementById('quizOwner').innerHTML = mine
-    ? `<span class="dot" style="background:${teamsCache[myTeam].color}"></span> 우리 땅 지키기`
-    : owned
-      ? `<span class="dot" style="background:${owned.color}"></span> ${escapeHtml(owned.name)} 땅 공격하기`
-      : `<span class="dot" style="background:#999"></span> 빈 땅 점령하기`;
-  document.getElementById('quizShield').textContent = `🛡️ ${fmt(cell.defense)}`;
-  document.getElementById('quizDesc').textContent = mine ? `정답 시 방어력 상승 (최대 ${MAX_DEFENSE})` : `방어력이 0이 되면 점령!`;
-  const pv = DIFF_POINT[w.difficulty] ?? 1.5;
-  document.getElementById('quizPointBadge').textContent = `${w.difficulty==='hard'?'어려운 어휘':w.difficulty==='easy'?'쉬운 어휘':'보통 어휘'} · 정답 시 ${mine?'+':'-'}${pv}`;
-  document.getElementById('quizWord').textContent = w.word;
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('quizRecord').textContent = `이 땅 누적 정답 ${cell.totalCorrect||0}회`;
-
-  const subjPool = DB[mySubject].all.filter(x=>x.word!==w.word);
-  const distractors = sample(subjPool, Math.min(3, subjPool.length)).map(x=>x.meaning);
-  while (distractors.length<3) distractors.push('（해당 없음）');
-  const options = shuffle([w.meaning, ...distractors]);
-  const wrap = document.getElementById('quizOptions');
+function renderQuizStatus(){
+  const { id, mode } = quiz;
+  const t = TERRAIN[terrainMap[id]];
+  const tags = document.getElementById('qTags');
+  const dots = document.getElementById('qDots');
+  if (mode === 'pioneer'){
+    const p = me.owned[id] ? t.need : (me.progress[id] || 0);
+    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">정답 ${t.need}개면 개척!</span>`;
+    dots.innerHTML = Array.from({length:t.need},(_,i)=>`<span class="${i<p?'on':''}"></span>`).join('');
+  } else {
+    const hp = me.owned[id] ? me.owned[id].hp : 0;
+    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">🛡 방어력 ${hp} / ${MAX_HP}</span><span class="tag">정답 시 +1</span>`;
+    dots.innerHTML = Array.from({length:MAX_HP},(_,i)=>`<span class="${i<hp?'on':''}"></span>`).join('');
+  }
+}
+function nextQuestion(){
+  if (!quiz) return;
+  renderQuizStatus();
+  const t = TERRAIN[terrainMap[quiz.id]];
+  const w = pickWord(t.diff);
+  quiz.word = w;
+  document.getElementById('qWord').textContent = w.word;
+  document.getElementById('qFeedback').textContent = '';
+  const others = DB[me.subject].all.filter(x=>x.word!==w.word && x.meaning!==w.meaning);
+  const distractors = sample(others, Math.min(3, others.length)).map(x=>x.meaning);
+  const wrap = document.getElementById('qOptions');
   wrap.innerHTML = '';
-  options.forEach(opt=>{
+  shuffle([w.meaning, ...distractors]).forEach(opt=>{
     const b = document.createElement('button');
-    b.className='opt-btn'; b.textContent = opt;
-    b.onclick = () => answerQuiz(b, opt, w, mine, pv, cellId);
+    b.className = 'opt-btn'; b.textContent = opt;
+    b.onclick = () => answer(b, opt);
     wrap.appendChild(b);
   });
-  document.getElementById('quizBackdrop').classList.add('active');
 }
-async function answerQuiz(btn, chosen, w, mine, pv, cellId){
-  document.querySelectorAll('#quizOptions .opt-btn').forEach(b=>b.disabled=true);
-  const correct = chosen === w.meaning;
-  const fb = document.getElementById('quizFeedback');
-  if (correct){
+function answer(btn, chosen){
+  const { id, mode, word: w } = quiz;
+  const t = TERRAIN[terrainMap[id]];
+  document.querySelectorAll('#qOptions .opt-btn').forEach(b=>b.disabled=true);
+  const fb = document.getElementById('qFeedback');
+  if (chosen === w.meaning){
     btn.classList.add('correct');
-    fb.textContent = mine ? '✅ 방어 성공!' : '✅ 공격 성공!';
-    fb.className = 'q-feedback ok';
-    wrongQueue[w.subject] = (wrongQueue[w.subject]||[]).filter(x=>x.word!==w.word);
-  } else {
-    btn.classList.add('wrong');
-    document.querySelectorAll('#quizOptions .opt-btn').forEach(b=>{ if (b.textContent===w.meaning) b.classList.add('correct'); });
-    fb.textContent = '❌ 아쉬워요! 다음에 또 만나요.';
-    fb.className = 'q-feedback bad';
-    wrongQueue[w.subject] = wrongQueue[w.subject] || [];
-    if (!wrongQueue[w.subject].some(x=>x.word===w.word)) wrongQueue[w.subject].push(w);
-  }
-  if (correct){
-    const res = await applyAnswer(cellId, pv).catch(()=>null);
-    if (res && !res.committed){
-      fb.textContent = '🛡 지금은 보호 중인 땅이라 반영되지 않았어요.';
-      fb.className = 'q-feedback bad';
+    me.correct++;
+    wrongQueue[me.subject] = (wrongQueue[me.subject]||[]).filter(x=>x.word!==w.word);
+    if (mode === 'pioneer'){
+      const p = (me.progress[id]||0) + 1;
+      if (p >= t.need){
+        delete me.progress[id];
+        me.owned[id] = { hp: START_HP };
+        fb.textContent = `🎉 ${t.name} 개척 성공!`; fb.className = 'q-feedback ok';
+        afterAnswer();
+        setTimeout(()=>{ closeQuiz(); toast(`🚩 ${zoneMap[id]}구역 ${t.icon}${t.name}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`); }, 1200);
+        return;
+      }
+      me.progress[id] = p;
+      fb.textContent = `✅ 정답! (${p}/${t.need})`; fb.className = 'q-feedback ok';
+      afterAnswer();
+      setTimeout(nextQuestion, 900);
+    } else {
+      me.owned[id].hp = Math.min(MAX_HP, me.owned[id].hp + 1);
+      fb.textContent = `✅ 방어 강화! 🛡 ${me.owned[id].hp}`; fb.className = 'q-feedback ok';
+      afterAnswer();
+      setTimeout(closeQuiz, 1000);
     }
+    return;
   }
-  setTimeout(closeQuiz, 1100);
+  btn.classList.add('wrong');
+  document.querySelectorAll('#qOptions .opt-btn').forEach(b=>{ if (b.textContent===w.meaning) b.classList.add('correct'); });
+  me.wrong++;
+  const wq = wrongQueue[me.subject] = wrongQueue[me.subject] || [];
+  if (!wq.some(x=>x.word===w.word)) wq.push(w);
+  const attack = aiAttack();
+  fb.innerHTML = `❌ 오답! 정답은 위에 초록색이에요.<br>👾 ${escapeHtml(attack.msg)}`;
+  fb.className = 'q-feedback bad';
+  afterAnswer();
+  if (attack.id) flashCell(attack.id);
+  setTimeout(()=>{
+    if (!quiz) return;
+    const stillValid = mode === 'pioneer' ? isFrontier(id) : !!me.owned[id];
+    if (!stillValid){ closeQuiz(); toast(mode === 'pioneer' ? '길이 끊겨서 이 땅은 지금 개척할 수 없어요.' : '이 땅을 빼앗겼어요. 다시 개척해 주세요!', true); return; }
+    if (mode === 'fortify'){ closeQuiz(); return; }
+    nextQuestion();
+  }, 2200);
 }
-function closeQuiz(){ document.getElementById('quizBackdrop').classList.remove('active'); currentQuizCellId = null; }
+function aiAttack(){
+  const owned = Object.keys(me.owned);
+  if (!owned.length) return { msg: '그림자 군단이 본진을 공격했지만 막아냈어요!' };
+  const border = owned.filter(id=>neighborsOf(id).some(n=>terrainMap[n] && !isOwned(n)));
+  const pool = border.length ? border : owned;
+  const id = pool[Math.floor(Math.random()*pool.length)];
+  const before = me.owned[id].hp;
+  const t = TERRAIN[terrainMap[id]];
+  if (before - 1 <= 0){
+    delete me.owned[id];
+    return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 빼앗았어요! 다시 개척해야 해요.` };
+  }
+  me.owned[id].hp = before - 1;
+  return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 공격했어요! (🛡 ${before}→${before-1})` };
+}
+function afterAnswer(){
+  savePlayer();
+  renderMap(); renderHeader(); renderMissionBar(); renderQuizStatus();
+  checkMissions();
+}
+function closeQuiz(){ quiz = null; document.getElementById('quizModal').classList.remove('active'); }
 
 /* ---------- 부팅 ---------- */
 async function boot(){
   showScreen('loading');
-  const ok = await loadAllData();
-  if (!ok) return;
+  if (!await loadAllData()) return;
   initTitle();
   showScreen('title');
 }
