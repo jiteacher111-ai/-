@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>어휘 개척단 — 우리 반 땅 개척 모험</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sea:#0c3a52; --sea2:#0a2d40;
+    --parchment:#f3e6c8; --parchment2:#ead5a8; --wood:#6b4423; --wood-dark:#4a2f18;
+    --ink:#3a2a1a; --ink-muted:#8a7355;
+    --teal:#1aa6a6; --teal-dark:#0d7373;
+    --gold:#f0b429; --gold-dark:#b9821a;
+    --danger:#d9453d; --ok:#2fa860; --fog:#1d3445;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{background:radial-gradient(circle at 50% 0%,var(--sea),var(--sea2) 75%);color:var(--ink);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow-x:hidden;}
+  .jua{font-family:'Jua',sans-serif;}
+  #app{position:relative;max-width:900px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+  .screen{display:none;flex:1;flex-direction:column;}
+  .screen.active{display:flex;}
+  .pad{padding:20px 16px 40px;}
+  .center{align-items:center;justify-content:center;}
+
+  .btn{font-family:'Jua',sans-serif;font-size:15px;color:#fff;background:linear-gradient(180deg,#2bc4c4,var(--teal));border:none;border-radius:12px;padding:13px 18px;cursor:pointer;box-shadow:0 4px 0 var(--teal-dark),0 6px 14px rgba(0,0,0,.3);transition:transform .12s;}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--teal-dark);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn-gold{background:linear-gradient(180deg,#ffd873,var(--gold));color:#3a2a10;box-shadow:0 4px 0 var(--gold-dark),0 6px 14px rgba(0,0,0,.3);}
+  .btn-danger{background:linear-gradient(180deg,#ff8a85,var(--danger));box-shadow:0 4px 0 #8a1f1f;}
+  .btn-plain{background:#fffdf5;color:var(--ink);border:1.5px solid var(--parchment2);box-shadow:none;font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:12px;padding:8px 12px;}
+  .btn-wide{width:100%;}
+
+  #loading{gap:16px;color:var(--parchment);text-align:center;}
+  .spinner{width:50px;height:50px;border-radius:50%;border:5px solid rgba(255,255,255,.2);border-top-color:var(--gold);animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .load-err{color:#ffd0ce;font-size:13px;max-width:480px;line-height:1.6;background:rgba(217,69,61,.18);border:1px solid rgba(217,69,61,.5);border-radius:10px;padding:16px;text-align:left;}
+
+  /* title */
+  #title{gap:14px;text-align:center;}
+  .title-sub{color:var(--parchment);font-size:12px;letter-spacing:2px;opacity:.8;}
+  .title-main{font-size:clamp(40px,10vw,60px);color:var(--gold);text-shadow:0 4px 0 var(--gold-dark),0 8px 20px rgba(0,0,0,.4);}
+  .title-desc{color:var(--parchment2);font-size:13px;}
+  .card{background:var(--parchment);border:3px solid var(--wood);border-radius:18px;padding:22px 20px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.35);text-align:left;}
+  .card h2{font-size:18px;text-align:center;}
+  .card.teacher{background:rgba(243,230,200,.12);border-color:rgba(243,230,200,.35);color:var(--parchment);}
+  .card.teacher .field label{color:var(--parchment2);}
+  .field label{display:block;font-size:11px;color:var(--ink-muted);margin-bottom:6px;font-weight:700;}
+  .field input,.field select{width:100%;background:#fffdf5;border:1.5px solid var(--parchment2);color:var(--ink);font-family:'Jua',sans-serif;font-size:17px;padding:10px 12px;border-radius:10px;outline:none;text-align:center;}
+  .field input:focus,.field select:focus{border-color:var(--teal);}
+  .row{display:flex;gap:8px;align-items:center;}
+  .row > .grow{flex:1;}
+  .err-msg{font-size:12px;color:var(--danger);text-align:center;min-height:16px;}
+  .card.teacher .err-msg{color:#ffb3ae;}
+  .back-link{color:var(--ink-muted);font-size:12px;text-align:center;cursor:pointer;text-decoration:underline;}
+  .code-input{letter-spacing:6px;text-transform:uppercase;}
+
+  /* mission editor */
+  .mission-edit{display:flex;gap:6px;align-items:center;}
+  .mission-edit input{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:8px;padding:8px;font-size:13px;color:var(--ink);font-family:'Noto Sans KR',sans-serif;}
+  .mission-edit .goal{width:64px;text-align:center;font-family:'Jua',sans-serif;}
+  .mission-edit .reward{flex:1;min-width:0;}
+  .mission-edit .rm{background:none;border:none;color:var(--danger);font-size:16px;cursor:pointer;}
+
+  /* header */
+  .topbar{background:var(--wood-dark);padding:10px 14px;display:flex;align-items:center;gap:10px;border-bottom:3px solid var(--wood);color:var(--parchment);}
+  .chip{font-family:'Jua',sans-serif;font-size:13px;}
+  .chip.code{color:var(--gold);letter-spacing:2px;}
+  .chip.me{margin-left:auto;font-size:12px;}
+  .icon-btn{background:none;border:none;color:var(--parchment);font-size:18px;cursor:pointer;}
+
+  .mission-bar{margin:10px 14px 4px;background:var(--parchment);border:2px solid var(--wood);border-radius:12px;padding:10px 12px;cursor:pointer;}
+  .mission-bar .mb-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;gap:8px;}
+  .mission-bar .mb-title{font-family:'Jua',sans-serif;font-size:13px;}
+  .mission-bar .mb-reward{color:var(--ink-muted);text-align:right;}
+  .prog{height:10px;background:var(--parchment2);border-radius:6px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,#7fd4a0,var(--ok));transition:width .4s;}
+
+  /* map */
+  #mapWrap{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:8px;touch-action:pan-x pan-y;}
+  .hex{stroke:#2a2015;stroke-width:1.5;}
+  .hex.frontier{cursor:pointer;stroke:#fff6d8;stroke-width:2;stroke-dasharray:4 3;}
+  .hex.owned{cursor:pointer;stroke:var(--gold);stroke-width:2.5;}
+  .hex.home{stroke:var(--gold);stroke-width:3.5;}
+  .hex.fog{cursor:not-allowed;}
+  .hex.attacked{animation:flash .9s ease 2;}
+  @keyframes flash{50%{fill:#ff3b3b;}}
+  .hex-icon{font-size:14px;pointer-events:none;}
+  .hex-sub{font-family:'Jua',sans-serif;font-size:9px;fill:#fff;pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:2px;}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:11px;color:var(--parchment2);padding:4px 12px 2px;}
+  .zoom-ctrl{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:30;}
+  .zoom-ctrl button{width:42px;height:42px;border-radius:50%;background:var(--wood);color:var(--parchment);border:2px solid var(--gold);font-size:18px;cursor:pointer;}
+
+  /* toast */
+  #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-120%);background:var(--parchment);border:2.5px solid var(--wood);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;z-index:80;transition:transform .3s;max-width:92vw;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.35);}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+  #toast.bad{border-color:var(--danger);color:#8a1f1f;}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(10,10,20,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:14px;}
+  .modal-backdrop.active{display:flex;}
+  .modal{background:var(--parchment);border:3px solid var(--wood);border-radius:18px;padding:20px 18px;width:100%;max-width:430px;max-height:90vh;overflow:auto;}
+  .modal-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .modal-title{font-size:17px;}
+  .modal-close{background:var(--danger);color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:14px;cursor:pointer;flex-shrink:0;}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+  .tag{font-family:'Jua',sans-serif;font-size:12px;padding:4px 10px;border-radius:8px;background:var(--wood);color:var(--parchment);}
+  .tag.teal{background:var(--teal);color:#fff;}
+  .dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;}
+  .dots span{width:16px;height:16px;border-radius:50%;background:var(--parchment2);border:2px solid var(--wood);}
+  .dots span.on{background:var(--ok);}
+  .q-word-box{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:12px;padding:16px;text-align:center;margin-bottom:12px;}
+  .q-word{font-family:'Jua',sans-serif;font-size:28px;}
+  .opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .opt-btn{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:10px;padding:11px 9px;font-size:13px;line-height:1.4;cursor:pointer;text-align:left;color:var(--ink);min-height:58px;display:flex;align-items:center;}
+  .opt-btn.correct{border-color:var(--ok);background:rgba(47,168,96,.18);}
+  .opt-btn.wrong{border-color:var(--danger);background:rgba(217,69,61,.18);}
+  .opt-btn[disabled]{cursor:default;}
+  @media (max-width:420px){.opt-grid{grid-template-columns:1fr;}}
+  .q-feedback{min-height:20px;text-align:center;font-size:13px;font-family:'Jua',sans-serif;margin-top:10px;line-height:1.5;}
+  .q-feedback.ok{color:var(--ok);}
+  .q-feedback.bad{color:var(--danger);}
+
+  .mission-row{display:flex;align-items:center;gap:10px;background:#fffdf5;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1.5px solid var(--parchment2);}
+  .mission-row.done{border-color:var(--ok);background:#eef8ef;}
+  .mission-row .mi{font-size:20px;}
+  .mission-row .mt{flex:1;font-size:13px;line-height:1.4;}
+  .mission-row .mt b{font-family:'Jua',sans-serif;font-weight:400;font-size:14px;}
+  .mission-row .ms{font-size:11px;color:var(--ink-muted);white-space:nowrap;}
+
+  /* dashboard */
+  .dash-code{text-align:center;color:var(--parchment);}
+  .dash-code .big{font-family:'Jua',sans-serif;font-size:52px;letter-spacing:10px;color:var(--gold);}
+  .panel{background:var(--parchment);border:3px solid var(--wood);border-radius:16px;padding:16px;margin-top:14px;}
+  .panel h3{font-family:'Jua',sans-serif;font-size:16px;margin-bottom:10px;}
+  .stu-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .stu-table th{font-size:11px;color:var(--ink-muted);text-align:left;padding:6px 4px;border-bottom:1.5px solid var(--parchment2);}
+  .stu-table td{padding:7px 4px;border-bottom:1px solid var(--parchment2);}
+  .stu-table th,.stu-table td{white-space:nowrap;}
+  .given-btn{font-size:11px;padding:5px 9px;border-radius:8px;border:1.5px solid var(--ok);background:#fff;color:var(--ok);cursor:pointer;font-weight:700;white-space:nowrap;}
+  .given-btn.on{background:var(--ok);color:#fff;}
+
+  footer{text-align:center;color:var(--parchment2);font-size:11px;padding:8px 10px 14px;opacity:.75;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div id="loading" class="screen active pad center">
+    <div class="spinner"></div>
+    <div class="jua" style="font-size:18px;">개척 지도를 펼치는 중...</div>
+    <div id="loadErrBox"></div>
+  </div>
+
+  <!-- 시작 화면 -->
+  <div id="title" class="screen pad center">
+    <div class="title-sub">초등 5학년 어휘 개척 모험</div>
+    <div class="title-main jua">어휘 개척단</div>
+    <div class="title-desc">낱말을 풀어 미지의 땅을 개척하고, 나만의 미션을 완수해 보상을 받아요!</div>
+    <div class="load-err" id="configWarn" style="display:none;">⚠️ Supabase 연결 정보가 아직 설정되지 않았어요.<br>파일 위쪽 <b>SUPABASE</b>의 URL과 ANON_KEY를 채워주세요.</div>
+    <div class="card">
+      <h2 class="jua">🧭 개척 시작</h2>
+      <div class="field"><label>학급 코드</label><input id="joinCode" class="code-input" maxlength="4" placeholder="4자리"></div>
+      <div class="field"><label>이름 (같은 이름으로 들어오면 이어서 할 수 있어요)</label><input id="joinName" maxlength="10" placeholder="이름"></div>
+      <div class="field"><label>과목</label><select id="joinSubject"></select></div>
+      <button class="btn btn-gold btn-wide" id="joinBtn">개척하러 가기!</button>
+      <div class="err-msg" id="joinErr"></div>
+    </div>
+    <div class="card teacher">
+      <h2 class="jua" style="font-size:15px;">👩‍🏫 선생님</h2>
+      <button class="btn btn-wide" id="goCreateBtn">새 학급 만들기</button>
+      <div class="row">
+        <div class="field grow" style="margin:0;"><input id="dashCode" class="code-input" maxlength="4" placeholder="학급 코드"></div>
+        <button class="btn" id="openDashBtn" style="padding:11px 14px;">대시보드</button>
+      </div>
+      <div class="err-msg" id="dashErr"></div>
+    </div>
+  </div>
+
+  <!-- 학급 만들기 -->
+  <div id="createScreen" class="screen pad center">
+    <div class="card">
+      <h2 class="jua">🏫 학급 미션 설정</h2>
+      <div style="font-size:12px;color:var(--ink-muted);line-height:1.5;">학생 한 명 한 명이 개척한 땅의 수가 목표에 도달하면 그 학생의 미션이 완료돼요. 보상은 자유롭게 적어주세요. (지도는 본진을 빼고 60칸이에요)</div>
+      <div id="missionEditor" style="display:flex;flex-direction:column;gap:8px;"></div>
+      <button class="btn btn-plain" id="addMissionBtn">＋ 미션 추가</button>
+      <button class="btn btn-gold btn-wide" id="createBtn">학급 만들기</button>
+      <div class="err-msg" id="createErr"></div>
+      <div class="back-link" id="backFromCreate">← 뒤로</div>
+    </div>
+  </div>
+
+  <!-- 선생님 대시보드 -->
+  <div id="dashboard" class="screen pad">
+    <div class="row" style="justify-content:space-between;">
+      <div class="back-link" id="dashBack" style="color:var(--parchment2);">← 처음으로</div>
+    </div>
+    <div class="dash-code">
+      <div style="font-size:12px;opacity:.8;">학생들에게 알려주세요 · 학급 코드</div>
+      <div class="big" id="dashCodeBig">----</div>
+      <div class="jua" style="font-size:16px;">참여 <span id="dashCount" style="color:var(--gold);font-size:22px;">0</span>명 · 보상 지급 대기 <span id="dashPending" style="color:var(--gold);font-size:22px;">0</span>건</div>
+    </div>
+    <div class="panel"><h3>🎯 미션 (학생별)</h3><div id="dashMissions"></div></div>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px;">
+        <h3 style="margin:0;">🧑‍🎓 학생 현황</h3>
+        <button class="btn btn-plain" id="dashRefresh">🔄 새로고침</button>
+      </div>
+      <div style="overflow-x:auto;"><table class="stu-table"><thead id="dashHead"></thead><tbody id="dashStudents"></tbody></table></div>
+      <div style="font-size:11px;color:var(--ink-muted);margin-top:8px;">5초마다 자동으로 갱신돼요. 미션을 달성한 학생에게 보상을 준 뒤 "지급하기"를 눌러주세요.</div>
+    </div>
+  </div>
+
+  <!-- 학생 개척 화면 -->
+  <div id="board" class="screen">
+    <div class="topbar">
+      <span class="chip code" id="boardCode">----</span>
+      <span class="chip me" id="boardMe"></span>
+      <button class="icon-btn" id="settingsBtn">⚙️</button>
+    </div>
+    <div class="mission-bar" id="missionBar"></div>
+    <div class="legend" id="legend"></div>
+    <div id="mapWrap"><svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div class="zoom-ctrl"><button id="zoomInBtn">＋</button><button id="zoomOutBtn">－</button></div>
+    <footer>점선 땅을 눌러 개척해요 · 내 땅을 누르면 방어력을 높일 수 있어요 · 틀리면 그림자 군단이 내 땅을 공격해요!</footer>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- 퀴즈 -->
+  <div class="modal-backdrop" id="quizModal">
+    <div class="modal">
+      <div class="modal-top">
+        <div class="modal-title jua" id="qTitle">구역</div>
+        <button class="modal-close" id="qClose">✕</button>
+      </div>
+      <div class="tags" id="qTags"></div>
+      <div class="dots" id="qDots"></div>
+      <div class="q-word-box">
+        <div style="font-size:11px;color:var(--ink-muted);margin-bottom:6px;">이 낱말의 뜻은?</div>
+        <div class="q-word" id="qWord"></div>
+      </div>
+      <div class="opt-grid" id="qOptions"></div>
+      <div class="q-feedback" id="qFeedback"></div>
+    </div>
+  </div>
+
+  <!-- 미션 목록 -->
+  <div class="modal-backdrop" id="missionModal">
+    <div class="modal">
+      <div class="modal-top"><div class="modal-title jua">🎯 나의 미션</div><button class="modal-close" id="missionClose">✕</button></div>
+      <div id="missionList"></div>
+    </div>
+  </div>
+
+  <!-- 미션 달성 -->
+  <div class="modal-backdrop" id="celebrateModal">
+    <div class="modal" style="max-width:340px;text-align:center;">
+      <div style="font-size:56px;">🎉</div>
+      <div class="jua" style="font-size:22px;margin:6px 0 10px;">미션 달성!</div>
+      <div id="celebrateText" style="font-size:14px;line-height:1.7;margin-bottom:16px;"></div>
+      <button class="btn btn-gold btn-wide" id="celebrateOk">좋아요!</button>
+    </div>
+  </div>
+
+  <!-- 설정 -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal" style="max-width:340px;">
+      <div class="modal-top"><div class="modal-title jua">설정</div><button class="modal-close" id="settingsClose">✕</button></div>
+      <div class="field"><label>과목</label><select id="settingsSubject"></select></div>
+      <button class="btn btn-danger btn-wide" id="leaveBtn" style="margin-top:16px;">처음으로 나가기</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+/* ========================================================================
+   설정
+   - SUPABASE: Supabase 대시보드 → Project Settings → API 에서
+     Project URL 과 anon(public) 또는 publishable 키를 복사해 넣으세요.
+     (service_role / secret 키는 절대 넣지 마세요)
+   - 테이블은 supabase/pioneer_schema.sql 을 SQL Editor에서 한 번 실행하면 만들어져요.
+   ======================================================================== */
+const SUPABASE = {
+  URL: 'https://eshzmwwamefzzcnjbkqd.supabase.co',
+  ANON_KEY: 'sb_publishable_N6JXgf7bA6vQLGAPfJevkQ_QJiCEcUw',
+};
+const CONFIG = {
+  SPREADSHEET_ID: '1s3Oc7TbPo6BmMhR2-NVKzSePpossJMUQjydLOdZisGs',
+  SHEETS: { 국어: '국어', 사회: '사회', 과학: '과학' },
+};
+const GRID_RADIUS = 4;
+const HEX_SIZE = 32;
+const NEI = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+const HOME = '0_0';
+const START_HP = 2, MAX_HP = 5;
+const TERRAIN = {
+  plain:    { icon:'🌾', name:'들판',     diff:'easy',   diffLabel:'쉬운 어휘',   need:2, color:'#9cc760' },
+  forest:   { icon:'🌲', name:'숲',       diff:'normal', diffLabel:'보통 어휘',   need:3, color:'#3f9a55' },
+  mountain: { icon:'⛰️', name:'산',       diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#9a7b5a' },
+  ruin:     { icon:'🏛️', name:'고대 유적', diff:'mixed',  diffLabel:'모든 어휘',   need:5, color:'#c9a24a' },
+};
+// 중심에서 멀어질수록 어려운 땅이 많아짐: [들판, 숲, 산, 유적] 누적 확률
+const TERRAIN_ODDS = { 1:[.7,1,1,1], 2:[.4,.85,1,1], 3:[.2,.6,.95,1], 4:[.1,.4,.85,1] };
+const DEFAULT_MISSIONS = [
+  { goal: 5,  reward: '칭찬 도장 1개' },
+  { goal: 12, reward: '간식 쿠폰' },
+  { goal: 20, reward: '자리 선택권' },
+  { goal: 35, reward: '숙제 면제권' },
+];
+const DASH_POLL_MS = 5000;
+
+let DB = {};
+let sb = null;
+let roomCode = null, playerKey = null;
+let room = { code:null, seed:0, missions:[] };
+let me = null, myGiven = {};
+let dashPlayers = [], dashTimer = null;
+let terrainMap = {}, zoneMap = {};
+let wrongQueue = {}, recentAsked = [];
+let quiz = null;
+
+/* ---------- CSV ---------- */
+function parseCSV(text){
+  const rows = []; let row = [], field = '', inQ = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i];
+    if (inQ){
+      if (c === '"'){ if (text[i+1] === '"'){ field+='"'; i++; } else inQ=false; }
+      else field += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(field); field=''; }
+      else if (c === '\n') { row.push(field); rows.push(row); row=[]; field=''; }
+      else if (c !== '\r') field += c;
+    }
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+function normalizeDifficulty(v){
+  v = (v||'').trim();
+  if (v.includes('어려운')) return 'hard';
+  if (v.includes('보통')) return 'normal';
+  if (v.includes('쉬운')) return 'easy';
+  return 'normal';
+}
+async function fetchSheet(subject, sheetName){
+  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`"${sheetName}" 시트를 불러오지 못했어요 (${res.status})`);
+  const text = await res.text();
+  if (/^<!DOCTYPE html/i.test(text.trim())) throw new Error(`"${sheetName}" 시트에 접근할 수 없어요 (공유 설정을 확인해주세요)`);
+  const rows = parseCSV(text);
+  if (!rows.length) return [];
+  const header = rows[0].map(h => (h||'').trim());
+  const idx = { word: header.indexOf('날말'), diff: header.indexOf('난이도'), meaning: header.indexOf('뜻') };
+  if (idx.word === -1 || idx.meaning === -1) throw new Error(`"${sheetName}" 시트에 "날말" 또는 "뜻" 열을 찾을 수 없어요`);
+  const words = []; const seen = new Set();
+  for (let i=1;i<rows.length;i++){
+    const r = rows[i]; if (!r) continue;
+    const word = (r[idx.word]||'').trim(), meaning = (r[idx.meaning]||'').trim();
+    if (!word || !meaning || seen.has(word+'|'+meaning)) continue;
+    seen.add(word+'|'+meaning);
+    words.push({ word, meaning, subject, difficulty: normalizeDifficulty(idx.diff>-1 ? r[idx.diff] : '') });
+  }
+  return words;
+}
+async function loadAllData(){
+  const errBox = document.getElementById('loadErrBox');
+  errBox.innerHTML = '';
+  const subjects = Object.keys(CONFIG.SHEETS);
+  DB = {};
+  for (const subj of subjects){
+    try { DB[subj] = { all: await fetchSheet(subj, CONFIG.SHEETS[subj]) }; }
+    catch (e){ DB[subj] = { all: [], error: e.message }; }
+  }
+  if (subjects.every(s => DB[s].all.length === 0)){
+    const firstErr = subjects.map(s=>DB[s].error).find(Boolean) || '어휘를 하나도 불러오지 못했어요.';
+    errBox.innerHTML = `<div class="load-err">⚠️ ${escapeHtml(firstErr)}<br><br>
+      스프레드시트 공유 설정(링크가 있는 모든 사용자-뷰어)과 시트 이름(국어/사회/과학)을 확인해주세요.</div>
+      <button class="btn btn-wide" id="retryBtn" style="margin-top:14px;">다시 시도</button>`;
+    document.getElementById('retryBtn').onclick = boot;
+    return false;
+  }
+  return true;
+}
+
+/* ---------- utils ---------- */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sample(arr,n){ return shuffle(arr).slice(0,n); }
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function genCode(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from({length:4},()=>c[Math.floor(Math.random()*c.length)]).join(''); }
+function nameKey(name){ return name.trim().replace(/\s+/g,' '); }
+function hashStr(s){ let h=1779033703^s.length; for(let i=0;i<s.length;i++){ h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return h>>>0; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+let toastTimer = null;
+function toast(msg, bad){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'show' + (bad ? ' bad' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>{ el.className = bad ? 'bad' : ''; }, 2600);
+}
+function timeAgo(iso){
+  const ts = iso ? Date.parse(iso) : 0;
+  if (!ts) return '-';
+  const m = Math.floor((Date.now()-ts)/60000);
+  if (m < 1) return '방금'; if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m/60); if (h < 24) return `${h}시간 전`;
+  return `${Math.floor(h/24)}일 전`;
+}
+
+/* ---------- hex map ---------- */
+function axialToPixel(q,r,s){ return { x: s*Math.sqrt(3)*(q+r/2), y: s*1.5*r }; }
+function hexCorners(cx,cy,s){
+  const pts=[];
+  for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i-30); pts.push(`${(cx+s*Math.cos(a)).toFixed(1)},${(cy+s*Math.sin(a)).toFixed(1)}`); }
+  return pts.join(' ');
+}
+function generateAxialCoords(N){
+  const list=[];
+  for(let q=-N;q<=N;q++){ const r1=Math.max(-N,-q-N), r2=Math.min(N,-q+N); for(let r=r1;r<=r2;r++) list.push([q,r]); }
+  return list;
+}
+function hexDist(q,r){ return (Math.abs(q)+Math.abs(r)+Math.abs(q+r))/2; }
+function neighborsOf(id){ const [q,r]=id.split('_').map(Number); return NEI.map(([dq,dr])=>`${q+dq}_${r+dr}`); }
+function buildTerrain(seed){
+  const rng = mulberry32(seed);
+  terrainMap = {}; zoneMap = {};
+  generateAxialCoords(GRID_RADIUS).forEach(([q,r], i)=>{
+    const id = `${q}_${r}`;
+    zoneMap[id] = i+1;
+    if (id === HOME) return;
+    const odds = TERRAIN_ODDS[hexDist(q,r)];
+    const x = rng();
+    terrainMap[id] = x < odds[0] ? 'plain' : x < odds[1] ? 'forest' : x < odds[2] ? 'mountain' : 'ruin';
+  });
+}
+
+/* ---------- Supabase ---------- */
+function isConfigured(){ return !SUPABASE.URL.startsWith('YOUR-') && !SUPABASE.ANON_KEY.startsWith('YOUR-'); }
+function initDb(){
+  if (sb) return true;
+  if (!isConfigured()) return false;
+  try { sb = createClient(SUPABASE.URL, SUPABASE.ANON_KEY); return true; }
+  catch(e){ console.warn('supabase init fail', e); return false; }
+}
+function dbErrMsg(error){
+  console.warn(error);
+  if (error && /relation|does not exist|schema cache/i.test(error.message||'')) return '테이블이 없어요. supabase/pioneer_schema.sql 을 먼저 실행해주세요.';
+  if (error && /row-level security|permission/i.test(error.message||'')) return '권한이 없어요. pioneer_schema.sql 의 정책(policy)이 적용됐는지 확인해주세요.';
+  return '서버와 통신하지 못했어요. 인터넷 연결이나 Supabase 설정을 확인해주세요.';
+}
+async function fetchRoom(code){
+  const { data, error } = await sb.from('pioneer_rooms').select('*').eq('code', code).maybeSingle();
+  if (error) throw new Error(dbErrMsg(error));
+  return data;
+}
+async function createRoomRow(missions){
+  for (let i=0;i<5;i++){
+    const code = genCode();
+    const { error } = await sb.from('pioneer_rooms').insert({ code, seed: hashStr(code), missions });
+    if (!error) return code;
+    if (error.code !== '23505') throw new Error(dbErrMsg(error));
+  }
+  throw new Error('학급 코드를 만들지 못했어요. 다시 시도해주세요.');
+}
+let saveChain = Promise.resolve();
+function savePlayer(){
+  const row = {
+    room_code: roomCode, name_key: playerKey, name: me.name, subject: me.subject,
+    owned: me.owned, progress: me.progress, correct: me.correct, wrong: me.wrong,
+    achieved: me.achieved, updated_at: new Date().toISOString(),
+  };
+  saveChain = saveChain
+    .then(() => sb.from('pioneer_players').upsert(row, { onConflict: 'room_code,name_key' }))
+    .then(res => { if (res && res.error){ dbErrMsg(res.error); toast('⚠️ 저장하지 못했어요. 인터넷 연결을 확인해주세요.', true); } })
+    .catch(e => console.warn(e));
+}
+async function fetchMyGiven(){
+  const { data } = await sb.from('pioneer_players').select('given').eq('room_code', roomCode).eq('name_key', playerKey).maybeSingle();
+  myGiven = (data && data.given) || {};
+}
+
+/* ---------- 개인 미션 ---------- */
+function ownedCount(p){ return p && p.owned ? Object.keys(p.owned).length : 0; }
+function missionList(){ return (room.missions || []).slice().sort((a,b)=>a.goal-b.goal); }
+function checkMissions(){
+  const n = ownedCount(me);
+  const newly = [];
+  missionList().forEach(m=>{ if (n >= m.goal && !me.achieved[m.id]){ me.achieved[m.id] = Date.now(); newly.push(m); } });
+  return newly;
+}
+function celebrate(m){
+  document.getElementById('celebrateText').innerHTML =
+    `<b>내 땅 ${m.goal}칸 개척</b> 미션을 완료했어요!<br>🎁 <b>${escapeHtml(m.reward)}</b><br><span style="color:var(--ink-muted);font-size:12px;">선생님께 말씀드리면 보상을 받을 수 있어요.</span>`;
+  document.getElementById('celebrateModal').classList.add('active');
+}
+function renderMissionBar(){
+  const bar = document.getElementById('missionBar');
+  const list = missionList();
+  const n = ownedCount(me);
+  if (!list.length){ bar.innerHTML = `<div class="mb-title">미션이 없어요</div>`; return; }
+  const next = list.find(m=>!me.achieved[m.id]);
+  if (!next){
+    bar.innerHTML = `<div class="mb-top"><span class="mb-title">🎉 모든 미션 완료!</span><span class="mb-reward">내 땅 ${n}칸</span></div>`;
+    return;
+  }
+  const done = list.filter(m=>me.achieved[m.id]).length;
+  const pct = Math.min(100, Math.round(n/next.goal*100));
+  bar.innerHTML = `<div class="mb-top">
+      <span class="mb-title">🎯 나의 미션 ${done+1}/${list.length} · 내 땅 ${n} / ${next.goal}칸</span>
+      <span class="mb-reward">🎁 ${escapeHtml(next.reward)}</span>
+    </div><div class="prog"><div class="prog-fill" style="width:${pct}%"></div></div>`;
+}
+function renderMissionList(){
+  const n = ownedCount(me);
+  document.getElementById('missionList').innerHTML = missionList().map(m=>{
+    const done = !!me.achieved[m.id];
+    const status = done ? (myGiven[m.id] ? '🎁 보상 받음' : '달성! 보상 대기') : `${Math.min(n,m.goal)}/${m.goal}`;
+    return `<div class="mission-row ${done?'done':''}">
+      <span class="mi">${done ? '✅' : '🎯'}</span>
+      <span class="mt"><b>내 땅 ${m.goal}칸 개척</b><br>🎁 ${escapeHtml(m.reward)}</span>
+      <span class="ms">${status}</span>
+    </div>`;
+  }).join('') || '<div style="text-align:center;color:var(--ink-muted);">미션이 없어요</div>';
+}
+
+/* ---------- 시작 화면 ---------- */
+function initTitle(){
+  const subjOpts = Object.keys(CONFIG.SHEETS).filter(s=>DB[s].all.length>=4).map(s=>`<option value="${s}">${s} (${DB[s].all.length}개)</option>`).join('');
+  document.getElementById('joinSubject').innerHTML = subjOpts;
+  document.getElementById('settingsSubject').innerHTML = subjOpts;
+  document.getElementById('joinCode').value = lsGet('pioneer_code') || '';
+  document.getElementById('joinName').value = lsGet('pioneer_name') || '';
+  document.getElementById('configWarn').style.display = isConfigured() ? 'none' : 'block';
+
+  document.getElementById('joinBtn').onclick = joinAsStudent;
+  document.getElementById('goCreateBtn').onclick = openCreate;
+  document.getElementById('openDashBtn').onclick = async () => {
+    const code = document.getElementById('dashCode').value.trim().toUpperCase();
+    const err = document.getElementById('dashErr');
+    if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
+    if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
+    try {
+      const r = await fetchRoom(code);
+      if (!r){ err.textContent = '학급을 찾을 수 없어요.'; return; }
+      err.textContent = '';
+      openDashboard(r);
+    } catch(e){ err.textContent = e.message; }
+  };
+  document.getElementById('backFromCreate').onclick = () => showScreen('title');
+  document.getElementById('dashBack').onclick = goHome;
+  document.getElementById('celebrateOk').onclick = () => document.getElementById('celebrateModal').classList.remove('active');
+}
+async function joinAsStudent(){
+  const code = document.getElementById('joinCode').value.trim().toUpperCase();
+  const name = document.getElementById('joinName').value.trim();
+  const subject = document.getElementById('joinSubject').value;
+  const err = document.getElementById('joinErr');
+  if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
+  if (!name){ err.textContent = '이름을 입력해주세요.'; return; }
+  if (!subject){ err.textContent = '불러온 어휘가 있는 과목이 없어요.'; return; }
+  if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
+  try {
+    const r = await fetchRoom(code);
+    if (!r){ err.textContent = '학급을 찾을 수 없어요. 코드를 확인해주세요.'; return; }
+    const key = nameKey(name);
+    const { data: prev, error } = await sb.from('pioneer_players').select('*').eq('room_code', code).eq('name_key', key).maybeSingle();
+    if (error) throw new Error(dbErrMsg(error));
+    err.textContent = '';
+    lsSet('pioneer_code', code); lsSet('pioneer_name', name);
+    room = r; roomCode = code; playerKey = key;
+    const p = prev || {};
+    me = { name, subject, owned: p.owned || {}, progress: p.progress || {}, correct: p.correct || 0, wrong: p.wrong || 0, achieved: p.achieved || {} };
+    myGiven = p.given || {};
+    buildTerrain(Number(r.seed) || hashStr(code));
+    checkMissions();
+    savePlayer();
+    enterBoard(!prev);
+  } catch(e){ err.textContent = e.message; }
+}
+function goHome(){
+  clearInterval(dashTimer); dashTimer = null;
+  roomCode = null; playerKey = null; me = null; quiz = null;
+  ['quizModal','missionModal','settingsModal','celebrateModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  clearTimeout(toastTimer); document.getElementById('toast').className = '';
+  showScreen('title');
+}
+
+/* ---------- 학급 만들기 / 대시보드 ---------- */
+function openCreate(){
+  const ed = document.getElementById('missionEditor');
+  ed.innerHTML = '';
+  const addRow = (goal, reward) => {
+    const row = document.createElement('div');
+    row.className = 'mission-edit';
+    row.innerHTML = `<input class="goal" type="number" min="1" max="60" placeholder="칸"><input class="reward" maxlength="30" placeholder="보상 (예: 칭찬 도장)"><button class="rm" title="삭제">✕</button>`;
+    row.querySelector('.goal').value = goal ?? '';
+    row.querySelector('.reward').value = reward ?? '';
+    row.querySelector('.rm').onclick = () => row.remove();
+    ed.appendChild(row);
+  };
+  DEFAULT_MISSIONS.forEach(m=>addRow(m.goal, m.reward));
+  document.getElementById('addMissionBtn').onclick = () => addRow('', '');
+  document.getElementById('createBtn').onclick = async () => {
+    const err = document.getElementById('createErr');
+    const rows = [...ed.querySelectorAll('.mission-edit')].map(r=>({
+      goal: parseInt(r.querySelector('.goal').value,10), reward: r.querySelector('.reward').value.trim()
+    })).filter(m=>m.goal>0 && m.reward);
+    if (!rows.length){ err.textContent = '미션을 1개 이상 입력해주세요 (목표 칸 수와 보상).'; return; }
+    if (rows.some(m=>m.goal>60)){ err.textContent = '목표는 60칸 이하로 정해주세요.'; return; }
+    if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
+    err.textContent = '';
+    const missions = rows.sort((a,b)=>a.goal-b.goal).map((m,i)=>({ id:'m'+i, goal:m.goal, reward:m.reward }));
+    try {
+      const code = await createRoomRow(missions);
+      openDashboard({ code, seed: hashStr(code), missions });
+    } catch(e){ err.textContent = e.message; }
+  };
+  showScreen('createScreen');
+}
+function openDashboard(r){
+  room = r; roomCode = r.code; playerKey = null; me = null;
+  document.getElementById('dashCode').value = r.code;
+  document.getElementById('dashCodeBig').textContent = r.code;
+  document.getElementById('dashRefresh').onclick = refreshDashboard;
+  showScreen('dashboard');
+  dashPlayers = [];
+  renderDashboard();
+  refreshDashboard();
+  clearInterval(dashTimer);
+  dashTimer = setInterval(refreshDashboard, DASH_POLL_MS);
+}
+async function refreshDashboard(){
+  if (!roomCode || playerKey) return;
+  const code = roomCode;
+  const { data, error } = await sb.from('pioneer_players').select('*').eq('room_code', code);
+  if (code !== roomCode) return;
+  if (error){ toast(dbErrMsg(error), true); return; }
+  dashPlayers = data || [];
+  renderDashboard();
+}
+function renderDashboard(){
+  const list = missionList();
+  let pending = 0;
+  dashPlayers.forEach(p=>list.forEach(m=>{ if ((p.achieved||{})[m.id] && !(p.given||{})[m.id]) pending++; }));
+  document.getElementById('dashCount').textContent = dashPlayers.length;
+  document.getElementById('dashPending').textContent = pending;
+  document.getElementById('dashMissions').innerHTML = list.map((m,i)=>{
+    const cnt = dashPlayers.filter(p=>(p.achieved||{})[m.id]).length;
+    return `<div class="mission-row ${cnt?'done':''}">
+      <span class="mi">🎯</span>
+      <span class="mt"><b>미션 ${i+1} · 내 땅 ${m.goal}칸</b><br>🎁 ${escapeHtml(m.reward)}</span>
+      <span class="ms">달성 ${cnt}명</span>
+    </div>`;
+  }).join('');
+  document.getElementById('dashHead').innerHTML = `<tr><th>이름</th><th>과목</th><th>개척</th><th>정답률</th><th>최근</th>${list.map((m,i)=>`<th title="${escapeHtml(m.reward)}">미션${i+1}<br>${m.goal}칸</th>`).join('')}</tr>`;
+  const rows = dashPlayers.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko'));
+  const tbody = document.getElementById('dashStudents');
+  tbody.innerHTML = rows.map(p=>{
+    const tries = (p.correct||0)+(p.wrong||0);
+    const acc = tries ? Math.round((p.correct||0)/tries*100)+'%' : '-';
+    const n = ownedCount(p);
+    const cells = list.map(m=>{
+      if (!(p.achieved||{})[m.id]) return `<td style="color:var(--ink-muted);font-size:11px;">${Math.min(n,m.goal)}/${m.goal}</td>`;
+      const given = !!(p.given||{})[m.id];
+      return `<td><button class="given-btn ${given?'on':''}" data-key="${escapeHtml(p.name_key)}" data-mid="${m.id}">${given?'✅ 지급':'지급하기'}</button></td>`;
+    }).join('');
+    return `<tr><td><b>${escapeHtml(p.name||'')}</b></td><td>${escapeHtml(p.subject||'')}</td><td>${n}칸</td><td>${acc}</td><td style="color:var(--ink-muted);font-size:11px;">${timeAgo(p.updated_at)}</td>${cells}</tr>`;
+  }).join('') || `<tr><td colspan="${5+list.length}" style="text-align:center;color:var(--ink-muted);padding:16px;">아직 참여한 학생이 없어요</td></tr>`;
+  tbody.querySelectorAll('.given-btn').forEach(b=>{ b.onclick = () => toggleGiven(b.dataset.key, b.dataset.mid); });
+}
+async function toggleGiven(key, mid){
+  const p = dashPlayers.find(x=>x.name_key===key);
+  if (!p) return;
+  const given = { ...(p.given||{}) };
+  if (given[mid]) delete given[mid]; else given[mid] = true;
+  p.given = given;
+  renderDashboard();
+  const { error } = await sb.from('pioneer_players').update({ given }).eq('room_code', roomCode).eq('name_key', key);
+  if (error) toast(dbErrMsg(error), true);
+}
+
+/* ---------- 학생 개척 화면 ---------- */
+let hexNodes = {};
+let zoomLevel = 1, mapBaseW = 0, mapBaseH = 0;
+function setZoom(v){
+  zoomLevel = Math.max(0.6, Math.min(2.2, v));
+  const svg = document.getElementById('mapSvg');
+  svg.setAttribute('width', mapBaseW*zoomLevel);
+  svg.setAttribute('height', mapBaseH*zoomLevel);
+}
+function enterBoard(isNew){
+  showScreen('board');
+  document.getElementById('boardCode').textContent = roomCode;
+  document.getElementById('legend').innerHTML = Object.values(TERRAIN).map(t=>`<span>${t.icon} ${t.name} · ${t.diffLabel} ${t.need}문제</span>`).join('');
+  const ss = document.getElementById('settingsSubject');
+  ss.value = me.subject;
+  ss.onchange = () => { me.subject = ss.value; savePlayer(); renderHeader(); };
+  document.getElementById('settingsBtn').onclick = () => document.getElementById('settingsModal').classList.add('active');
+  document.getElementById('settingsClose').onclick = () => document.getElementById('settingsModal').classList.remove('active');
+  document.getElementById('leaveBtn').onclick = goHome;
+  document.getElementById('missionBar').onclick = async () => {
+    renderMissionList();
+    document.getElementById('missionModal').classList.add('active');
+    await fetchMyGiven().catch(()=>{});
+    if (me) renderMissionList();
+  };
+  document.getElementById('missionClose').onclick = () => document.getElementById('missionModal').classList.remove('active');
+  document.getElementById('qClose').onclick = closeQuiz;
+  document.getElementById('zoomInBtn').onclick = () => setZoom(zoomLevel+0.2);
+  document.getElementById('zoomOutBtn').onclick = () => setZoom(zoomLevel-0.2);
+  buildSvgSkeleton();
+  renderMap(); renderHeader(); renderMissionBar();
+  toast(isNew ? '🏠 본진에서 출발! 점선으로 된 땅을 눌러 개척해 보세요.' : `다시 왔군요, ${me.name}! 개척을 이어가요.`);
+}
+function renderHeader(){
+  const tries = me.correct + me.wrong;
+  const acc = tries ? Math.round(me.correct/tries*100) : 0;
+  document.getElementById('boardMe').textContent = `${me.name} · ${me.subject} · 내 땅 ${ownedCount(me)}칸 · 정답률 ${acc}%`;
+}
+function buildSvgSkeleton(){
+  const svg = document.getElementById('mapSvg');
+  const coords = generateAxialCoords(GRID_RADIUS);
+  const pts = coords.map(([q,r])=>axialToPixel(q,r,HEX_SIZE));
+  const pad = HEX_SIZE*1.1;
+  const minX=Math.min(...pts.map(p=>p.x))-pad, maxX=Math.max(...pts.map(p=>p.x))+pad;
+  const minY=Math.min(...pts.map(p=>p.y))-pad, maxY=Math.max(...pts.map(p=>p.y))+pad;
+  mapBaseW = maxX-minX; mapBaseH = maxY-minY;
+  svg.setAttribute('viewBox', `0 0 ${mapBaseW} ${mapBaseH}`);
+  svg.innerHTML = '';
+  hexNodes = {};
+  const NS = 'http://www.w3.org/2000/svg';
+  coords.forEach(([q,r])=>{
+    const id = `${q}_${r}`;
+    const {x,y} = axialToPixel(q,r,HEX_SIZE);
+    const cx = x-minX, cy = y-minY;
+    const poly = document.createElementNS(NS,'polygon');
+    poly.setAttribute('points', hexCorners(cx,cy,HEX_SIZE-1.5));
+    poly.classList.add('hex'); poly.dataset.id = id;
+    poly.onclick = () => onCellClick(id);
+    const icon = document.createElementNS(NS,'text');
+    icon.setAttribute('x', cx); icon.setAttribute('y', cy+1); icon.setAttribute('text-anchor','middle');
+    icon.classList.add('hex-icon');
+    const sub = document.createElementNS(NS,'text');
+    sub.setAttribute('x', cx); sub.setAttribute('y', cy+15); sub.setAttribute('text-anchor','middle');
+    sub.classList.add('hex-sub');
+    svg.appendChild(poly); svg.appendChild(icon); svg.appendChild(sub);
+    hexNodes[id] = { poly, icon, sub };
+  });
+  const fit = (document.getElementById('mapWrap').clientWidth - 16) / mapBaseW;
+  setZoom(Math.min(1.7, fit > 0 ? fit : 1));
+}
+function isOwned(id){ return id === HOME || !!me.owned[id]; }
+function isFrontier(id){ return !isOwned(id) && neighborsOf(id).some(isOwned); }
+function cellState(id){ return id === HOME ? 'home' : me.owned[id] ? 'owned' : isFrontier(id) ? 'frontier' : 'fog'; }
+function renderMap(){
+  Object.entries(hexNodes).forEach(([id, n])=>{
+    const st = cellState(id);
+    const t = TERRAIN[terrainMap[id]];
+    n.poly.classList.remove('home','owned','frontier','fog');
+    n.poly.classList.add(st);
+    n.poly.style.opacity = '1';
+    if (st === 'home'){
+      n.poly.setAttribute('fill', '#f0b429'); n.icon.textContent = '🏠'; n.sub.textContent = '본진';
+    } else if (st === 'owned'){
+      n.poly.setAttribute('fill', t.color); n.icon.textContent = t.icon; n.sub.textContent = `🛡${me.owned[id].hp}`;
+    } else if (st === 'frontier'){
+      n.poly.setAttribute('fill', t.color); n.poly.style.opacity = '.55';
+      n.icon.textContent = t.icon; n.sub.textContent = `${me.progress[id]||0}/${t.need}`;
+    } else {
+      n.poly.setAttribute('fill', '#1d3445'); n.icon.textContent = '☁️'; n.sub.textContent = '';
+    }
+  });
+}
+function flashCell(id){
+  const n = hexNodes[id]; if (!n) return;
+  n.poly.classList.remove('attacked'); void n.poly.getBBox(); n.poly.classList.add('attacked');
+  setTimeout(()=>n.poly.classList.remove('attacked'), 1900);
+}
+
+/* ---------- 퀴즈 ---------- */
+function onCellClick(id){
+  const st = cellState(id);
+  if (st === 'home'){ toast('🏠 우리 본진이에요. 그림자 군단도 본진은 빼앗을 수 없어요!'); return; }
+  if (st === 'fog'){ toast('☁️ 아직 갈 수 없는 땅이에요. 맞닿은 땅부터 개척해요!'); return; }
+  if (st === 'owned' && me.owned[id].hp >= MAX_HP){ toast(`🛡 이미 방어력이 최대(${MAX_HP})예요!`); return; }
+  openQuiz(id, st === 'owned' ? 'fortify' : 'pioneer');
+}
+function pickWord(diff){
+  const all = DB[me.subject].all;
+  let pool = diff === 'mixed' ? all : all.filter(w=>w.difficulty===diff);
+  if (!pool.length) pool = all;
+  const wq = wrongQueue[me.subject] || [];
+  if (wq.length && Math.random() < 0.35) return wq.shift();
+  const fresh = pool.filter(w=>!recentAsked.includes(w.word));
+  const chosen = sample(fresh.length ? fresh : pool, 1)[0];
+  recentAsked.push(chosen.word);
+  if (recentAsked.length > 15) recentAsked.shift();
+  return chosen;
+}
+function openQuiz(id, mode){
+  quiz = { id, mode };
+  const t = TERRAIN[terrainMap[id]];
+  document.getElementById('qTitle').textContent = `${zoneMap[id]}구역 · ${t.icon} ${t.name} ${mode==='pioneer'?'개척하기':'방어 강화'}`;
+  document.getElementById('quizModal').classList.add('active');
+  nextQuestion();
+}
+function renderQuizStatus(){
+  if (!quiz) return;
+  const { id, mode } = quiz;
+  const t = TERRAIN[terrainMap[id]];
+  const tags = document.getElementById('qTags');
+  const dots = document.getElementById('qDots');
+  if (mode === 'pioneer'){
+    const p = me.owned[id] ? t.need : (me.progress[id] || 0);
+    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">정답 ${t.need}개면 개척!</span>`;
+    dots.innerHTML = Array.from({length:t.need},(_,i)=>`<span class="${i<p?'on':''}"></span>`).join('');
+  } else {
+    const hp = me.owned[id] ? me.owned[id].hp : 0;
+    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">🛡 방어력 ${hp} / ${MAX_HP}</span><span class="tag">정답 시 +1</span>`;
+    dots.innerHTML = Array.from({length:MAX_HP},(_,i)=>`<span class="${i<hp?'on':''}"></span>`).join('');
+  }
+}
+function nextQuestion(){
+  if (!quiz) return;
+  renderQuizStatus();
+  const t = TERRAIN[terrainMap[quiz.id]];
+  const w = pickWord(t.diff);
+  quiz.word = w;
+  document.getElementById('qWord').textContent = w.word;
+  document.getElementById('qFeedback').textContent = '';
+  const others = DB[me.subject].all.filter(x=>x.word!==w.word && x.meaning!==w.meaning);
+  const distractors = sample(others, Math.min(3, others.length)).map(x=>x.meaning);
+  const wrap = document.getElementById('qOptions');
+  wrap.innerHTML = '';
+  shuffle([w.meaning, ...distractors]).forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'opt-btn'; b.textContent = opt;
+    b.onclick = () => answer(b, opt);
+    wrap.appendChild(b);
+  });
+}
+function answer(btn, chosen){
+  const { id, mode, word: w } = quiz;
+  const t = TERRAIN[terrainMap[id]];
+  document.querySelectorAll('#qOptions .opt-btn').forEach(b=>b.disabled=true);
+  const fb = document.getElementById('qFeedback');
+  if (chosen === w.meaning){
+    btn.classList.add('correct');
+    me.correct++;
+    wrongQueue[me.subject] = (wrongQueue[me.subject]||[]).filter(x=>x.word!==w.word);
+    if (mode === 'pioneer'){
+      const p = (me.progress[id]||0) + 1;
+      if (p >= t.need){
+        delete me.progress[id];
+        me.owned[id] = { hp: START_HP };
+        fb.textContent = `🎉 ${t.name} 개척 성공!`; fb.className = 'q-feedback ok';
+        const newly = afterAnswer();
+        setTimeout(()=>{
+          closeQuiz();
+          if (newly.length) celebrate(newly[newly.length-1]);
+          else toast(`🚩 ${zoneMap[id]}구역 ${t.icon}${t.name}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
+        }, 1200);
+        return;
+      }
+      me.progress[id] = p;
+      fb.textContent = `✅ 정답! (${p}/${t.need})`; fb.className = 'q-feedback ok';
+      afterAnswer();
+      setTimeout(nextQuestion, 900);
+    } else {
+      me.owned[id].hp = Math.min(MAX_HP, me.owned[id].hp + 1);
+      fb.textContent = `✅ 방어 강화! 🛡 ${me.owned[id].hp}`; fb.className = 'q-feedback ok';
+      afterAnswer();
+      setTimeout(closeQuiz, 1000);
+    }
+    return;
+  }
+  btn.classList.add('wrong');
+  document.querySelectorAll('#qOptions .opt-btn').forEach(b=>{ if (b.textContent===w.meaning) b.classList.add('correct'); });
+  me.wrong++;
+  const wq = wrongQueue[me.subject] = wrongQueue[me.subject] || [];
+  if (!wq.some(x=>x.word===w.word)) wq.push(w);
+  const attack = aiAttack();
+  fb.innerHTML = `❌ 오답! 정답은 위에 초록색이에요.<br>👾 ${escapeHtml(attack.msg)}`;
+  fb.className = 'q-feedback bad';
+  afterAnswer();
+  if (attack.id) flashCell(attack.id);
+  setTimeout(()=>{
+    if (!quiz) return;
+    const stillValid = mode === 'pioneer' ? isFrontier(id) : !!me.owned[id];
+    if (!stillValid){ closeQuiz(); toast(mode === 'pioneer' ? '길이 끊겨서 이 땅은 지금 개척할 수 없어요.' : '이 땅을 빼앗겼어요. 다시 개척해 주세요!', true); return; }
+    if (mode === 'fortify'){ closeQuiz(); return; }
+    nextQuestion();
+  }, 2200);
+}
+function aiAttack(){
+  const owned = Object.keys(me.owned);
+  if (!owned.length) return { msg: '그림자 군단이 본진을 공격했지만 막아냈어요!' };
+  const border = owned.filter(id=>neighborsOf(id).some(n=>terrainMap[n] && !isOwned(n)));
+  const pool = border.length ? border : owned;
+  const id = pool[Math.floor(Math.random()*pool.length)];
+  const before = me.owned[id].hp;
+  const t = TERRAIN[terrainMap[id]];
+  if (before - 1 <= 0){
+    delete me.owned[id];
+    return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 빼앗았어요! 다시 개척해야 해요.` };
+  }
+  me.owned[id].hp = before - 1;
+  return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 공격했어요! (🛡 ${before}→${before-1})` };
+}
+function afterAnswer(){
+  const newly = checkMissions();
+  savePlayer();
+  renderMap(); renderHeader(); renderMissionBar(); renderQuizStatus();
+  return newly;
+}
+function closeQuiz(){ quiz = null; document.getElementById('quizModal').classList.remove('active'); }
+
+/* ---------- 부팅 ---------- */
+async function boot(){
+  showScreen('loading');
+  if (!await loadAllData()) return;
+  initTitle();
+  showScreen('title');
+}
+boot();
+</script>
+</body>
+</html>
