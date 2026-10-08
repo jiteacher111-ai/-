@@ -109,6 +109,13 @@
   .tag{font-family:'Jua',sans-serif;font-size:12px;padding:4px 10px;border-radius:8px;background:var(--wood);color:var(--parchment);}
   .tag.teal{background:var(--teal);color:#fff;}
   .dots{display:flex;gap:7px;justify-content:center;margin-bottom:12px;}
+  .timer-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:5px;}
+  #qTimerText{font-family:'Jua',sans-serif;font-size:15px;}
+  #qTimerText.low{color:var(--danger);}
+  .timer-hint{font-size:11px;color:var(--ink-muted);}
+  .timer{height:10px;background:var(--parchment2);border-radius:6px;overflow:hidden;margin-bottom:12px;}
+  .timer-fill{height:100%;width:100%;background:var(--ok);}
+  .timer-fill.low{background:var(--danger);}
   .dots span{width:16px;height:16px;border-radius:50%;background:var(--parchment2);border:2px solid var(--wood);}
   .dots span.on{background:var(--ok);}
   .q-word-box{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:12px;padding:16px;text-align:center;margin-bottom:12px;}
@@ -239,6 +246,8 @@
       </div>
       <div class="tags" id="qTags"></div>
       <div class="dots" id="qDots"></div>
+      <div class="timer-row"><span id="qTimerText">⏰</span><span class="timer-hint">시간이 지나거나 창을 닫으면 오답이에요</span></div>
+      <div class="timer"><div class="timer-fill" id="qTimerFill"></div></div>
       <div class="q-word-box">
         <div style="font-size:11px;color:var(--ink-muted);margin-bottom:6px;">이 낱말의 뜻은?</div>
         <div class="q-word" id="qWord"></div>
@@ -315,6 +324,7 @@ const DEFAULT_MISSIONS = [
   { goal: 35, reward: '숙제 면제권' },
 ];
 const DASH_POLL_MS = 5000;
+const QUESTION_TIME_SEC = 15;
 // 선생님 비밀번호의 SHA-256 값. 바꾸려면 새 비밀번호의 SHA-256을 넣으세요.
 const TEACHER_PW_SHA256 = '34707c3f40dfa20c3902b807b627d420d6d474d9d98066ba637953d1cfd6b914';
 
@@ -619,6 +629,7 @@ async function joinAsStudent(){
 }
 function goHome(){
   clearInterval(dashTimer); dashTimer = null;
+  stopTimer();
   roomCode = null; playerKey = null; me = null; quiz = null;
   ['quizModal','missionModal','settingsModal','celebrateModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
   clearTimeout(toastTimer); document.getElementById('toast').className = '';
@@ -745,7 +756,10 @@ function enterBoard(isNew){
     if (me) renderMissionList();
   };
   document.getElementById('missionClose').onclick = () => document.getElementById('missionModal').classList.remove('active');
-  document.getElementById('qClose').onclick = closeQuiz;
+  document.getElementById('qClose').onclick = () => {
+    if (quiz && quiz.word && !quiz.answered) answer(null, null, 'quit');
+    else closeQuiz();
+  };
   document.getElementById('zoomInBtn').onclick = () => setZoom(zoomLevel+0.2);
   document.getElementById('zoomOutBtn').onclick = () => setZoom(zoomLevel-0.2);
   buildSvgSkeleton();
@@ -878,8 +892,34 @@ function nextQuestion(){
     b.onclick = () => answer(b, opt);
     wrap.appendChild(b);
   });
+  quiz.answered = false;
+  startTimer();
 }
-function answer(btn, chosen){
+let quizTimer = null;
+function stopTimer(){ clearInterval(quizTimer); quizTimer = null; }
+function startTimer(){
+  stopTimer();
+  const total = QUESTION_TIME_SEC * 1000;
+  const end = Date.now() + total;
+  const fill = document.getElementById('qTimerFill');
+  const text = document.getElementById('qTimerText');
+  const tick = () => {
+    const left = Math.max(0, end - Date.now());
+    const low = left <= 5000;
+    fill.style.width = (left / total * 100) + '%';
+    fill.classList.toggle('low', low);
+    text.classList.toggle('low', low);
+    text.textContent = `⏰ ${Math.ceil(left / 1000)}초`;
+    if (left <= 0){ stopTimer(); answer(null, null, 'timeout'); }
+  };
+  tick();
+  quizTimer = setInterval(tick, 100);
+}
+// reason: 'timeout'(시간 초과) | 'quit'(문제 중 창 닫기) — 둘 다 오답 처리
+function answer(btn, chosen, reason){
+  if (!quiz || quiz.answered) return;
+  quiz.answered = true;
+  stopTimer();
   const { id, mode, word: w } = quiz;
   const t = TERRAIN[terrainMap[id]];
   document.querySelectorAll('#qOptions .opt-btn').forEach(b=>b.disabled=true);
@@ -914,16 +954,22 @@ function answer(btn, chosen){
     }
     return;
   }
-  btn.classList.add('wrong');
+  if (btn) btn.classList.add('wrong');
   document.querySelectorAll('#qOptions .opt-btn').forEach(b=>{ if (b.textContent===w.meaning) b.classList.add('correct'); });
   me.wrong++;
   const wq = wrongQueue[me.subject] = wrongQueue[me.subject] || [];
   if (!wq.some(x=>x.word===w.word)) wq.push(w);
   const attack = aiAttack();
-  fb.innerHTML = `❌ 오답! 정답은 위에 초록색이에요.<br>👾 ${escapeHtml(attack.msg)}`;
-  fb.className = 'q-feedback bad';
   afterAnswer();
   if (attack.id) flashCell(attack.id);
+  if (reason === 'quit'){
+    closeQuiz();
+    toast(`🏳 문제를 포기했어요! 👾 ${attack.msg}`, true);
+    return;
+  }
+  const head = reason === 'timeout' ? '⏰ 시간 초과!' : '❌ 오답!';
+  fb.innerHTML = `${head} 정답은 위에 초록색이에요.<br>👾 ${escapeHtml(attack.msg)}`;
+  fb.className = 'q-feedback bad';
   setTimeout(()=>{
     if (!quiz) return;
     const stillValid = mode === 'pioneer' ? isFrontier(id) : !!me.owned[id];
@@ -953,7 +999,7 @@ function afterAnswer(){
   renderMap(); renderHeader(); renderMissionBar(); renderQuizStatus();
   return newly;
 }
-function closeQuiz(){ quiz = null; document.getElementById('quizModal').classList.remove('active'); }
+function closeQuiz(){ stopTimer(); quiz = null; document.getElementById('quizModal').classList.remove('active'); }
 
 /* ---------- 부팅 ---------- */
 async function boot(){
