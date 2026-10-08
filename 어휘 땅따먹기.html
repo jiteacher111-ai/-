@@ -80,15 +80,17 @@
 
   /* map */
   #mapWrap{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:8px;touch-action:pan-x pan-y;}
-  .hex{stroke:#2a2015;stroke-width:1.5;}
-  .hex.frontier{cursor:pointer;stroke:#fff6d8;stroke-width:2;stroke-dasharray:4 3;}
-  .hex.owned{cursor:pointer;stroke:var(--gold);stroke-width:2.5;}
-  .hex.home{stroke:var(--gold);stroke-width:3.5;}
-  .hex.fog{cursor:not-allowed;}
-  .hex.attacked{animation:flash .9s ease 2;}
+  .tile{stroke:#2a2015;stroke-width:1;}
+  .tile.frontier{cursor:pointer;stroke:#fff6d8;stroke-width:2;stroke-dasharray:4 3;}
+  .tile.owned{cursor:pointer;stroke:var(--gold);stroke-width:2;}
+  .tile.home{stroke:#fff3c4;stroke-width:2.5;}
+  .tile.fog{cursor:not-allowed;}
+  .tile.attacked{animation:flash .9s ease 2;}
+  .tile-deco{pointer-events:none;}
+  .room-label{font-family:'Jua',sans-serif;fill:#fff;pointer-events:none;}
   @keyframes flash{50%{fill:#ff3b3b;}}
-  .hex-icon{font-size:14px;pointer-events:none;}
-  .hex-sub{font-family:'Jua',sans-serif;font-size:9px;fill:#fff;pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:2px;}
+  .tile-icon{font-size:15px;pointer-events:none;}
+  .tile-sub{font-family:'Jua',sans-serif;font-size:9px;fill:#fff;pointer-events:none;paint-order:stroke;stroke:rgba(0,0,0,.55);stroke-width:2px;}
   .legend{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;font-size:11px;color:var(--parchment2);padding:4px 12px 2px;}
   .zoom-ctrl{position:fixed;right:16px;bottom:16px;display:flex;flex-direction:column;gap:8px;z-index:30;}
   .zoom-ctrl button{width:42px;height:42px;border-radius:50%;background:var(--wood);color:var(--parchment);border:2px solid var(--gold);font-size:18px;cursor:pointer;}
@@ -160,7 +162,7 @@
   .boss-modal{border-color:#5b2a6e;}
   .boss-icon{animation:bossBob 1.2s ease-in-out infinite;}
   @keyframes bossBob{50%{transform:translateY(-6px) scale(1.05);}}
-  .hex,.hex-icon{transform-box:fill-box;transform-origin:center;}
+  .tile,.tile-icon{transform-box:fill-box;transform-origin:center;}
   .pop{animation:pop .7s cubic-bezier(.3,1.6,.5,1);}
   @keyframes pop{0%{transform:scale(.2);}100%{transform:scale(1);}}
   .opt-btn.correct{animation:okPulse .45s ease;}
@@ -179,7 +181,7 @@
 
   <div id="loading" class="screen active pad center">
     <div class="spinner"></div>
-    <div class="jua" style="font-size:18px;">개척 지도를 펼치는 중...</div>
+    <div class="jua" style="font-size:18px;">교실 지도를 펼치는 중...</div>
     <div id="loadErrBox"></div>
   </div>
 
@@ -187,7 +189,7 @@
   <div id="title" class="screen pad center">
     <div class="title-sub">초등 5학년 어휘 개척 모험</div>
     <div class="title-main jua">어휘 개척단</div>
-    <div class="title-desc">낱말을 풀어 미지의 땅을 개척하고, 나만의 미션을 완수해 보상을 받아요!</div>
+    <div class="title-desc">낱말을 풀어 그림자에 덮인 우리 교실을 한 칸씩 되찾고, 나만의 미션을 완수해 보상을 받아요!</div>
     <div class="load-err" id="configWarn" style="display:none;">⚠️ Supabase 연결 정보가 아직 설정되지 않았어요.<br>파일 위쪽 <b>SUPABASE</b>의 URL과 ANON_KEY를 채워주세요.</div>
     <div class="card">
       <h2 class="jua">🧭 개척 시작</h2>
@@ -213,7 +215,7 @@
   <div id="createScreen" class="screen pad center">
     <div class="card">
       <h2 class="jua">🏫 학급 미션 설정</h2>
-      <div style="font-size:12px;color:var(--ink-muted);line-height:1.5;">학생 한 명 한 명이 개척한 땅의 수가 목표에 도달하면 그 학생의 미션이 완료돼요. 보상은 자유롭게 적어주세요. (지도는 본진을 빼고 60칸이에요)</div>
+      <div style="font-size:12px;color:var(--ink-muted);line-height:1.5;">학생 한 명 한 명이 개척한 땅의 수가 목표에 도달하면 그 학생의 미션이 완료돼요. 보상은 자유롭게 적어주세요. (교실 지도는 본진을 빼고 <span id="totalCells"></span>칸이에요)</div>
       <div id="missionEditor" style="display:flex;flex-direction:column;gap:8px;"></div>
       <button class="btn btn-plain" id="addMissionBtn">＋ 미션 추가</button>
       <button class="btn btn-gold btn-wide" id="createBtn">학급 만들기</button>
@@ -256,7 +258,7 @@
     <div class="legend" id="legend"></div>
     <div id="mapWrap"><svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="zoom-ctrl"><button id="zoomInBtn">＋</button><button id="zoomOutBtn">－</button></div>
-    <footer>점선 땅을 눌러 개척해요 · 내 땅을 누르면 방어력을 높일 수 있어요 · 3연속 정답이면 🔥보너스! · 틀리면 그림자 군단이 내 땅을 공격해요!</footer>
+    <footer>점선 칸을 눌러 개척해요 · 내 땅을 누르면 방어력을 높일 수 있어요 · 3연속 정답이면 🔥보너스! · 틀리면 그림자 군단이 내 땅을 공격해요!</footer>
   </div>
 
   <div id="toast"></div>
@@ -339,24 +341,47 @@ const CONFIG = {
   SHEET_NAME: '낱말 집계',
   SUBJECTS: ['국어', '사회', '과학'],
 };
-const GRID_RADIUS = 4;
-const HEX_SIZE = 32;
-const NEI = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
-const HOME = '0_0';
+// 위에서 내려다본 교실. 첫 줄이 칠판 쪽, 왼쪽 벽이 창문, 오른쪽 벽이 복도(앞문·뒷문).
+// . 바닥  D 학생 책상(두 개씩 붙은 4분단)  P 화분  B 학급문고  L 사물함  C 청소함
+// T 선생님 책상  K 교탁  V TV  H 뒷문(본진)
+const CLASSROOM = [
+  'TT...KKK...VV',
+  '.............',
+  '.DD.DD.DD.DD.',
+  'PDD.DD.DD.DD.',
+  '.DD.DD.DD.DD.',
+  '.DD.DD.DD.DD.',
+  'PDD.DD.DD.DD.',
+  '.DD.DD.DD.DD.',
+  '.............',
+  'BB..........H',
+  'LLLLLLLLLLLCC',
+];
+const ROWS = CLASSROOM.length, COLS = CLASSROOM[0].length;
+const TILE_CODES = { '.':'floor', D:'desk', P:'plant', B:'shelf', L:'locker', C:'clean', T:'tdesk', K:'podium', V:'tv' };
 const START_HP = 2, MAX_HP = 5;
 const TERRAIN = {
-  plain:    { icon:'🌾', name:'들판',     diff:'easy',   diffLabel:'쉬운 어휘',   need:2, color:'#9cc760' },
-  forest:   { icon:'🌲', name:'숲',       diff:'normal', diffLabel:'보통 어휘',   need:3, color:'#3f9a55' },
-  mountain: { icon:'⛰️', name:'산',       diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#9a7b5a' },
-  ruin:     { icon:'🏛️', name:'고대 유적', diff:'mixed',  diffLabel:'모든 어휘',   need:5, color:'#c9a24a' },
+  floor:  { icon:'',   name:'교실 바닥',   diff:'easy',   diffLabel:'쉬운 어휘',   need:2, color:'#d9c49c' },
+  desk:   { icon:'',   name:'책상',        diff:'normal', diffLabel:'보통 어휘',   need:3, color:'#b98450' },
+  plant:  { icon:'🪴', name:'화분',        diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#9cc58a' },
+  shelf:  { icon:'📚', name:'학급문고',    diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#b597cf' },
+  locker: { icon:'🎒', name:'사물함',      diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#8fb3cc' },
+  clean:  { icon:'🧹', name:'청소함',      diff:'hard',   diffLabel:'어려운 어휘', need:4, color:'#a9b8a2' },
+  tdesk:  { icon:'💻', name:'선생님 책상', diff:'mixed',  diffLabel:'모든 어휘',   need:5, color:'#e0a94e' },
+  podium: { icon:'📖', name:'교탁',        diff:'mixed',  diffLabel:'모든 어휘',   need:5, color:'#e0a94e' },
+  tv:     { icon:'📺', name:'TV',          diff:'mixed',  diffLabel:'모든 어휘',   need:5, color:'#e0a94e' },
 };
-// 중심에서 멀어질수록 어려운 땅이 많아짐: [들판, 숲, 산, 유적] 누적 확률
-const TERRAIN_ODDS = { 1:[.7,1,1,1], 2:[.4,.85,1,1], 3:[.2,.6,.95,1], 4:[.1,.4,.85,1] };
+const LEGEND = [
+  { icon:'🟫', label:'교실 바닥', key:'floor' },
+  { icon:'✏️', label:'책상', key:'desk' },
+  { icon:'🎒', label:'사물함·학급문고·화분·청소함', key:'locker' },
+  { icon:'📖', label:'교탁·선생님 책상·TV', key:'podium' },
+];
 const DEFAULT_MISSIONS = [
-  { goal: 5,  reward: '칭찬 도장 1개' },
-  { goal: 12, reward: '간식 쿠폰' },
-  { goal: 20, reward: '자리 선택권' },
-  { goal: 35, reward: '숙제 면제권' },
+  { goal: 10,  reward: '칭찬 도장 1개' },
+  { goal: 30,  reward: '간식 쿠폰' },
+  { goal: 60,  reward: '자리 선택권' },
+  { goal: 100, reward: '숙제 면제권' },
 ];
 const DASH_POLL_MS = 5000;
 const QUESTION_TIME_SEC = 15;
@@ -365,9 +390,9 @@ const FAST_RATIO = 0.5;         // 제한시간이 절반 넘게 남았을 때 �
 // 내 땅이 at칸이 되면 등장. 격파 기록은 achieved에 'boss:<at>' 키로 저장한다.
 // 이름은 받침으로 끝나야 한다(화면 문구가 '이/을/과' 조사를 쓴다).
 const BOSSES = [
-  { at: 10, name: '그림자 대장', icon: '👹', hp: 5 },
-  { at: 25, name: '그림자 장군', icon: '👺', hp: 7 },
-  { at: 45, name: '그림자 왕',   icon: '🐲', hp: 9 },
+  { at: 15,  name: '그림자 대장', icon: '👹', hp: 5 },
+  { at: 50,  name: '그림자 장군', icon: '👺', hp: 7 },
+  { at: 100, name: '그림자 왕',   icon: '🐲', hp: 9 },
 ];
 const BOSS_HEAL = 2;
 // 선생님 비밀번호의 SHA-256 값. 바꾸려면 새 비밀번호의 SHA-256을 넣으세요.
@@ -379,7 +404,7 @@ let roomCode = null, playerKey = null;
 let room = { code:null, seed:0, missions:[] };
 let me = null, myGiven = {};
 let dashPlayers = [], dashTimer = null;
-let terrainMap = {}, zoneMap = {};
+let terrainMap = {}, HOME = null;
 let wrongQueue = {}, recentAsked = [];
 let combo = 0, bossHp = {};
 let quiz = null;
@@ -463,7 +488,6 @@ function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.class
 function genCode(){ const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; return Array.from({length:4},()=>c[Math.floor(Math.random()*c.length)]).join(''); }
 function nameKey(name){ return name.trim().replace(/\s+/g,' '); }
 function hashStr(s){ let h=1779033703^s.length; for(let i=0;i<s.length;i++){ h=Math.imul(h^s.charCodeAt(i),3432918353); h=h<<13|h>>>19; } return h>>>0; }
-function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
 function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
 function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
 let toastTimer = null;
@@ -545,32 +569,40 @@ function timeAgo(iso){
   return `${Math.floor(h/24)}일 전`;
 }
 
-/* ---------- hex map ---------- */
-function axialToPixel(q,r,s){ return { x: s*Math.sqrt(3)*(q+r/2), y: s*1.5*r }; }
-function hexCorners(cx,cy,s){
-  const pts=[];
-  for(let i=0;i<6;i++){ const a=Math.PI/180*(60*i-30); pts.push(`${(cx+s*Math.cos(a)).toFixed(1)},${(cy+s*Math.sin(a)).toFixed(1)}`); }
-  return pts.join(' ');
+/* ---------- 교실 지도 ---------- */
+// 칸 id는 'r<행>c<열>'. 예전 육각형 지도의 id('-1_0' 등)와 겹치지 않는다.
+const cellId = (r, c) => `r${r}c${c}`;
+function parseId(id){ const m = /^r(\d+)c(\d+)$/.exec(id); return m ? [+m[1], +m[2]] : [-1, -1]; }
+function buildClassroom(){
+  terrainMap = {};
+  CLASSROOM.forEach((line, r) => [...line].forEach((ch, c) => {
+    if (ch === 'H') HOME = cellId(r, c);
+    else terrainMap[cellId(r, c)] = TILE_CODES[ch];
+  }));
 }
-function generateAxialCoords(N){
-  const list=[];
-  for(let q=-N;q<=N;q++){ const r1=Math.max(-N,-q-N), r2=Math.min(N,-q+N); for(let r=r1;r<=r2;r++) list.push([q,r]); }
-  return list;
+function neighborsOf(id){
+  const [r, c] = parseId(id);
+  return [[r-1,c],[r+1,c],[r,c-1],[r,c+1]]
+    .filter(([y,x]) => y >= 0 && y < ROWS && x >= 0 && x < COLS)
+    .map(([y,x]) => cellId(y, x));
 }
-function hexDist(q,r){ return (Math.abs(q)+Math.abs(r)+Math.abs(q+r))/2; }
-function neighborsOf(id){ const [q,r]=id.split('_').map(Number); return NEI.map(([dq,dr])=>`${q+dq}_${r+dr}`); }
-function buildTerrain(seed){
-  const rng = mulberry32(seed);
-  terrainMap = {}; zoneMap = {};
-  generateAxialCoords(GRID_RADIUS).forEach(([q,r], i)=>{
-    const id = `${q}_${r}`;
-    zoneMap[id] = i+1;
-    if (id === HOME) return;
-    const odds = TERRAIN_ODDS[hexDist(q,r)];
-    const x = rng();
-    terrainMap[id] = x < odds[0] ? 'plain' : x < odds[1] ? 'forest' : x < odds[2] ? 'mountain' : 'ruin';
-  });
+function cellLabel(id){
+  if (id === HOME) return '교실 뒷문';
+  const [r, c] = parseId(id);
+  const type = terrainMap[id];
+  if (type === 'desk') return `${Math.floor((c-1)/3)+1}분단 ${r-1}번째 줄 ${(c-1)%3 === 0 ? '왼쪽' : '오른쪽'} 책상`;
+  if (type === 'locker') return `${c+1}번 사물함`;
+  if (type === 'floor'){
+    if (r <= 1) return '교실 앞 바닥';
+    if (r >= ROWS - 3) return '교실 뒤 바닥';
+    if (c === 0) return '창가 통로';
+    if (c === COLS - 1) return '복도 쪽 통로';
+    return '분단 사이 통로';
+  }
+  return TERRAIN[type].name;
 }
+const TOTAL_CELLS = () => Object.keys(terrainMap).length;
+const keepCells = obj => Object.fromEntries(Object.entries(obj || {}).filter(([k]) => terrainMap[k]));
 
 /* ---------- Supabase ---------- */
 function isConfigured(){ return !SUPABASE.URL.startsWith('YOUR-') && !SUPABASE.ANON_KEY.startsWith('YOUR-'); }
@@ -618,7 +650,7 @@ async function fetchMyGiven(){
 }
 
 /* ---------- 개인 미션 ---------- */
-function ownedCount(p){ return p && p.owned ? Object.keys(p.owned).length : 0; }
+function ownedCount(p){ return p && p.owned ? Object.keys(p.owned).filter(k => terrainMap[k]).length : 0; }
 function missionList(){ return (room.missions || []).slice().sort((a,b)=>a.goal-b.goal); }
 function checkMissions(){
   const n = ownedCount(me);
@@ -777,9 +809,8 @@ async function joinAsStudent(){
     lsSet('pioneer_code', code); lsSet('pioneer_name', name);
     room = r; roomCode = code; playerKey = key;
     const p = prev || {};
-    me = { name, subject, owned: p.owned || {}, progress: p.progress || {}, correct: p.correct || 0, wrong: p.wrong || 0, achieved: p.achieved || {} };
+    me = { name, subject, owned: keepCells(p.owned), progress: keepCells(p.progress), correct: p.correct || 0, wrong: p.wrong || 0, achieved: p.achieved || {} };
     myGiven = p.given || {};
-    buildTerrain(Number(r.seed) || hashStr(code));
     checkMissions();
     savePlayer();
     enterBoard(!prev);
@@ -797,12 +828,13 @@ function goHome(){
 
 /* ---------- 학급 만들기 / 대시보드 ---------- */
 function openCreate(){
+  document.getElementById('totalCells').textContent = TOTAL_CELLS();
   const ed = document.getElementById('missionEditor');
   ed.innerHTML = '';
   const addRow = (goal, reward) => {
     const row = document.createElement('div');
     row.className = 'mission-edit';
-    row.innerHTML = `<input class="goal" type="number" min="1" max="60" placeholder="칸"><input class="reward" maxlength="30" placeholder="보상 (예: 칭찬 도장)"><button class="rm" title="삭제">✕</button>`;
+    row.innerHTML = `<input class="goal" type="number" min="1" max="${TOTAL_CELLS()}" placeholder="칸"><input class="reward" maxlength="30" placeholder="보상 (예: 칭찬 도장)"><button class="rm" title="삭제">✕</button>`;
     row.querySelector('.goal').value = goal ?? '';
     row.querySelector('.reward').value = reward ?? '';
     row.querySelector('.rm').onclick = () => row.remove();
@@ -816,7 +848,7 @@ function openCreate(){
       goal: parseInt(r.querySelector('.goal').value,10), reward: r.querySelector('.reward').value.trim()
     })).filter(m=>m.goal>0 && m.reward);
     if (!rows.length){ err.textContent = '미션을 1개 이상 입력해주세요 (목표 칸 수와 보상).'; return; }
-    if (rows.some(m=>m.goal>60)){ err.textContent = '목표는 60칸 이하로 정해주세요.'; return; }
+    if (rows.some(m=>m.goal>TOTAL_CELLS())){ err.textContent = `목표는 ${TOTAL_CELLS()}칸 이하로 정해주세요.`; return; }
     if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
     err.textContent = '';
     const missions = rows.sort((a,b)=>a.goal-b.goal).map((m,i)=>({ id:'m'+i, goal:m.goal, reward:m.reward }));
@@ -890,7 +922,7 @@ async function toggleGiven(key, mid){
 }
 
 /* ---------- 학생 개척 화면 ---------- */
-let hexNodes = {};
+let tileNodes = {};
 let zoomLevel = 1, mapBaseW = 0, mapBaseH = 0;
 function setZoom(v){
   zoomLevel = Math.max(0.6, Math.min(2.2, v));
@@ -901,7 +933,7 @@ function setZoom(v){
 function enterBoard(isNew){
   showScreen('board');
   document.getElementById('boardCode').textContent = roomCode;
-  document.getElementById('legend').innerHTML = Object.values(TERRAIN).map(t=>`<span>${t.icon} ${t.name} · ${t.diffLabel} ${t.need}문제</span>`).join('');
+  document.getElementById('legend').innerHTML = LEGEND.map(l => { const t = TERRAIN[l.key]; return `<span>${l.icon} ${l.label} · ${t.diffLabel} ${t.need}문제</span>`; }).join('');
   const ss = document.getElementById('settingsSubject');
   ss.value = me.subject;
   ss.onchange = () => { me.subject = ss.value; savePlayer(); renderHeader(); };
@@ -927,41 +959,59 @@ function enterBoard(isNew){
   document.getElementById('bossBanner').onclick = () => { const b = currentBoss(); if (b) showBossIntro(b); };
   buildSvgSkeleton();
   renderMap(); renderHeader(); renderMissionBar(); renderBossBanner();
-  toast(isNew ? '🏠 본진에서 출발! 점선으로 된 땅을 눌러 개척해 보세요.' : `다시 왔군요, ${me.name}! 개척을 이어가요.`);
+  toast(isNew ? '🚪 교실 뒷문에서 출발! 그림자에 덮인 교실을 한 칸씩 되찾아요.' : `다시 왔군요, ${me.name}! 개척을 이어가요.`);
 }
 function renderHeader(){
   const tries = me.correct + me.wrong;
   const acc = tries ? Math.round(me.correct/tries*100) : 0;
   document.getElementById('boardMe').textContent = `${me.name} · ${me.subject} · 내 땅 ${ownedCount(me)}칸 · 정답률 ${acc}%`;
 }
+const CELL = 34, M_LEFT = 16, M_RIGHT = 24, M_TOP = 46, M_BOTTOM = 12;
+function svgEl(tag, attrs, parent){
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  parent.appendChild(el);
+  return el;
+}
+function svgText(parent, x, y, text, attrs){
+  const el = svgEl('text', { x, y, 'text-anchor':'middle', 'dominant-baseline':'central', ...attrs }, parent);
+  el.textContent = text;
+  return el;
+}
 function buildSvgSkeleton(){
   const svg = document.getElementById('mapSvg');
-  const coords = generateAxialCoords(GRID_RADIUS);
-  const pts = coords.map(([q,r])=>axialToPixel(q,r,HEX_SIZE));
-  const pad = HEX_SIZE*1.1;
-  const minX=Math.min(...pts.map(p=>p.x))-pad, maxX=Math.max(...pts.map(p=>p.x))+pad;
-  const minY=Math.min(...pts.map(p=>p.y))-pad, maxY=Math.max(...pts.map(p=>p.y))+pad;
-  mapBaseW = maxX-minX; mapBaseH = maxY-minY;
+  const gridW = COLS * CELL, gridH = ROWS * CELL;
+  mapBaseW = M_LEFT + gridW + M_RIGHT; mapBaseH = M_TOP + gridH + M_BOTTOM;
   svg.setAttribute('viewBox', `0 0 ${mapBaseW} ${mapBaseH}`);
   svg.innerHTML = '';
-  hexNodes = {};
-  const NS = 'http://www.w3.org/2000/svg';
-  coords.forEach(([q,r])=>{
-    const id = `${q}_${r}`;
-    const {x,y} = axialToPixel(q,r,HEX_SIZE);
-    const cx = x-minX, cy = y-minY;
-    const poly = document.createElementNS(NS,'polygon');
-    poly.setAttribute('points', hexCorners(cx,cy,HEX_SIZE-1.5));
-    poly.classList.add('hex'); poly.dataset.id = id;
-    poly.onclick = () => onCellClick(id);
-    const icon = document.createElementNS(NS,'text');
-    icon.setAttribute('x', cx); icon.setAttribute('y', cy+1); icon.setAttribute('text-anchor','middle');
-    icon.classList.add('hex-icon');
-    const sub = document.createElementNS(NS,'text');
-    sub.setAttribute('x', cx); sub.setAttribute('y', cy+15); sub.setAttribute('text-anchor','middle');
-    sub.classList.add('hex-sub');
-    svg.appendChild(poly); svg.appendChild(icon); svg.appendChild(sub);
-    hexNodes[id] = { poly, icon, sub };
+  tileNodes = {};
+  // 벽과 바닥 틀
+  svgEl('rect', { x:0, y:0, width:mapBaseW, height:mapBaseH, rx:12, fill:'#5b3b22' }, svg);
+  svgEl('rect', { x:M_LEFT-3, y:M_TOP-3, width:gridW+6, height:gridH+6, rx:4, fill:'#3b2a1b' }, svg);
+  // 칠판과 시계 (앞쪽 벽)
+  const bx = M_LEFT + 3*CELL, bw = 7*CELL;
+  svgEl('rect', { x:bx, y:8, width:bw, height:26, rx:3, fill:'#2f5d46', stroke:'#c9a26b', 'stroke-width':3 }, svg);
+  svgText(svg, bx + bw/2, 21, '칠  판', { 'font-size':13, class:'room-label' });
+  svgText(svg, M_LEFT + 1.5*CELL, 21, '🕘', { 'font-size':16 });
+  // 창문 (왼쪽 벽)
+  [1, 4, 7].forEach(r0 => svgEl('rect', { x:3, y:M_TOP + r0*CELL + 4, width:8, height:3*CELL - 8, rx:2, fill:'#9ad3f5', stroke:'#e8f6ff', 'stroke-width':1 }, svg));
+  // 앞문·뒷문 (오른쪽 벽, 복도 쪽)
+  [[0, '앞문'], [parseId(HOME)[0] - 1, '뒷문']].forEach(([r0, label]) => {
+    const x = M_LEFT + gridW + 5, y = M_TOP + r0*CELL + 3, h = 2*CELL - 6;
+    svgEl('rect', { x, y, width:14, height:h, rx:2, fill:'#a8743e', stroke:'#e9c08a', 'stroke-width':1 }, svg);
+    [...label].forEach((ch, i) => svgText(svg, x + 7, y + h/2 + (i - 0.5) * 11, ch, { 'font-size':9, class:'room-label' }));
+  });
+  // 칸
+  [...Object.keys(terrainMap), HOME].forEach(id => {
+    const [r, c] = parseId(id);
+    const x = M_LEFT + c*CELL, y = M_TOP + r*CELL;
+    const rect = svgEl('rect', { x:x+1, y:y+1, width:CELL-2, height:CELL-2, rx:5, class:'tile', 'data-id':id }, svg);
+    rect.onclick = () => onCellClick(id);
+    const deco = terrainMap[id] === 'desk'
+      ? svgEl('rect', { x:x+5, y:y+6, width:CELL-10, height:CELL-17, rx:2, fill:'#ecc98f', class:'tile-deco' }, svg) : null;
+    const icon = svgText(svg, x + CELL/2, y + CELL/2 - 2, '', { class:'tile-icon' });
+    const sub = svgEl('text', { x:x + CELL/2, y:y + CELL - 5, 'text-anchor':'middle', class:'tile-sub' }, svg);
+    tileNodes[id] = { rect, deco, icon, sub };
   });
   const fit = (document.getElementById('mapWrap').clientWidth - 16) / mapBaseW;
   setZoom(Math.min(1.7, fit > 0 ? fit : 1));
@@ -969,33 +1019,38 @@ function buildSvgSkeleton(){
 function isOwned(id){ return id === HOME || !!me.owned[id]; }
 function isFrontier(id){ return !isOwned(id) && neighborsOf(id).some(isOwned); }
 function cellState(id){ return id === HOME ? 'home' : me.owned[id] ? 'owned' : isFrontier(id) ? 'frontier' : 'fog'; }
+// 개척하지 않은 칸은 그림자로 덮되, 책상·사물함 모양은 희미하게 보여 교실임을 알 수 있게 한다.
 function renderMap(){
-  Object.entries(hexNodes).forEach(([id, n])=>{
+  Object.entries(tileNodes).forEach(([id, n])=>{
     const st = cellState(id);
-    const t = TERRAIN[terrainMap[id]];
-    n.poly.classList.remove('home','owned','frontier','fog');
-    n.poly.classList.add(st);
-    n.poly.style.opacity = '1';
+    n.rect.classList.remove('home','owned','frontier','fog');
+    n.rect.classList.add(st);
+    n.rect.style.opacity = st === 'frontier' ? '.62' : '1';
+    n.icon.style.opacity = st === 'fog' ? '.3' : '1';
+    if (n.deco) n.deco.style.opacity = st === 'fog' ? '.12' : '1';
     if (st === 'home'){
-      n.poly.setAttribute('fill', '#f0b429'); n.icon.textContent = '🏠'; n.sub.textContent = '본진';
-    } else if (st === 'owned'){
-      n.poly.setAttribute('fill', t.color); n.icon.textContent = t.icon; n.sub.textContent = `🛡${me.owned[id].hp}`;
+      n.rect.setAttribute('fill', '#f0b429'); n.icon.textContent = '🚪'; n.sub.textContent = '본진';
+      return;
+    }
+    const t = TERRAIN[terrainMap[id]];
+    n.icon.textContent = t.icon;
+    if (st === 'owned'){
+      n.rect.setAttribute('fill', t.color); n.sub.textContent = `🛡${me.owned[id].hp}`;
     } else if (st === 'frontier'){
-      n.poly.setAttribute('fill', t.color); n.poly.style.opacity = '.55';
-      n.icon.textContent = t.icon; n.sub.textContent = `${me.progress[id]||0}/${t.need}`;
+      n.rect.setAttribute('fill', t.color); n.sub.textContent = `${me.progress[id]||0}/${t.need}`;
     } else {
-      n.poly.setAttribute('fill', '#1d3445'); n.icon.textContent = '☁️'; n.sub.textContent = '';
+      n.rect.setAttribute('fill', '#2b2a3d'); n.sub.textContent = '';
     }
   });
 }
 function flashCell(id){
-  const n = hexNodes[id]; if (!n) return;
-  n.poly.classList.remove('attacked'); void n.poly.getBBox(); n.poly.classList.add('attacked');
-  setTimeout(()=>n.poly.classList.remove('attacked'), 1900);
+  const n = tileNodes[id]; if (!n) return;
+  n.rect.classList.remove('attacked'); void n.rect.getBBox(); n.rect.classList.add('attacked');
+  setTimeout(()=>n.rect.classList.remove('attacked'), 1900);
 }
 function popCell(id){
-  const n = hexNodes[id]; if (!n) return;
-  [n.poly, n.icon].forEach(el => {
+  const n = tileNodes[id]; if (!n) return;
+  [n.rect, n.icon].forEach(el => {
     el.classList.remove('pop'); void el.getBBox(); el.classList.add('pop');
     setTimeout(() => el.classList.remove('pop'), 800);
   });
@@ -1004,8 +1059,8 @@ function popCell(id){
 /* ---------- 퀴즈 ---------- */
 function onCellClick(id){
   const st = cellState(id);
-  if (st === 'home'){ toast('🏠 우리 본진이에요. 그림자 군단도 본진은 빼앗을 수 없어요!'); return; }
-  if (st === 'fog'){ toast('☁️ 아직 갈 수 없는 땅이에요. 맞닿은 땅부터 개척해요!'); return; }
+  if (st === 'home'){ toast('🚪 교실 뒷문은 우리 본진이에요. 그림자 군단도 빼앗을 수 없어요!'); return; }
+  if (st === 'fog'){ toast('🌑 아직 그림자에 덮인 곳이에요. 맞닿은 칸부터 개척해요!'); return; }
   if (st === 'owned' && me.owned[id].hp >= MAX_HP){ toast(`🛡 이미 방어력이 최대(${MAX_HP})예요!`); return; }
   openQuiz(id, st === 'owned' ? 'fortify' : 'pioneer');
 }
@@ -1024,7 +1079,7 @@ function pickWord(diff){
 function openQuiz(id, mode){
   quiz = { id, mode };
   const t = TERRAIN[terrainMap[id]];
-  document.getElementById('qTitle').textContent = `${zoneMap[id]}구역 · ${t.icon} ${t.name} ${mode==='pioneer'?'개척하기':'방어 강화'}`;
+  document.getElementById('qTitle').textContent = `${t.icon ? t.icon + ' ' : ''}${cellLabel(id)} ${mode==='pioneer'?'개척하기':'방어 강화'}`;
   document.getElementById('quizModal').classList.add('active');
   nextQuestion();
 }
@@ -1131,7 +1186,7 @@ function answer(btn, chosen, reason){
         setTimeout(()=>{
           closeQuiz();
           Sound.play('capture'); popCell(id);
-          toast(`🚩 ${zoneMap[id]}구역 ${t.icon}${t.name}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
+          toast(`🚩 ${cellLabel(id)}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
           const pops = newly.map(m => () => celebrate(m));
           if (bossAfter && bossAfter !== bossBefore) pops.push(() => showBossIntro(bossAfter));
           if (pops.length) setTimeout(() => queuePopups(pops), 700);
@@ -1200,18 +1255,17 @@ function answer(btn, chosen, reason){
 }
 function aiAttack(){
   const owned = Object.keys(me.owned);
-  if (!owned.length) return { msg: '그림자 군단이 본진을 공격했지만 막아냈어요!' };
+  if (!owned.length) return { msg: '그림자 군단이 뒷문(본진)을 공격했지만 막아냈어요!' };
   const border = owned.filter(id=>neighborsOf(id).some(n=>terrainMap[n] && !isOwned(n)));
   const pool = border.length ? border : owned;
   const id = pool[Math.floor(Math.random()*pool.length)];
   const before = me.owned[id].hp;
-  const t = TERRAIN[terrainMap[id]];
   if (before - 1 <= 0){
     delete me.owned[id];
-    return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 빼앗았어요! 다시 개척해야 해요.` };
+    return { id, msg: `그림자 군단이 ${cellLabel(id)}을(를) 빼앗았어요! 다시 개척해야 해요.` };
   }
   me.owned[id].hp = before - 1;
-  return { id, msg: `그림자 군단이 ${zoneMap[id]}구역 ${t.name}을(를) 공격했어요! (🛡 ${before}→${before-1})` };
+  return { id, msg: `그림자 군단이 ${cellLabel(id)}을(를) 공격했어요! (🛡 ${before}→${before-1})` };
 }
 function afterAnswer(){
   const newly = checkMissions();
@@ -1223,6 +1277,7 @@ function closeQuiz(){ stopTimer(); quiz = null; document.getElementById('quizMod
 
 /* ---------- 부팅 ---------- */
 async function boot(){
+  buildClassroom();
   showScreen('loading');
   if (!await loadAllData()) return;
   initTitle();
