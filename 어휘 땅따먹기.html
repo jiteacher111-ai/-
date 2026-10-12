@@ -53,6 +53,8 @@
   .row{display:flex;gap:8px;align-items:center;}
   .row > .grow{flex:1;}
   .err-msg{font-size:12px;color:var(--danger);text-align:center;min-height:16px;}
+  .subj-info{font-size:11px;color:var(--ink-muted);margin-top:6px;line-height:1.55;}
+  .subj-info.bad{color:var(--danger);font-weight:700;}
   .card.teacher .err-msg{color:#ffb3ae;}
   .back-link{color:var(--ink-muted);font-size:12px;text-align:center;cursor:pointer;text-decoration:underline;}
   .code-input{letter-spacing:6px;text-transform:uppercase;}
@@ -230,7 +232,7 @@
       <h2 class="jua">🧭 개척 시작</h2>
       <div class="field"><label>학급 코드</label><input id="joinCode" class="code-input" maxlength="4" placeholder="4자리"></div>
       <div class="field"><label>이름 (같은 이름으로 들어오면 이어서 할 수 있어요)</label><input id="joinName" maxlength="10" placeholder="이름"></div>
-      <div class="field"><label>과목</label><select id="joinSubject"></select></div>
+      <div class="field"><label>과목</label><select id="joinSubject"></select><div class="subj-info" id="subjectInfo"></div></div>
       <button class="btn btn-gold btn-wide" id="joinBtn">개척하러 가기!</button>
       <div class="err-msg" id="joinErr"></div>
     </div>
@@ -519,6 +521,12 @@ function normalizeDifficulty(v){
   if (v.includes('쉬운')) return 'easy';
   return 'normal';
 }
+// 과목 칸이 '국어과', '[국어]'처럼 적혀 있거나 보이지 않는 공백이 섞여 있어도 과목을 알아본다.
+function subjectOf(v){
+  const c = (v || '').replace(/[\s\u200B-\u200D\uFEFF]/g, '');
+  return CONFIG.SUBJECTS.find(s => c === s) || CONFIG.SUBJECTS.find(s => c.includes(s)) || null;
+}
+let VOCAB_STATS = { blank: 0, unknown: {} };
 // gviz는 없는 시트 이름을 주면 첫 탭을 돌려주므로, 헤더로 올바른 탭인지 확인한다.
 async function fetchVocab(){
   const sheetName = CONFIG.SHEET_NAME;
@@ -533,11 +541,18 @@ async function fetchVocab(){
   if (idx.word === -1 || idx.meaning === -1 || idx.subject === -1) throw new Error(`"${sheetName}" 시트에 "낱말", "과목", "뜻" 열을 찾을 수 없어요`);
   const bySubject = Object.fromEntries(CONFIG.SUBJECTS.map(s => [s, []]));
   const seen = new Set();
+  VOCAB_STATS = { blank: 0, unknown: {} };
   for (let i=1;i<rows.length;i++){
     const r = rows[i]; if (!r) continue;
-    const subject = (r[idx.subject]||'').trim();
     const word = (r[idx.word]||'').trim(), meaning = (r[idx.meaning]||'').trim();
-    if (!bySubject[subject] || !word || !meaning) continue;
+    if (!word || !meaning) continue;
+    const raw = (r[idx.subject]||'').trim();
+    const subject = subjectOf(raw);
+    if (!subject){
+      if (!raw) VOCAB_STATS.blank++;
+      else VOCAB_STATS.unknown[raw] = (VOCAB_STATS.unknown[raw] || 0) + 1;
+      continue;
+    }
     const key = subject+'|'+word+'|'+meaning;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -885,10 +900,33 @@ async function passTeacherGate(){
 }
 
 /* ---------- 시작 화면 ---------- */
+const MIN_WORDS = 4;            // 보기 4개를 만들려면 과목마다 낱말이 4개 이상 필요
+// 과목 목록이 비거나 일부 과목을 못 고를 때 이유를 바로 알 수 있게 불러온 낱말 수를 보여 준다.
+function renderSubjectInfo(){
+  const el = document.getElementById('subjectInfo');
+  const counts = CONFIG.SUBJECTS.map(s => `${s} ${DB[s].all.length}개`).join(' · ');
+  const unknown = Object.entries(VOCAB_STATS.unknown).sort((a, b) => b[1] - a[1]);
+  const notes = [];
+  if (unknown.length){
+    const n = unknown.reduce((a, [, c]) => a + c, 0);
+    notes.push(`과목 칸이 ${unknown.slice(0, 3).map(([v]) => `'${escapeHtml(v)}'`).join(', ')}${unknown.length > 3 ? ' 등' : ''}인 ${n}행은 국어·사회·과학으로 알아보지 못해 빠졌어요.`);
+  }
+  if (VOCAB_STATS.blank) notes.push(`과목 칸이 비어 있는 ${VOCAB_STATS.blank}행은 빠졌어요.`);
+  const none = !CONFIG.SUBJECTS.some(s => DB[s].all.length >= MIN_WORDS);
+  if (none) notes.unshift(`고를 수 있는 과목이 없어요. 과목마다 낱말이 ${MIN_WORDS}개 이상 있어야 해요. "${escapeHtml(CONFIG.SHEET_NAME)}" 시트의 과목 칸을 확인해주세요.`);
+  el.className = 'subj-info' + (none ? ' bad' : '');
+  el.innerHTML = `불러온 낱말: ${counts}` + notes.map(n => `<br>${n}`).join('');
+}
 function initTitle(){
-  const subjOpts = CONFIG.SUBJECTS.filter(s=>DB[s].all.length>=4).map(s=>`<option value="${s}">${s} (${DB[s].all.length}개)</option>`).join('');
-  document.getElementById('joinSubject').innerHTML = subjOpts;
-  document.getElementById('settingsSubject').innerHTML = subjOpts;
+  const usable = s => DB[s].all.length >= MIN_WORDS;
+  const subjOpts = CONFIG.SUBJECTS.map(s => `<option value="${s}" ${usable(s) ? '' : 'disabled'}>${s} (${usable(s) ? DB[s].all.length + '개' : `낱말 ${DB[s].all.length}개 · 부족`})</option>`).join('');
+  ['joinSubject', 'settingsSubject'].forEach(id => {
+    const sel = document.getElementById(id);
+    sel.innerHTML = subjOpts;
+    const first = CONFIG.SUBJECTS.find(usable);
+    if (first) sel.value = first;
+  });
+  renderSubjectInfo();
   document.getElementById('joinCode').value = lsGet('pioneer_code') || '';
   document.getElementById('joinName').value = lsGet('pioneer_name') || '';
   document.getElementById('configWarn').style.display = isConfigured() ? 'none' : 'block';
@@ -929,7 +967,7 @@ async function joinAsStudent(){
   const err = document.getElementById('joinErr');
   if (code.length !== 4){ err.textContent = '학급 코드는 4자리예요.'; return; }
   if (!name){ err.textContent = '이름을 입력해주세요.'; return; }
-  if (!subject){ err.textContent = '불러온 어휘가 있는 과목이 없어요.'; return; }
+  if (!subject || DB[subject].all.length < MIN_WORDS){ err.textContent = '고를 수 있는 과목이 없어요. 과목 칸 아래 안내를 선생님께 보여주세요.'; return; }
   if (!initDb()){ err.textContent = 'Supabase 연결 정보가 필요해요.'; return; }
   try {
     const r = await fetchRoom(code);
