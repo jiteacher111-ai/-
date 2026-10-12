@@ -176,6 +176,38 @@
   @keyframes fxFloat{0%{opacity:0;transform:translate(-50%,-20%) scale(.6);}20%{opacity:1;transform:translate(-50%,-50%) scale(1.15);}100%{opacity:0;transform:translate(-50%,-140%) scale(1);}}
   .confetti{position:fixed;top:-16px;width:9px;height:14px;z-index:95;pointer-events:none;border-radius:2px;animation:fall linear forwards;}
   @keyframes fall{to{transform:translateY(110vh) rotate(760deg);}}
+  /* 학습 강화 · 아이템 */
+  .q-word.long{font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:17px;line-height:1.5;}
+  .q-type{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--parchment2);color:var(--ink);margin-bottom:6px;}
+  .q-type.rev{background:#dcd0f5;color:#4b2a8a;}
+  .item-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;}
+  .item-btn{font-family:'Jua',sans-serif;font-size:13px;background:#fff7d6;border:1.5px solid var(--gold);border-radius:10px;padding:6px 12px;cursor:pointer;color:var(--ink);}
+  .item-btn:disabled{opacity:.4;cursor:not-allowed;}
+  .item-info{font-size:12px;color:var(--ink-muted);font-weight:700;}
+  .opt-btn.gone{opacity:.25;text-decoration:line-through;}
+  .learn-card{margin-top:10px;background:#fffdf5;border:2px dashed var(--danger);border-radius:12px;padding:10px 12px;text-align:center;color:var(--ink);font-family:'Noto Sans KR',sans-serif;}
+  .learn-card .lc-word{font-family:'Jua',sans-serif;font-size:20px;}
+  .learn-card .lc-mean{font-size:14px;font-weight:700;margin-top:2px;line-height:1.5;}
+  .learn-card .lc-sub{font-size:11px;color:var(--ink-muted);margin-top:6px;}
+  .items-chip{font-family:'Jua',sans-serif;font-size:12px;background:rgba(255,255,255,.1);border-radius:8px;padding:3px 8px;white-space:nowrap;}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+  .stat{background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:10px;padding:8px 4px;text-align:center;}
+  .stat b{display:block;font-family:'Jua',sans-serif;font-size:22px;font-weight:400;}
+  .stat span{font-size:11px;color:var(--ink-muted);}
+  .word-row{display:flex;gap:8px;align-items:flex-start;background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:13px;line-height:1.45;}
+  .word-row .wr-w{font-family:'Jua',sans-serif;font-size:15px;white-space:nowrap;}
+  .word-row .wr-m{flex:1;}
+  .word-row .wr-s{font-size:11px;color:var(--ink-muted);white-space:nowrap;}
+  .sub-h{font-family:'Jua',sans-serif;font-size:14px;margin:12px 0 6px;}
+  .rank-row{display:flex;align-items:center;gap:10px;background:#fffdf5;border:1.5px solid var(--parchment2);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:13px;}
+  .rank-row.me{border-color:var(--ok);background:#eef8ef;}
+  .rank-row .rk{font-family:'Jua',sans-serif;font-size:16px;width:28px;text-align:center;}
+  .rank-row .rn{flex:1;font-weight:700;}
+  .rank-row .rv{font-size:12px;color:var(--ink-muted);white-space:nowrap;}
+  .tabs{display:flex;gap:6px;margin-bottom:10px;}
+  .tabs button{flex:1;font-family:'Jua',sans-serif;font-size:13px;padding:7px;border-radius:9px;border:1.5px solid var(--wood);background:#fffdf5;cursor:pointer;color:var(--ink);}
+  .tabs button.on{background:var(--wood);color:var(--parchment);}
+  @media (max-width:520px){.chip.me{font-size:10px;}.items-chip{font-size:11px;padding:2px 5px;}}
   @media (prefers-reduced-motion: reduce){.pop,.opt-btn.correct,.modal.shake,.boss-banner,.boss-icon{animation:none !important;}.fx-text,.confetti{display:none;}}
 </style>
 </head>
@@ -238,6 +270,8 @@
       <div class="jua" style="font-size:16px;">참여 <span id="dashCount" style="color:var(--gold);font-size:22px;">0</span>명 · 보상 지급 대기 <span id="dashPending" style="color:var(--gold);font-size:22px;">0</span>건</div>
     </div>
     <div class="panel"><h3>🎯 미션 (학생별)</h3><div id="dashMissions"></div></div>
+    <div class="panel"><h3>📉 우리 반이 자주 틀린 낱말</h3><div id="dashWords"></div>
+      <div style="font-size:11px;color:var(--ink-muted);margin-top:8px;">수업 시작 전에 이 낱말들을 함께 짚어주면 좋아요. 한 번 다시 맞힌다고 바로 빠지지는 않고, 학생이 시간을 두고 여러 번 맞혀 ★3개(익힌 낱말)를 모으면 목록에서 빠져요.</div></div>
     <div class="panel">
       <div class="row" style="justify-content:space-between;margin-bottom:10px;">
         <h3 style="margin:0;">🧑‍🎓 학생 현황</h3>
@@ -253,6 +287,9 @@
     <div class="topbar">
       <span class="chip code" id="boardCode">----</span>
       <span class="chip me" id="boardMe"></span>
+      <span class="items-chip" id="itemsChip" title="💡 힌트 · 🛡 방패"></span>
+      <button class="icon-btn" id="noteBtn" title="낱말 노트">📒</button>
+      <button class="icon-btn" id="rankBtn" title="우리 반 순위">🏆</button>
       <button class="icon-btn" id="muteBtn" title="효과음 켜기/끄기">🔊</button>
       <button class="icon-btn" id="settingsBtn">⚙️</button>
     </div>
@@ -262,11 +299,12 @@
       <span><i class="sw" style="background:#3cb46a;border-color:#1d6b3a;"></i>내 땅</span>
       <span><i class="sw dashed"></i>개척할 수 있는 칸</span>
       <span><i class="sw" style="background:#2b2a3d;"></i>그림자 (아직 못 가요)</span>
+      <span>✨🎁 보물 상자 (개척하면 아이템!)</span>
     </div>
     <div class="legend" id="legend"></div>
     <div id="mapWrap"><svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="zoom-ctrl"><button id="zoomInBtn">＋</button><button id="zoomOutBtn">－</button></div>
-    <footer>점선 칸을 눌러 개척해요 · 내 땅을 누르면 방어력을 높일 수 있어요 · 3연속 정답이면 🔥보너스! · 틀리면 그림자 군단이 내 땅을 공격해요!</footer>
+    <footer>점선 칸을 눌러 개척해요 · 내 땅을 누르면 방어력을 높일 수 있어요 · 3연속 정답이면 🔥보너스! · 틀렸던 낱말을 맞히면 🧠보너스! · 📒 낱말 노트에서 안전하게 복습해요</footer>
   </div>
 
   <div id="toast"></div>
@@ -283,10 +321,14 @@
       <div class="timer-row"><span id="qTimerText">⏰</span><span class="timer-hint">시간이 지나거나 창을 닫으면 오답이에요</span></div>
       <div class="timer"><div class="timer-fill" id="qTimerFill"></div></div>
       <div class="q-word-box">
-        <div style="font-size:11px;color:var(--ink-muted);margin-bottom:6px;">이 낱말의 뜻은?</div>
+        <div class="q-type" id="qPrompt">이 낱말의 뜻은?</div>
         <div class="q-word" id="qWord"></div>
       </div>
       <div class="opt-grid" id="qOptions"></div>
+      <div class="item-row">
+        <button class="item-btn" id="hintBtn" title="틀린 답 2개를 지워요">💡 힌트 쓰기 (<span id="hintCnt">0</span>)</button>
+        <span class="item-info" id="shieldInfo"></span>
+      </div>
       <div class="q-feedback" id="qFeedback"></div>
     </div>
   </div>
@@ -317,6 +359,23 @@
       <div id="bossText" style="font-size:14px;line-height:1.7;margin-bottom:16px;"></div>
       <button class="btn btn-danger btn-wide" id="bossFightBtn">⚔️ 도전하기!</button>
       <button class="btn btn-plain btn-wide" id="bossLaterBtn" style="margin-top:8px;">나중에 할래요</button>
+    </div>
+  </div>
+
+  <!-- 낱말 노트 -->
+  <div class="modal-backdrop" id="noteModal">
+    <div class="modal">
+      <div class="modal-top"><div class="modal-title jua">📒 나의 낱말 노트</div><button class="modal-close" id="noteClose">✕</button></div>
+      <div id="noteBody"></div>
+    </div>
+  </div>
+
+  <!-- 우리 반 순위 -->
+  <div class="modal-backdrop" id="rankModal">
+    <div class="modal">
+      <div class="modal-top"><div class="modal-title jua">🏆 우리 반 순위</div><button class="modal-close" id="rankClose">✕</button></div>
+      <div class="tabs"><button data-k="land" class="on">🚩 개척한 땅</button><button data-k="master">⭐ 익힌 낱말</button></div>
+      <div id="rankBody"></div>
     </div>
   </div>
 
@@ -405,6 +464,19 @@ const BOSSES = [
   { at: 100, name: '그림자 왕',   icon: '🐲', hp: 9 },
 ];
 const BOSS_HEAL = 2;
+/* ---- 학습 강화 ----
+   - 간격 반복(라이트너 상자): 맞히면 상자가 한 칸 올라가고, 틀리면 0번 상자로 돌아가요.
+     상자 번호가 높을수록 오래 기다렸다가 다시 물어봐요(잊어버릴 즈음 다시 꺼내 기억을 굳힘).
+   - 틀린 낱말은 RETRY_GAP 문제 뒤에 바로 다시 나와요(오답 즉시 재확인).
+   - 한 번 이상 맞힌 낱말은 '뜻 → 낱말' 거꾸로 문제로도 나와요(양방향 인출). */
+const SRS_MINUTES = [0, 3, 20, 60*24, 60*24*3, 60*24*7];
+const MAX_BOX = SRS_MINUTES.length - 1;
+const MASTER_BOX = 3;           // 3번 상자 이상이면 '익힌 낱말'
+const RETRY_GAP = 2;            // 틀린 낱말은 다른 문제 2개 뒤에 다시
+const REVERSE_RATE = 0.45;      // 맞혀본 낱말을 거꾸로 물을 확률
+const DUE_RATE = 0.4;           // 복습할 때가 된 낱말을 먼저 꺼낼 확률
+const REVIEW_LEN = 6;           // 낱말 노트 복습 한 판 문제 수
+const CHEST_COUNT = 9;          // 교실에 숨겨진 보물 상자 수
 // 선생님 비밀번호의 SHA-256 값. 바꾸려면 새 비밀번호의 SHA-256을 넣으세요.
 const TEACHER_PW_SHA256 = '34707c3f40dfa20c3902b807b627d420d6d474d9d98066ba637953d1cfd6b914';
 
@@ -415,7 +487,10 @@ let room = { code:null, seed:0, missions:[] };
 let me = null, myGiven = {};
 let dashPlayers = [], dashTimer = null;
 let terrainMap = {}, HOME = null;
-let wrongQueue = {}, recentAsked = [];
+let retryQueue = [], recentAsked = [];
+let studyCol = true;            // DB에 study 열이 없으면 false로 바뀌고 이 기기에만 저장
+let chests = new Set();
+let rankKey = 'land', rankPlayers = [];
 let combo = 0, bossHp = {};
 let quiz = null;
 
@@ -613,6 +688,46 @@ function cellLabel(id){
 }
 const TOTAL_CELLS = () => Object.keys(terrainMap).length;
 const keepCells = obj => Object.fromEntries(Object.entries(obj || {}).filter(([k]) => terrainMap[k]));
+// 보물 상자 위치: 학급마다 다르지만 같은 학급 학생들은 같은 자리 (학급 seed로 결정)
+function mulberry32(a){ return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function placeChests(seed){
+  const [hr, hc] = parseId(HOME);
+  const rnd = mulberry32(seed || 1);
+  const cand = Object.keys(terrainMap).filter(id => { const [r, c] = parseId(id); return Math.abs(r-hr) + Math.abs(c-hc) >= 4; }).sort();
+  for (let i = cand.length - 1; i > 0; i--){ const j = Math.floor(rnd()*(i+1)); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+  chests = new Set(cand.slice(0, CHEST_COUNT));
+}
+const hasChest = id => chests.has(id) && me && !me.achieved['chest:'+id];
+
+/* ---------- 낱말 학습 기록 ---------- */
+const wordKey = w => w.subject + '|' + w.word;
+function normStudy(st){
+  st = (st && typeof st === 'object') ? st : {};
+  return { words: st.words || {}, items: { hint: 0, shield: 0, ...(st.items || {}) } };
+}
+const wordRec = w => me.study.words[wordKey(w)];
+function isDue(w){ const r = wordRec(w); return !!r && Date.now() - (r.t || 0) >= SRS_MINUTES[Math.min(r.b, MAX_BOX)] * 60000; }
+// 결과를 기록하고 { recovered: 틀렸던 낱말을 다시 맞힘, mastered: 이번에 처음 익힘 } 을 돌려준다.
+function recordWord(w, ok){
+  const k = wordKey(w);
+  const r = me.study.words[k] || { b:0, c:0, w:0, t:0, l:null };
+  const recovered = ok && r.l === 0;
+  const before = r.b;
+  if (ok){ r.c++; r.b = Math.min(MAX_BOX, r.b + 1); } else { r.w++; r.b = 0; }
+  r.l = ok ? 1 : 0; r.t = Date.now();
+  me.study.words[k] = r;
+  return { recovered, mastered: ok && before < MASTER_BOX && r.b >= MASTER_BOX };
+}
+const masteredCount = (st, subject) => Object.entries((st && st.words) || {}).filter(([k, r]) => r.b >= MASTER_BOX && (!subject || k.startsWith(subject + '|'))).length;
+function weakWords(subject){
+  return DB[subject].all
+    .map(w => ({ w, r: wordRec(w) }))
+    .filter(x => x.r && x.r.w > 0 && x.r.b < MASTER_BOX)
+    .sort((a, b) => a.r.b - b.r.b || b.r.w - a.r.w);
+}
+function queueRetry(w){
+  if (!retryQueue.some(x => wordKey(x.w) === wordKey(w))) retryQueue.push({ w, wait: RETRY_GAP + 1 });
+}
 
 /* ---------- Supabase ---------- */
 function isConfigured(){ return !SUPABASE.URL.startsWith('YOUR-') && !SUPABASE.ANON_KEY.startsWith('YOUR-'); }
@@ -649,9 +764,16 @@ function savePlayer(){
     owned: me.owned, progress: me.progress, correct: me.correct, wrong: me.wrong,
     achieved: me.achieved, updated_at: new Date().toISOString(),
   };
+  if (studyCol) row.study = me.study;
+  lsSet(`pioneer_study:${roomCode}:${playerKey}`, JSON.stringify(me.study));
   saveChain = saveChain
     .then(() => sb.from('pioneer_players').upsert(row, { onConflict: 'room_code,name_key' }))
-    .then(res => { if (res && res.error){ dbErrMsg(res.error); toast('⚠️ 저장하지 못했어요. 인터넷 연결을 확인해주세요.', true); } })
+    .then(res => {
+      if (!res || !res.error) return;
+      // 예전 테이블에 study 열이 없으면, 학습 기록은 이 기기에만 두고 나머지는 계속 저장한다.
+      if (studyCol && /study/i.test(res.error.message || '')){ studyCol = false; console.warn('study 열 없음: supabase/pioneer_schema.sql 을 다시 실행하세요'); if (me) savePlayer(); return; }
+      dbErrMsg(res.error); toast('⚠️ 저장하지 못했어요. 인터넷 연결을 확인해주세요.', true);
+    })
     .catch(e => console.warn(e));
 }
 async function fetchMyGiven(){
@@ -819,7 +941,12 @@ async function joinAsStudent(){
     lsSet('pioneer_code', code); lsSet('pioneer_name', name);
     room = r; roomCode = code; playerKey = key;
     const p = prev || {};
-    me = { name, subject, owned: keepCells(p.owned), progress: keepCells(p.progress), correct: p.correct || 0, wrong: p.wrong || 0, achieved: p.achieved || {} };
+    let study = normStudy(p.study);
+    if (!Object.keys(study.words).length){
+      try { const local = JSON.parse(lsGet(`pioneer_study:${code}:${key}`) || 'null'); if (local) study = normStudy(local); } catch(e){}
+    }
+    me = { name, subject, owned: keepCells(p.owned), progress: keepCells(p.progress), correct: p.correct || 0, wrong: p.wrong || 0, achieved: p.achieved || {}, study };
+    placeChests(r.seed);
     myGiven = p.given || {};
     checkMissions();
     savePlayer();
@@ -830,8 +957,8 @@ function goHome(){
   clearInterval(dashTimer); dashTimer = null;
   stopTimer();
   roomCode = null; playerKey = null; me = null; quiz = null;
-  popupQueue = []; combo = 0; bossHp = {};
-  ['quizModal','missionModal','settingsModal','celebrateModal','bossModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  popupQueue = []; combo = 0; bossHp = {}; retryQueue = []; recentAsked = [];
+  ['quizModal','missionModal','settingsModal','celebrateModal','bossModal','noteModal','rankModal'].forEach(id=>document.getElementById(id).classList.remove('active'));
   clearTimeout(toastTimer); document.getElementById('toast').className = '';
   showScreen('title');
 }
@@ -904,7 +1031,7 @@ function renderDashboard(){
       <span class="ms">달성 ${cnt}명</span>
     </div>`;
   }).join('');
-  document.getElementById('dashHead').innerHTML = `<tr><th>이름</th><th>과목</th><th>개척</th><th>정답률</th><th>최근</th>${list.map((m,i)=>`<th title="${escapeHtml(m.reward)}">미션${i+1}<br>${m.goal}칸</th>`).join('')}</tr>`;
+  document.getElementById('dashHead').innerHTML = `<tr><th>이름</th><th>과목</th><th>개척</th><th>정답률</th><th>⭐익힌 낱말</th><th>최근</th>${list.map((m,i)=>`<th title="${escapeHtml(m.reward)}">미션${i+1}<br>${m.goal}칸</th>`).join('')}</tr>`;
   const rows = dashPlayers.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ko'));
   const tbody = document.getElementById('dashStudents');
   tbody.innerHTML = rows.map(p=>{
@@ -916,9 +1043,28 @@ function renderDashboard(){
       const given = !!(p.given||{})[m.id];
       return `<td><button class="given-btn ${given?'on':''}" data-key="${escapeHtml(p.name_key)}" data-mid="${m.id}">${given?'✅ 지급':'지급하기'}</button></td>`;
     }).join('');
-    return `<tr><td><b>${escapeHtml(p.name||'')}</b></td><td>${escapeHtml(p.subject||'')}</td><td>${n}칸</td><td>${acc}</td><td style="color:var(--ink-muted);font-size:11px;">${timeAgo(p.updated_at)}</td>${cells}</tr>`;
-  }).join('') || `<tr><td colspan="${5+list.length}" style="text-align:center;color:var(--ink-muted);padding:16px;">아직 참여한 학생이 없어요</td></tr>`;
+    return `<tr><td><b>${escapeHtml(p.name||'')}</b></td><td>${escapeHtml(p.subject||'')}</td><td>${n}칸</td><td>${acc}</td><td>${p.study ? masteredCount(p.study) + '개' : '-'}</td><td style="color:var(--ink-muted);font-size:11px;">${timeAgo(p.updated_at)}</td>${cells}</tr>`;
+  }).join('') || `<tr><td colspan="${6+list.length}" style="text-align:center;color:var(--ink-muted);padding:16px;">아직 참여한 학생이 없어요</td></tr>`;
   tbody.querySelectorAll('.given-btn').forEach(b=>{ b.onclick = () => toggleGiven(b.dataset.key, b.dataset.mid); });
+  renderDashWords();
+}
+// 학생들이 지금 '다시 볼 낱말'로 가지고 있는 낱말을 모아, 많이 틀린 순으로 보여 준다.
+function renderDashWords(){
+  const box = document.getElementById('dashWords');
+  if (dashPlayers.length && !dashPlayers.some(p => 'study' in p)){
+    box.innerHTML = '<div style="font-size:12px;color:var(--danger);line-height:1.6;">낱말 통계를 보려면 Supabase SQL Editor에서 <b>supabase/pioneer_schema.sql</b>을 한 번 더 실행해 주세요. (study 열 추가)</div>';
+    return;
+  }
+  const agg = {};
+  dashPlayers.forEach(p => Object.entries((p.study && p.study.words) || {}).forEach(([k, r]) => {
+    if (!r.w || r.b >= MASTER_BOX) return;
+    const a = agg[k] = agg[k] || { k, wrong: 0, kids: 0 };
+    a.wrong += r.w; a.kids++;
+  }));
+  const meaningOf = k => { const [sub, ...rest] = k.split('|'); const word = rest.join('|'); const f = (DB[sub] ? DB[sub].all : []).find(w => w.word === word); return { sub, word, meaning: f ? f.meaning : '' }; };
+  const top = Object.values(agg).sort((a, b) => b.kids - a.kids || b.wrong - a.wrong).slice(0, 10);
+  box.innerHTML = top.map((a, i) => { const m = meaningOf(a.k); return `<div class="word-row"><span class="wr-w">${i+1}. ${escapeHtml(m.word)}</span><span class="wr-m">${escapeHtml(m.meaning)} <span style="color:var(--ink-muted);font-size:11px;">(${escapeHtml(m.sub)})</span></span><span class="wr-s">${a.kids}명 · ${a.wrong}회</span></div>`; }).join('')
+    || '<div style="font-size:12px;color:var(--ink-muted);">아직 틀린 낱말이 없어요.</div>';
 }
 async function toggleGiven(key, mid){
   const p = dashPlayers.find(x=>x.name_key===key);
@@ -958,9 +1104,16 @@ function enterBoard(isNew){
   };
   document.getElementById('missionClose').onclick = () => document.getElementById('missionModal').classList.remove('active');
   document.getElementById('qClose').onclick = () => {
-    if (quiz && quiz.word && !quiz.answered) answer(null, null, 'quit');
+    if (quiz && quiz.mode === 'review') finishReview();
+    else if (quiz && quiz.word && !quiz.answered) answer(null, null, 'quit');
     else closeQuiz();
   };
+  document.getElementById('hintBtn').onclick = useHint;
+  document.getElementById('noteBtn').onclick = openNote;
+  document.getElementById('noteClose').onclick = () => document.getElementById('noteModal').classList.remove('active');
+  document.getElementById('rankBtn').onclick = openRank;
+  document.getElementById('rankClose').onclick = () => document.getElementById('rankModal').classList.remove('active');
+  document.querySelectorAll('#rankModal .tabs button').forEach(b => b.onclick = () => { rankKey = b.dataset.k; renderRank(); });
   document.getElementById('zoomInBtn').onclick = () => setZoom(zoomLevel+0.2);
   document.getElementById('zoomOutBtn').onclick = () => setZoom(zoomLevel-0.2);
   const muteBtn = document.getElementById('muteBtn');
@@ -968,13 +1121,13 @@ function enterBoard(isNew){
   muteBtn.onclick = () => { muteBtn.textContent = Sound.toggle() ? '🔇' : '🔊'; };
   document.getElementById('bossBanner').onclick = () => { const b = currentBoss(); if (b) showBossIntro(b); };
   buildSvgSkeleton();
-  renderMap(); renderHeader(); renderMissionBar(); renderBossBanner();
+  renderMap(); renderHeader(); renderMissionBar(); renderBossBanner(); renderItemsUi();
   toast(isNew ? '🚪 교실 뒷문에서 출발! 그림자에 덮인 교실을 한 칸씩 되찾아요.' : `다시 왔군요, ${me.name}! 개척을 이어가요.`);
 }
 function renderHeader(){
   const tries = me.correct + me.wrong;
   const acc = tries ? Math.round(me.correct/tries*100) : 0;
-  document.getElementById('boardMe').textContent = `${me.name} · ${me.subject} · 내 땅 ${ownedCount(me)}칸 · 정답률 ${acc}%`;
+  document.getElementById('boardMe').textContent = `${me.name} · ${me.subject} · 내 땅 ${ownedCount(me)}칸 · ⭐${masteredCount(me.study, me.subject)} · 정답률 ${acc}%`;
 }
 const CELL = 34, M_LEFT = 16, M_RIGHT = 24, M_TOP = 46, M_BOTTOM = 12;
 function svgEl(tag, attrs, parent){
@@ -1043,7 +1196,8 @@ function renderMap(){
       return;
     }
     const t = TERRAIN[terrainMap[id]];
-    n.icon.textContent = t.icon;
+    n.icon.textContent = hasChest(id) ? (st === 'fog' ? '✨' : '🎁') : t.icon;
+    if (st === 'fog' && hasChest(id)) n.icon.style.opacity = '.55';
     if (st === 'owned'){
       n.rect.setAttribute('fill', OWNED_COLOR); n.sub.textContent = `🛡${me.owned[id].hp}`;
     } else if (st === 'frontier'){
@@ -1070,18 +1224,33 @@ function popCell(id){
 function onCellClick(id){
   const st = cellState(id);
   if (st === 'home'){ toast('🚪 교실 뒷문은 우리 본진이에요. 그림자 군단도 빼앗을 수 없어요!'); return; }
-  if (st === 'fog'){ toast('🌑 아직 그림자에 덮인 곳이에요. 맞닿은 칸부터 개척해요!'); return; }
+  if (st === 'fog'){ toast(hasChest(id) ? '✨ 그림자 속에서 무언가 반짝여요! 가까이 개척해 가 보세요.' : '🌑 아직 그림자에 덮인 곳이에요. 맞닿은 칸부터 개척해요!'); return; }
   if (st === 'owned' && me.owned[id].hp >= MAX_HP){ toast(`🛡 이미 방어력이 최대(${MAX_HP})예요!`); return; }
   openQuiz(id, st === 'owned' ? 'fortify' : 'pioneer');
 }
+// 문제 고르는 순서: ① 방금 틀린 낱말(2문제 뒤) ② 복습할 때가 된 낱말 ③ 처음 보는 낱말 ④ 아직 못 익힌 낱말
 function pickWord(diff){
   const all = DB[me.subject].all;
-  let pool = diff === 'mixed' ? all : all.filter(w=>w.difficulty===diff);
-  if (!pool.length) pool = all;
-  const wq = wrongQueue[me.subject] || [];
-  if (wq.length && Math.random() < 0.35) return wq.shift();
-  const fresh = pool.filter(w=>!recentAsked.includes(w.word));
-  const chosen = sample(fresh.length ? fresh : pool, 1)[0];
+  let chosen = null;
+  retryQueue.forEach(x => { if (x.w.subject === me.subject) x.wait--; });
+  const ri = retryQueue.findIndex(x => x.w.subject === me.subject && x.wait <= 0);
+  if (ri > -1){ chosen = retryQueue.splice(ri, 1)[0].w; quiz.retry = true; }
+  const notRecent = w => !recentAsked.includes(w.word) && !retryQueue.some(x => x.w.word === w.word);
+  if (!chosen && Math.random() < DUE_RATE){
+    const due = all.filter(w => notRecent(w) && isDue(w));
+    const match = diff === 'mixed' ? due : due.filter(w => w.difficulty === diff);
+    if (due.length) chosen = sample(match.length ? match : due, 1)[0];
+  }
+  if (!chosen){
+    let pool = diff === 'mixed' ? all : all.filter(w=>w.difficulty===diff);
+    if (!pool.length) pool = all;
+    const fresh = pool.filter(notRecent);
+    const notLast = pool.filter(w => !recentAsked.slice(-3).includes(w.word));
+    const base = fresh.length ? fresh : notLast.length ? notLast : pool;
+    const unseen = base.filter(w => !wordRec(w));
+    const learning = base.filter(w => (wordRec(w)?.b || 0) < MASTER_BOX);
+    chosen = sample(unseen.length && Math.random() < 0.7 ? unseen : learning.length ? learning : base, 1)[0];
+  }
   recentAsked.push(chosen.word);
   if (recentAsked.length > 15) recentAsked.shift();
   return chosen;
@@ -1093,49 +1262,136 @@ function openQuiz(id, mode){
   document.getElementById('quizModal').classList.add('active');
   nextQuestion();
 }
+function startReview(){
+  const list = weakWords(me.subject).slice(0, REVIEW_LEN).map(x => x.w);
+  if (!list.length){ toast('🎉 다시 볼 낱말이 없어요! 개척하면서 새 낱말을 만나 보세요.'); return; }
+  document.getElementById('noteModal').classList.remove('active');
+  quiz = { mode: 'review', id: null, list: shuffle(list), total: list.length, got: 0, healed: 0, again: new Set() };
+  document.getElementById('qTitle').textContent = '🔁 낱말 복습 (그림자 공격 없음)';
+  document.getElementById('quizModal').classList.add('active');
+  nextQuestion();
+}
+function finishReview(){
+  const q = quiz;
+  closeQuiz();
+  if (!q || q.mode !== 'review') return;
+  Sound.play('capture');
+  toast(`🔁 복습 끝! ${q.got}번 맞혔어요${q.healed ? ` · 내 땅 방어력 +${q.healed}` : ''} · 익힌 낱말 ${masteredCount(me.study, me.subject)}개`);
+}
 function renderQuizStatus(){
   if (!quiz) return;
   const { id, mode } = quiz;
   const tags = document.getElementById('qTags');
   const dots = document.getElementById('qDots');
-  const comboTag = combo >= 2
+  const comboTag = combo >= 2 && mode !== 'review'
     ? `<span class="tag fire">🔥 ${combo}콤보${combo % COMBO_EVERY === COMBO_EVERY-1 ? ' · 다음 정답 보너스!' : ''}</span>` : '';
+  const retryTag = quiz.retry ? `<span class="tag" style="background:#8e5bd9;">🧠 아까 틀린 낱말</span>` : '';
+  renderItemsUi();
+  if (mode === 'review'){
+    tags.innerHTML = `<span class="tag teal">연습 · 공격 없음</span><span class="tag">정답마다 내 땅 🛡+1</span><span class="tag">남은 문제 ${quiz.list.length + (quiz.answered ? 0 : 1)}</span>${retryTag}`;
+    dots.innerHTML = '';
+    return;
+  }
   if (mode === 'boss'){
     const b = quiz.boss, hp = bossHp[b.at] ?? b.hp;
-    tags.innerHTML = `<span class="tag boss">${b.icon} ${b.name}</span><span class="tag">HP ${hp} / ${b.hp}</span><span class="tag teal">모든 어휘</span>${comboTag}`;
+    tags.innerHTML = `<span class="tag boss">${b.icon} ${b.name}</span><span class="tag">HP ${hp} / ${b.hp}</span><span class="tag teal">모든 어휘</span>${comboTag}${retryTag}`;
     dots.innerHTML = Array.from({length:b.hp},(_,i)=>`<span class="${i<hp?'boss-on':''}"></span>`).join('');
     return;
   }
   const t = TERRAIN[terrainMap[id]];
   if (mode === 'pioneer'){
     const p = me.owned[id] ? t.need : (me.progress[id] || 0);
-    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">정답 ${t.need}개면 개척!</span>${comboTag}`;
+    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">정답 ${t.need}개면 개척!</span>${hasChest(id) ? '<span class="tag" style="background:var(--gold);color:#3a2a10;">🎁 보물 상자</span>' : ''}${comboTag}${retryTag}`;
     dots.innerHTML = Array.from({length:t.need},(_,i)=>`<span class="${i<p?'on':''}"></span>`).join('');
   } else {
     const hp = me.owned[id] ? me.owned[id].hp : 0;
-    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">🛡 방어력 ${hp} / ${MAX_HP}</span><span class="tag">정답 시 +1</span>${comboTag}`;
+    tags.innerHTML = `<span class="tag teal">${t.diffLabel}</span><span class="tag">🛡 방어력 ${hp} / ${MAX_HP}</span><span class="tag">정답 시 +1</span>${comboTag}${retryTag}`;
     dots.innerHTML = Array.from({length:MAX_HP},(_,i)=>`<span class="${i<hp?'on':''}"></span>`).join('');
   }
 }
+// 보기 4개를 만든다. 오답 보기는 되도록 같은 난이도에서 골라 헷갈리게(제대로 구별해야 맞힘).
+function buildOptions(w, reverse){
+  const all = DB[me.subject].all;
+  const others = all.filter(x => x.word !== w.word && x.meaning !== w.meaning);
+  const textOf = x => reverse ? x.word : x.meaning;
+  const answerText = textOf(w);
+  const texts = new Set([answerText]);
+  const same = shuffle(others.filter(x => x.difficulty === w.difficulty));
+  const rest = shuffle(others.filter(x => x.difficulty !== w.difficulty));
+  for (const x of [...same, ...rest]){ if (texts.size >= 4) break; texts.add(textOf(x)); }
+  return { answerText, options: shuffle([...texts]) };
+}
 function nextQuestion(){
   if (!quiz) return;
+  quiz.retry = false; quiz.hinted = false;
+  let w;
+  if (quiz.mode === 'review'){
+    if (!quiz.list.length) return finishReview();
+    w = quiz.list.shift();
+  } else {
+    w = pickWord(quiz.mode === 'boss' ? 'mixed' : TERRAIN[terrainMap[quiz.id]].diff);
+  }
+  const rec = wordRec(w);
+  // 한 번이라도 맞혀 본 낱말은 거꾸로(뜻 → 낱말)도 물어 본다.
+  const reverse = !!rec && rec.c > 0 && DB[me.subject].all.length >= 4 && Math.random() < REVERSE_RATE;
+  const { answerText, options } = buildOptions(w, reverse);
+  Object.assign(quiz, { word: w, reverse, answerText, answered: false });
   renderQuizStatus();
-  const w = pickWord(quiz.mode === 'boss' ? 'mixed' : TERRAIN[terrainMap[quiz.id]].diff);
-  quiz.word = w;
-  document.getElementById('qWord').textContent = w.word;
+  const prompt = document.getElementById('qPrompt');
+  prompt.textContent = reverse ? '🔄 거꾸로 문제 · 이 뜻을 가진 낱말은?' : '이 낱말의 뜻은?';
+  prompt.classList.toggle('rev', reverse);
+  const qw = document.getElementById('qWord');
+  qw.textContent = reverse ? w.meaning : w.word;
+  qw.classList.toggle('long', reverse);
   document.getElementById('qFeedback').textContent = '';
-  const others = DB[me.subject].all.filter(x=>x.word!==w.word && x.meaning!==w.meaning);
-  const distractors = sample(others, Math.min(3, others.length)).map(x=>x.meaning);
+  document.querySelector('#quizModal .modal').scrollTop = 0;
   const wrap = document.getElementById('qOptions');
   wrap.innerHTML = '';
-  shuffle([w.meaning, ...distractors]).forEach(opt=>{
+  options.forEach(opt=>{
     const b = document.createElement('button');
     b.className = 'opt-btn'; b.textContent = opt;
+    if (reverse) b.style.cssText = 'font-family:Jua,sans-serif;font-size:17px;justify-content:center;';
     b.onclick = () => answer(b, opt);
     wrap.appendChild(b);
   });
-  quiz.answered = false;
+  renderItemsUi();
   startTimer();
+}
+/* ---------- 아이템 ---------- */
+function renderItemsUi(){
+  if (!me) return;
+  const it = me.study.items;
+  document.getElementById('itemsChip').textContent = `💡${it.hint} 🛡${it.shield}`;
+  document.getElementById('hintCnt').textContent = it.hint;
+  document.getElementById('hintBtn').disabled = !quiz || !quiz.word || quiz.answered || quiz.hinted || it.hint <= 0;
+  document.getElementById('shieldInfo').textContent = quiz && quiz.mode === 'review' ? '' : (it.shield > 0 ? `🛡 방패 ${it.shield}개: 틀려도 공격을 막아줘요` : '');
+}
+function useHint(){
+  if (!quiz || quiz.answered || quiz.hinted || me.study.items.hint <= 0) return;
+  quiz.hinted = true;
+  me.study.items.hint--;
+  const wrongs = shuffle([...document.querySelectorAll('#qOptions .opt-btn')].filter(b => b.textContent !== quiz.answerText)).slice(0, 2);
+  wrongs.forEach(b => { b.disabled = true; b.classList.add('gone'); });
+  Sound.play('fast');
+  renderItemsUi();
+  savePlayer();
+}
+const REWARDS = [
+  { w: 4, give: () => { me.study.items.hint++; return '💡 <b>힌트 1개</b>를 얻었어요!<br><span style="font-size:12px;color:var(--ink-muted);">문제에서 쓰면 틀린 답 2개가 지워져요.</span>'; } },
+  { w: 4, give: () => { me.study.items.shield++; return '🛡 <b>방패 1개</b>를 얻었어요!<br><span style="font-size:12px;color:var(--ink-muted);">다음에 틀렸을 때 그림자 공격을 한 번 막아줘요.</span>'; } },
+  { w: 2, give: id => { let n = 0; [id, ...neighborsOf(id)].forEach(k => { if (me.owned[k]){ me.owned[k].hp = Math.min(MAX_HP, me.owned[k].hp + 2); n++; } }); return `🏰 <b>튼튼한 성벽!</b><br>상자 주변 내 땅 ${n}칸의 방어력이 +2 올랐어요.`; } },
+];
+function openChest(id){
+  me.achieved['chest:'+id] = Date.now();
+  let roll = Math.random() * REWARDS.reduce((a, r) => a + r.w, 0);
+  const r = REWARDS.find(x => (roll -= x.w) < 0) || REWARDS[0];
+  return r.give(id);
+}
+function weakestOwned(){
+  const ids = Object.keys(me.owned).filter(k => me.owned[k].hp < MAX_HP);
+  if (!ids.length) return null;
+  const min = Math.min(...ids.map(k => me.owned[k].hp));
+  return sample(ids.filter(k => me.owned[k].hp === min), 1)[0];
 }
 let quizTimer = null;
 function stopTimer(){ clearInterval(quizTimer); quizTimer = null; }
@@ -1168,21 +1424,26 @@ function answer(btn, chosen, reason){
   const leftMs = Math.max(0, (quiz.timeEnd || 0) - Date.now());
   stopTimer();
   const { id, mode, word: w } = quiz;
-  const t = mode === 'boss' ? null : TERRAIN[terrainMap[id]];
+  const t = (mode === 'boss' || mode === 'review') ? null : TERRAIN[terrainMap[id]];
   document.querySelectorAll('#qOptions .opt-btn').forEach(b=>b.disabled=true);
+  renderItemsUi();
   const fb = document.getElementById('qFeedback');
-  if (chosen === w.meaning){
+  if (chosen === quiz.answerText){
     btn.classList.add('correct');
     me.correct++;
-    wrongQueue[me.subject] = (wrongQueue[me.subject]||[]).filter(x=>x.word!==w.word);
-    combo++;
-    const bonus = combo % COMBO_EVERY === 0 ? 1 : 0;
+    retryQueue = retryQueue.filter(x => wordKey(x.w) !== wordKey(w));
+    const { recovered, mastered } = recordWord(w, true);
     const fast = leftMs >= QUESTION_TIME_SEC * 1000 * FAST_RATIO;
-    const gain = 1 + bonus;
+    let bonus = 0;
+    if (mode !== 'review'){ combo++; bonus = combo % COMBO_EVERY === 0 ? 1 : 0; }
+    const memBonus = recovered && mode !== 'review' ? 1 : 0;
+    const gain = 1 + bonus + memBonus;
     if (bonus){ Sound.play('combo'); floatText(`🔥 ${combo}콤보! +1`, '#ffb347'); }
+    else if (memBonus){ Sound.play('combo'); floatText('🧠 기억 성공! +1', '#c9a7ff'); }
     else if (fast){ Sound.play('fast'); floatText('⚡ 번개 정답!', '#ffe066'); }
     else Sound.play('correct');
-    const extras = [fast ? '⚡ 번개 정답!' : '', bonus ? `🔥 ${combo}콤보 보너스 +1` : ''].filter(Boolean).join(' ');
+    if (mastered) setTimeout(() => floatText(`⭐ '${w.word}' 익혔어요!`, '#ffe066'), bonus || memBonus || fast ? 700 : 0);
+    const extras = [fast ? '⚡ 번개 정답!' : '', bonus ? `🔥 ${combo}콤보 보너스 +1` : '', memBonus ? '🧠 틀렸던 낱말 기억 성공 +1' : '', mastered ? `⭐ 익힌 낱말 ${masteredCount(me.study, me.subject)}개` : ''].filter(Boolean).join(' ');
     const say = main => { fb.innerHTML = escapeHtml(main) + (extras ? `<br>${escapeHtml(extras)}` : ''); fb.className = 'q-feedback ok'; };
     if (mode === 'pioneer'){
       const p = (me.progress[id]||0) + gain;
@@ -1190,6 +1451,7 @@ function answer(btn, chosen, reason){
         const bossBefore = currentBoss();
         delete me.progress[id];
         me.owned[id] = { hp: START_HP };
+        const chestMsg = hasChest(id) ? openChest(id) : null;
         say(`🎉 ${t.name} 개척 성공!`);
         const newly = afterAnswer();
         const bossAfter = currentBoss();
@@ -1197,7 +1459,9 @@ function answer(btn, chosen, reason){
           closeQuiz();
           Sound.play('capture'); popCell(id);
           toast(`🚩 ${cellLabel(id)}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
-          const pops = newly.map(m => () => celebrate(m));
+          const pops = [];
+          if (chestMsg) pops.push(() => showCelebrate('🎁', '보물 상자 발견!', chestMsg));
+          newly.forEach(m => pops.push(() => celebrate(m)));
           if (bossAfter && bossAfter !== bossBefore) pops.push(() => showBossIntro(bossAfter));
           if (pops.length) setTimeout(() => queuePopups(pops), 700);
         }, 1200);
@@ -1212,19 +1476,28 @@ function answer(btn, chosen, reason){
       say(`✅ 방어 강화! 🛡 ${me.owned[id].hp}`);
       afterAnswer();
       setTimeout(closeQuiz, 1000);
+    } else if (mode === 'review'){
+      quiz.got++;
+      const tid = weakestOwned();
+      if (tid){ me.owned[tid].hp++; quiz.healed++; }
+      say(tid ? `✅ 정답! ${cellLabel(tid)} 🛡+1` : '✅ 정답!');
+      afterAnswer();
+      if (tid) flashOk(tid);
+      setTimeout(nextQuestion, 1000);
     } else {
       const b = quiz.boss;
       bossHp[b.at] = Math.max(0, (bossHp[b.at] ?? b.hp) - gain);
       if (bossHp[b.at] <= 0){
         me.achieved['boss:'+b.at] = Date.now();
         Object.values(me.owned).forEach(c => { c.hp = Math.min(MAX_HP, c.hp + BOSS_HEAL); });
+        me.study.items.hint++; me.study.items.shield++;
         delete bossHp[b.at];
         say(`💥 ${b.name}을 물리쳤어요!`);
         afterAnswer();
         setTimeout(()=>{
           closeQuiz();
           queuePopups([() => showCelebrate('🏆', '보스 격파!',
-            `<b>${escapeHtml(b.name)}</b>을 물리쳤어요!<br>내 모든 땅의 방어력이 <b>+${BOSS_HEAL}</b> 올랐어요. 🛡`)]);
+            `<b>${escapeHtml(b.name)}</b>을 물리쳤어요!<br>내 모든 땅의 방어력이 <b>+${BOSS_HEAL}</b> 올랐어요. 🛡<br>전리품: 💡 힌트 1개 · 🛡 방패 1개`)]);
         }, 1200);
         return;
       }
@@ -1234,26 +1507,45 @@ function answer(btn, chosen, reason){
     }
     return;
   }
-  combo = 0;
+  // ----- 오답 -----
   if (btn) btn.classList.add('wrong');
-  document.querySelectorAll('#qOptions .opt-btn').forEach(b=>{ if (b.textContent===w.meaning) b.classList.add('correct'); });
+  document.querySelectorAll('#qOptions .opt-btn').forEach(b=>{ if (b.textContent===quiz.answerText) b.classList.add('correct'); });
   me.wrong++;
-  const wq = wrongQueue[me.subject] = wrongQueue[me.subject] || [];
-  if (!wq.some(x=>x.word===w.word)) wq.push(w);
-  const attack = aiAttack();
+  recordWord(w, false);
+  // 정답을 바로 다시 보여 주고, 잠시 뒤 같은 낱말을 다시 물어 기억을 바로잡는다.
+  const card = `<div class="learn-card"><div class="lc-word">${escapeHtml(w.word)}</div><div class="lc-mean">${escapeHtml(w.meaning)}</div><div class="lc-sub">🧠 이 낱말은 곧 다시 나와요. 소리 내어 한 번 읽어 보세요!</div></div>`;
+  if (mode === 'review'){
+    if (!quiz.again.has(wordKey(w))){ quiz.again.add(wordKey(w)); quiz.list.push(w); }
+    afterAnswer();
+    Sound.play('wrong'); shakeModal();
+    fb.innerHTML = `${reason === 'timeout' ? '⏰ 시간 초과!' : '❌ 아쉬워요!'} 연습이라 공격은 없어요.${card}`;
+    fb.className = 'q-feedback bad';
+    fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    setTimeout(() => { if (quiz && quiz.mode === 'review') nextQuestion(); }, 3200);
+    return;
+  }
+  combo = 0;
+  queueRetry(w);
+  let attack;
+  if (me.study.items.shield > 0){
+    me.study.items.shield--;
+    attack = { msg: `방패가 그림자 공격을 막아냈어요! (남은 방패 ${me.study.items.shield})`, blocked: true };
+  } else attack = aiAttack();
   afterAnswer();
-  Sound.play('wrong'); setTimeout(() => Sound.play('attack'), 250);
+  Sound.play('wrong');
+  if (!attack.blocked) setTimeout(() => Sound.play('attack'), 250);
   if (attack.id) flashCell(attack.id);
   if (reason === 'quit'){
     closeQuiz();
-    toast(`🏳 문제를 포기했어요! 👾 ${attack.msg}`, true);
+    toast(`🏳 문제를 포기했어요! ${attack.blocked ? '🛡' : '👾'} ${attack.msg}  (정답: ${w.word} = ${w.meaning})`, true);
     return;
   }
   shakeModal();
   const head = reason === 'timeout' ? '⏰ 시간 초과!' : '❌ 오답!';
-  const who = mode === 'boss' ? `${quiz.boss.icon} ${quiz.boss.name}의 반격! ` : '👾 ';
-  fb.innerHTML = `${head} 정답은 위에 초록색이에요.<br>${escapeHtml(who + attack.msg)}`;
+  const who = attack.blocked ? '🛡 ' : mode === 'boss' ? `${quiz.boss.icon} ${quiz.boss.name}의 반격! ` : '👾 ';
+  fb.innerHTML = `${head} ${escapeHtml(who + attack.msg)}${card}`;
   fb.className = 'q-feedback bad';
+  fb.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   setTimeout(()=>{
     if (!quiz) return;
     if (mode === 'boss'){ nextQuestion(); return; }
@@ -1261,8 +1553,9 @@ function answer(btn, chosen, reason){
     if (!stillValid){ closeQuiz(); toast(mode === 'pioneer' ? '길이 끊겨서 이 땅은 지금 개척할 수 없어요.' : '이 땅을 빼앗겼어요. 다시 개척해 주세요!', true); return; }
     if (mode === 'fortify'){ closeQuiz(); return; }
     nextQuestion();
-  }, 2200);
+  }, 3400);
 }
+function flashOk(id){ popCell(id); }
 function aiAttack(){
   const owned = Object.keys(me.owned);
   if (!owned.length) return { msg: '그림자 군단이 뒷문(본진)을 공격했지만 막아냈어요!' };
@@ -1280,10 +1573,64 @@ function aiAttack(){
 function afterAnswer(){
   const newly = checkMissions();
   savePlayer();
-  renderMap(); renderHeader(); renderMissionBar(); renderBossBanner(); renderQuizStatus();
+  renderMap(); renderHeader(); renderMissionBar(); renderBossBanner(); renderQuizStatus(); renderItemsUi();
   return newly;
 }
 function closeQuiz(){ stopTimer(); quiz = null; document.getElementById('quizModal').classList.remove('active'); }
+
+/* ---------- 낱말 노트 ---------- */
+const stars = b => '★'.repeat(Math.min(b, MASTER_BOX)) + '☆'.repeat(Math.max(0, MASTER_BOX - b));
+function openNote(){
+  const sub = me.subject, all = DB[sub].all;
+  const recs = all.map(w => ({ w, r: wordRec(w) })).filter(x => x.r);
+  const mastered = recs.filter(x => x.r.b >= MASTER_BOX);
+  const weak = weakWords(sub);
+  const due = recs.filter(x => x.r.b >= MASTER_BOX && isDue(x.w)).length;
+  const pct = all.length ? Math.round(mastered.length / all.length * 100) : 0;
+  const row = ({ w, r }) => `<div class="word-row"><span class="wr-w">${escapeHtml(w.word)}</span><span class="wr-m">${escapeHtml(w.meaning)}</span><span class="wr-s">${stars(r.b)}${r.w ? `<br>틀림 ${r.w}` : ''}</span></div>`;
+  document.getElementById('noteBody').innerHTML = `
+    <div class="stat-grid">
+      <div class="stat"><b>${recs.length}</b><span>만난 낱말</span></div>
+      <div class="stat"><b style="color:var(--ok);">${mastered.length}</b><span>⭐ 익힌 낱말</span></div>
+      <div class="stat"><b style="color:var(--danger);">${weak.length}</b><span>다시 볼 낱말</span></div>
+    </div>
+    <div style="font-size:12px;margin-bottom:4px;">${escapeHtml(sub)} 낱말 ${all.length}개 중 <b>${pct}%</b> 익혔어요</div>
+    <div class="prog" style="margin-bottom:12px;"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div style="font-size:12px;color:var(--ink-muted);line-height:1.6;margin-bottom:10px;">
+      ★ 3개를 모으면 익힌 낱말이 돼요. 한 번에 몰아서 맞히는 것보다, <b>시간을 두고 여러 번</b> 맞혀야 별이 차요.
+      ${due ? `<br>⏰ 익힌 낱말 중 <b>${due}개</b>가 다시 확인할 때가 됐어요. 개척하다 보면 다시 나와요!` : ''}
+    </div>
+    <button class="btn btn-gold btn-wide" id="reviewBtn" ${weak.length ? '' : 'disabled'}>🔁 다시 볼 낱말 복습하기 (공격 없음 · 정답마다 내 땅 🛡+1)</button>
+    <div class="sub-h">😵 다시 볼 낱말 ${weak.length}개</div>
+    ${weak.map(row).join('') || '<div style="font-size:12px;color:var(--ink-muted);">아직 없어요. 틀린 낱말이 여기 모여요.</div>'}
+    <div class="sub-h">⭐ 익힌 낱말 ${mastered.length}개</div>
+    ${mastered.slice().sort((a,b) => b.r.t - a.r.t).map(row).join('') || '<div style="font-size:12px;color:var(--ink-muted);">시간을 두고 3번 맞히면 여기에 쌓여요.</div>'}`;
+  document.getElementById('reviewBtn').onclick = startReview;
+  document.getElementById('noteModal').classList.add('active');
+}
+
+/* ---------- 우리 반 순위 ---------- */
+async function openRank(){
+  document.getElementById('rankModal').classList.add('active');
+  document.getElementById('rankBody').innerHTML = '<div style="text-align:center;color:var(--ink-muted);padding:12px;">불러오는 중...</div>';
+  const { data, error } = await sb.from('pioneer_players').select('*').eq('room_code', roomCode);
+  if (!me) return;
+  if (error){ document.getElementById('rankBody').innerHTML = `<div class="err-msg">${escapeHtml(dbErrMsg(error))}</div>`; return; }
+  rankPlayers = (data || []).map(p => p.name_key === playerKey ? { ...p, owned: me.owned, study: me.study } : p);
+  renderRank();
+}
+function renderRank(){
+  document.querySelectorAll('#rankModal .tabs button').forEach(b => b.classList.toggle('on', b.dataset.k === rankKey));
+  const val = p => rankKey === 'land' ? ownedCount(p) : masteredCount(p.study);
+  const unit = rankKey === 'land' ? '칸' : '개';
+  const list = rankPlayers.slice().sort((a, b) => val(b) - val(a) || (a.name||'').localeCompare(b.name||'', 'ko'));
+  const medal = i => ['🥇','🥈','🥉'][i] || (i + 1);
+  let prev = null, rank = 0;
+  document.getElementById('rankBody').innerHTML = list.map((p, i) => {
+    if (val(p) !== prev){ rank = i; prev = val(p); }
+    return `<div class="rank-row ${p.name_key === playerKey ? 'me' : ''}"><span class="rk">${medal(rank)}</span><span class="rn">${escapeHtml(p.name || '')}${p.name_key === playerKey ? ' (나)' : ''}</span><span class="rv">${val(p)}${unit}</span></div>`;
+  }).join('') + (rankKey === 'master' ? '<div style="font-size:11px;color:var(--ink-muted);margin-top:6px;">⭐ 익힌 낱말: 시간을 두고 3번 이상 맞힌 낱말 수 (모든 과목)</div>' : '');
+}
 
 /* ---------- 부팅 ---------- */
 async function boot(){

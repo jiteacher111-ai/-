@@ -19,9 +19,13 @@ create table if not exists public.pioneer_players (
   wrong      int   not null default 0,
   achieved   jsonb not null default '{}'::jsonb,
   given      jsonb not null default '{}'::jsonb,
+  study      jsonb not null default '{}'::jsonb,
   updated_at timestamptz not null default now(),
   primary key (room_code, name_key)
 );
+
+-- 낱말 학습 기록(간격 반복·오답·아이템). 예전에 만든 테이블에도 열을 더해 줍니다.
+alter table public.pioneer_players add column if not exists study jsonb not null default '{}'::jsonb;
 
 grant select, insert on public.pioneer_rooms to anon;
 grant select, insert, update on public.pioneer_players to anon;
