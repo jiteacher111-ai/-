@@ -4,17 +4,18 @@
 - 1920×1080, 24fps, 2,880프레임(정확히 120초), 28숏
 - 작업공간 루트의 `docs/`, `data/`, `assets/` 원본만 읽고, 원본은 수정하지 않습니다.
 
-## 현재 결과 (2026-10-04)
+## 현재 결과 (2026-10-19)
 
 | 파일 | 상태 |
 |---|---|
 | `out/dino-playground-preview-silent.mp4` | ✅ 960×540, 2,880프레임, 120.000초, 오디오 없음, 검은 프레임 0 |
-| `out/dino-playground-final.mp4` | ⏸ 외부 오디오(음성 46개, 음악 1개, 효과음 8개)가 없어서 렌더하지 않음 |
+| `out/dino-playground-mix-preview.mp4` | ✅ 1920×1080, 120.000초, 대사 46개 + 효과음 8개 (ElevenLabs), AAC 48kHz, -16.0 LUFS / 피크 -1.4 dBFS. **BGM 없음 — 최종본 아님** |
+| `out/dino-playground-final.mp4` | ⏸ BGM `assets/audio/music/playground-theme-120s.wav` 1개가 없어서 렌더하지 않음 |
 | `out/keyframes/*.png` | ✅ 레이아웃 확인용 스틸 8장 (S03, S07, S09, S10, S16, S22, S27, S28) |
 | `out/contact-sheets/character-cutouts.png` | ✅ 컷아웃 84장 검수 시트 (4캐릭터 × 표정 7 + 포즈 6 + 동작 8) |
 | `out/subtitles.ko.srt` | ✅ 원본 SRT를 바꾸지 않고 복사 |
 | `out/missing-assets.json` | 누락 오디오 목록 |
-| `out/qa-report.json` | QA 결과: pass 16 / fail 0 / warn 4 / skip 1 (최종본) |
+| `out/qa-report.json` | QA 결과: pass 18 / fail 0 / warn 4 / skip 1 (최종본) |
 | `out/validation-report.json`, `out/preprocess-report.json` | 입력 검증, 전처리 상세 |
 
 ## v2 — 역동 동작 + 멀티샷 (2026-10-06)
@@ -44,6 +45,24 @@
   - 컷 목록은 `out/qa-report.json` 의 `multi-shot-cuts` 에 있음
 - QA 는 컷마다 해당 컷 카메라로 검사합니다. 잘림은 그 컷이 담는 캐릭터만 보고, 미디엄에서 화자 얼굴이 자막 띠를 피하는지도 확인합니다.
 
+## v3 — ElevenLabs 음성·효과음 (2026-10-19)
+
+- **음성 캐스팅** `audio-production/voice-casting.json` (모델 `eleven_v4`, 감정은 voice-lines 의 `emotion` 을 오디오 태그로 변환, 대사 문구는 한 글자도 바꾸지 않음)
+  | 캐릭터 | 보이스 | 이유 |
+  |---|---|---|
+  | 성운 | sena — Friendly, Cheerful (`[childlike voice]`) | 밝고 귀여운 애니메이션 음성 — 성인 성우가 남자아이를 연기하는 방식 |
+  | 티노 | Deok su | "Fat and cute character voice" — 둥글고 통통 튀는 아기 공룡 |
+  | 뿔리 | Yun — Warm, Clear | 따뜻하고 차분한 음성 — 안전 수칙을 안정감 있게 |
+  | 카로 | Man Bo | "Cheerful and funny character voice" — 호기심 많고 경쾌함 |
+  - 3세 아이 목소리를 새로 디자인하는 것은 ElevenLabs 안전 정책에 막혀서, 라이브러리의 성우 보이스를 썼습니다. 실존 아동의 목소리는 복제하지 않았습니다.
+- **테이크 선택** `scripts/select-voice-takes.mjs`: 대사마다 4개 테이크 중 자막 구간 안에 들어가는 가장 긴(여유 있는) 테이크 → 앞뒤 100ms 무음 → 48kHz mono 24-bit. 결과는 `audio-production/voice-selections.json`
+  - L28 합창: `[slowly]` 테이크가 3.2~3.4초로 2.4초 구간(120초 끝)을 넘어서, 같은 문구·같은 보이스인 L05 녹음을 다시 씀 (`.slow.wav` 로 보관)
+  - `scripts/tighten-voice-pauses.mjs`: 구간을 넘는 파일은 문장 사이 쉼만 줄임 (속도 변경은 5% 이내). L28_tino 2.85 → 2.78초 (×1.009)
+- **효과음** `scripts/select-sfx-takes.mjs` (`eleven_text_to_sound_v2`, 48kHz stereo 24-bit). 아주 작게 생성된 발소리·그네 삐걱임은 잡음을 줄이고, 삐걱임은 큐 길이(76.2~98.5초)만큼 반복. 결과는 `audio-production/sfx-selections.json`. 멈춰!에는 사이렌·경고음을 넣지 않았습니다.
+- **음량** `scripts/normalize-audio-levels.mjs`: 혼자 말하는 대사 -19 LUFS, 합창 파트 -24 LUFS (4명 합쳐 비슷한 크기), 효과음 -18 LUFS (그 위에 cue volume). 결과는 `audio-production/levels.json`
+- **마스터링** `render-final.mjs`: 렌더 후 2패스 loudnorm (-16 LUFS, true peak -1.5 dBTP), 영상은 복사
+- **BGM 은 아직 없습니다.** 연결된 ElevenLabs 커넥터는 제한판이라 음악을 만들 수 없고, Higgsfield 커넥터는 잔액·모델 조회만 되고 이미지·영상·음악을 생성하지 못합니다. 그래서 BGM 없이 `npm run render:mix-preview` 로 믹스 미리보기만 만들었습니다. 음악 파일을 `assets/audio/music/playground-theme-120s.wav` 에 넣으면 `npm run render:final` 이 최종본을 만듭니다 (대사 중 BGM −4dB 덕킹은 이미 적용되어 있음).
+
 ## 1. 설치
 
 ```bash
@@ -65,15 +84,13 @@ npm install        # 로컬 설치만 함. 전역 패키지 없음. postinstall 
 | `npm run dev` | Remotion Studio 미리보기 (http://localhost:3000) |
 | `npm run stills` | 키프레임 8장을 렌더합니다. 특정 프레임을 추가하려면 `npm run stills -- 660 2430` |
 | `npm run render:preview` | 50% 스케일 무음 프리뷰를 렌더합니다 (약 1분 30초 소요). |
-| `npm run render:final` | 오디오가 **모두** 있을 때만 1920×1080 H.264 + AAC 48kHz로 렌더하고, 없으면 건너뜁니다. |
+| `npm run render:final` | 오디오가 **모두** 있을 때만 1920×1080 H.264 + AAC 48kHz로 렌더하고(-16 LUFS 마스터링), 없으면 건너뜁니다. |
+| `npm run render:mix-preview` | BGM 만 없을 때 대사+효과음 믹스 미리보기 → `out/dino-playground-mix-preview.mp4` (최종본 아님) |
 | `npm run qa` | `out/qa-report.json` 생성 |
 | `npm run all` | 위 순서대로 전부 실행 |
 | `npm run typecheck` | TypeScript 검사 |
 
-**오디오가 준비되면** 파일을 작업공간 루트의 아래 경로에 넣고 `npm run all`을 실행하세요.
-- `assets/audio/voices/L01_seongun.wav` … (전체 목록은 `out/missing-assets.json`)
-- `assets/audio/music/playground-theme-120s.wav`
-- `assets/audio/sfx/*.wav`
+대사 46개와 효과음 8개는 `assets/audio/voices/`, `assets/audio/sfx/` 에 있습니다. **BGM 이 준비되면** `assets/audio/music/playground-theme-120s.wav` 에 넣고 `npm run sync && npm run validate && npm run render:final && npm run qa` 를 실행하세요.
 
 ## 3. 구조
 
@@ -135,7 +152,7 @@ preprocess.config.json   ★ 배경 제거·그림자 제거·크롭 확장 조�
 - 립싱크는 하지 않습니다. 대사 중에는 1% 상하 움직임, ±1.5° 고개 기울기만 씁니다. 회전은 최대 ±3°입니다.
 - 타이밍과 대사 문구는 원본 그대로입니다. 자막은 SRT와 같은 문구·시간으로 번인합니다.
 - 그네는 배경을 마스킹해 움직이면 이중 이미지가 생깁니다. 브리프 10절의 "어색한 왜곡보다 정지 연출 우선"에 따라 **정지 상태**로 두고, 점선 경계와 캐릭터 반응으로 표현합니다 (`swingMotion: "static"`).
-- 누락 오디오는 생성하거나 대체하지 않습니다.
+- 누락 오디오를 다른 파일이나 무음으로 대체하지 않습니다. 대사·효과음은 요청에 따라 ElevenLabs 로 만들었고, BGM 은 만들 수단이 없어 비워 두었습니다.
 - 숏 사이에는 12프레임 디졸브만 씁니다(검은 프레임 없음). 119.6초부터 웜 아이보리로 페이드합니다.
 
 ## 6. 알려진 데이터 이슈 (수정하지 않고 보고)

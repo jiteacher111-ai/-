@@ -158,11 +158,12 @@ const blackFrames = (file) => {
 for (const [key, file, w, h] of [
   ['preview', 'dino-playground-preview-silent.mp4', 960, 540],
   ['final', 'dino-playground-final.mp4', 1920, 1080],
+  ['mix-preview', 'dino-playground-mix-preview.mp4', 1920, 1080],
 ]) {
   const p = path.join(OUT_DIR, file);
   if (!exists(p)) {
     outputs[key] = {file: `out/${file}`, exists: false};
-    add(`output-${key}`, key === 'final' && !audio.allAudioPresent ? 'skip' : 'fail', {file: `out/${file}`, reason: key === 'final' ? '오디오가 모두 있을 때만 렌더' : '렌더되지 않음'});
+    add(`output-${key}`, (key === 'final' && !audio.allAudioPresent) || key === 'mix-preview' ? 'skip' : 'fail', {file: `out/${file}`, reason: key === 'final' ? '오디오가 모두 있을 때만 렌더' : key === 'mix-preview' ? 'BGM 만 없을 때 선택 렌더 (npm run render:mix-preview)' : '렌더되지 않음'});
     continue;
   }
   const info = probe(p);
@@ -173,6 +174,14 @@ for (const [key, file, w, h] of [
   const black = blackFrames(p);
   outputs[key] = {file: `out/${file}`, sizeBytes: fs.statSync(p).size, ...info, blackSegments: black};
   add(`output-${key}`, durOk && resOk && audioOk && black === 0 ? 'pass' : 'fail', {videoFrames: info?.video?.frames, videoSeconds: vDur, containerSeconds: info?.duration, resolution: `${info?.video?.width}x${info?.video?.height}`, hasAudio: info?.hasAudio, blackSegments: black});
+  if (info?.hasAudio) {
+    // 통합 음량 -16 LUFS ±1, 피크 -1 dBFS 이하
+    const log = spawnSync('ffmpeg', ['-hide_banner', '-nostats', '-i', p, '-af', 'ebur128=peak=true', '-f', 'null', '-'], {encoding: 'utf8'}).stderr.split('Summary:').pop();
+    const lufs = Number(/\bI:\s+(-?[\d.]+) LUFS/.exec(log)?.[1]);
+    const peak = Number(/Peak:\s+(-?[\d.]+) dBFS/.exec(log)?.[1]);
+    outputs[key].loudness = {integratedLUFS: lufs, truePeakDbfs: peak};
+    add(`loudness-${key}`, Math.abs(lufs + 16) <= 1 && peak <= -1 ? 'pass' : 'warn', {integratedLUFS: lufs, truePeakDbfs: peak, target: '-16 LUFS ±1, TP ≤ -1 dBFS'});
+  }
 }
 const kf = exists(path.join(OUT_DIR, 'keyframes', 'stills.json')) ? readJson(path.join(OUT_DIR, 'keyframes', 'stills.json')) : null;
 add('keyframes-8', kf?.rendered?.length >= 8 ? 'pass' : 'fail', {files: kf?.rendered?.map((r) => r.file) ?? []});

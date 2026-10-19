@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-10-06T12:31:58.737Z",
+  "generatedAt": "2026-10-19T07:47:41.582Z",
   "ok": true,
   "summary": {
-    "pass": 16,
+    "pass": 18,
     "fail": 0,
     "warn": 4,
     "skip": 1
@@ -509,20 +509,11 @@
     {
       "name": "audio-exists",
       "status": "warn",
-      "voiceFilesMissing": 46,
+      "voiceFilesMissing": 0,
       "musicMissing": [
         "assets/audio/music/playground-theme-120s.wav"
       ],
-      "sfxMissing": [
-        "assets/audio/sfx/footsteps-soft.wav",
-        "assets/audio/sfx/bell-soft.wav",
-        "assets/audio/sfx/icon-chime.wav",
-        "assets/audio/sfx/pop-soft.wav",
-        "assets/audio/sfx/slide-whoosh-soft.wav",
-        "assets/audio/sfx/swing-creak-soft.wav",
-        "assets/audio/sfx/sparkle-soft.wav",
-        "assets/audio/sfx/laugh-soft.wav"
-      ],
+      "sfxMissing": [],
       "report": "out/missing-assets.json"
     },
     {
@@ -694,6 +685,23 @@
       "reason": "오디오가 모두 있을 때만 렌더"
     },
     {
+      "name": "output-mix-preview",
+      "status": "pass",
+      "videoFrames": 2880,
+      "videoSeconds": 120,
+      "containerSeconds": 120,
+      "resolution": "1920x1080",
+      "hasAudio": true,
+      "blackSegments": 0
+    },
+    {
+      "name": "loudness-mix-preview",
+      "status": "pass",
+      "integratedLUFS": -16,
+      "truePeakDbfs": -1.4,
+      "target": "-16 LUFS ±1, TP ≤ -1 dBFS"
+    },
+    {
       "name": "keyframes-8",
       "status": "pass",
       "files": [
@@ -735,6 +743,24 @@
     "final": {
       "file": "out/dino-playground-final.mp4",
       "exists": false
+    },
+    "mix-preview": {
+      "file": "out/dino-playground-mix-preview.mp4",
+      "sizeBytes": 37807791,
+      "duration": 120,
+      "video": {
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "fps": "24/1",
+        "frames": 2880
+      },
+      "hasAudio": true,
+      "blackSegments": 0,
+      "loudness": {
+        "integratedLUFS": -16,
+        "truePeakDbfs": -1.4
+      }
     }
   }
 }

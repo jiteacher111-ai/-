@@ -12,6 +12,7 @@
     "stills": "node scripts/render-stills.mjs",
     "render:preview": "node scripts/render-preview.mjs",
     "render:final": "node scripts/render-final.mjs",
+    "render:mix-preview": "node scripts/render-final.mjs --allow-missing-music",
     "qa": "node scripts/qa.mjs",
     "typecheck": "tsc --noEmit",
     "all": "npm run sync && npm run validate && npm run preprocess && npm run stills && npm run render:preview && npm run render:final && npm run qa",

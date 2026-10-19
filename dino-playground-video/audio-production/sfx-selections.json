@@ -1,0 +1,203 @@
+{
+  "assets/audio/sfx/footsteps-soft.wav": {
+    "generation_id": "sd4gAhMbuiFoWDHq2Dpp",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Light soft footsteps on a rubber playground floor, short and padded, gentle and close",
+    "takes": [
+      {
+        "id": "sd4gAhMbuiFoWDHq2Dpp",
+        "sec": 1
+      },
+      {
+        "id": "IUNBsxvgvQBxz8GZDp4V",
+        "sec": 2
+      },
+      {
+        "id": "6cnjYOEOSEEF1VU1nczv",
+        "sec": 0.48
+      },
+      {
+        "id": "AdM5V4IEG1PeyQmWmsrb",
+        "sec": 1
+      }
+    ],
+    "takeSec": 1,
+    "wavSec": 0.937
+  },
+  "assets/audio/sfx/bell-soft.wav": {
+    "generation_id": "kj1KBMl05aFh0sNZu8bO",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Small round soft bell jingle, one gentle shake, warm and quiet",
+    "takes": [
+      {
+        "id": "kj1KBMl05aFh0sNZu8bO",
+        "sec": 2
+      },
+      {
+        "id": "D0qxoiCEbi4LmOj6QGnQ",
+        "sec": 2
+      },
+      {
+        "id": "cRUSiFpqfIcXBeeOBVxx",
+        "sec": 2
+      },
+      {
+        "id": "sq5x3MeTKiTfeLzgLxXy",
+        "sec": 2
+      }
+    ],
+    "takeSec": 2,
+    "wavSec": 2
+  },
+  "assets/audio/sfx/icon-chime.wav": {
+    "generation_id": "OZiJpj3M6WhCTtlG4usp",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Single clear soft chime ding, rounded and mellow, not sharp, short decay",
+    "takes": [
+      {
+        "id": "OZiJpj3M6WhCTtlG4usp",
+        "sec": 2
+      },
+      {
+        "id": "CgIxw2HtFVccQklizwoH",
+        "sec": 2
+      },
+      {
+        "id": "H1L6XHbWG77JCVC4GeKw",
+        "sec": 1
+      },
+      {
+        "id": "wivt9SDAMxwWwCo1lmPd",
+        "sec": 2
+      }
+    ],
+    "takeSec": 2,
+    "wavSec": 2
+  },
+  "assets/audio/sfx/pop-soft.wav": {
+    "generation_id": "8NKeu5mlU1Gjj0mgTWfN",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Soft gentle bubble pop, low and rounded, very short",
+    "takes": [
+      {
+        "id": "GbNf2ALjhWXFIidD3Jqi",
+        "sec": 2
+      },
+      {
+        "id": "QcuWD63UMYV8f0J96K8l",
+        "sec": 2
+      },
+      {
+        "id": "8NKeu5mlU1Gjj0mgTWfN",
+        "sec": 1
+      },
+      {
+        "id": "7C1iYTXroGDi1chMDQWR",
+        "sec": 1
+      }
+    ],
+    "takeSec": 1,
+    "wavSec": 1
+  },
+  "assets/audio/sfx/slide-whoosh-soft.wav": {
+    "generation_id": "UgP99XuyLjFat8raITg1",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Short slow soft air whoosh of sliding down a plastic playground slide, gentle",
+    "takes": [
+      {
+        "id": "UgP99XuyLjFat8raITg1",
+        "sec": 2
+      },
+      {
+        "id": "1oyBIzDVykGimjxfcDpJ",
+        "sec": 1
+      },
+      {
+        "id": "0eRZR7xLWuPNwS4t0FTw",
+        "sec": 2
+      },
+      {
+        "id": "TvKWmTL2ZcM3Eii94fD2",
+        "sec": 1
+      }
+    ],
+    "takeSec": 2,
+    "wavSec": 2
+  },
+  "assets/audio/sfx/swing-creak-soft.wav": {
+    "generation_id": "VpmpuRkty8vzpGaZmZ4f",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Very faint rhythmic creak of a wooden swing and rope swaying slowly, distant and soft",
+    "takes": [
+      {
+        "id": "fmWuGQW30wbLUye3KodR",
+        "sec": 2
+      },
+      {
+        "id": "jfeDgYMAJpXSMu3IVhnQ",
+        "sec": 2
+      },
+      {
+        "id": "VpmpuRkty8vzpGaZmZ4f",
+        "sec": 1
+      },
+      {
+        "id": "7ibtNfyy5k4lPSeuwbvW",
+        "sec": 1
+      }
+    ],
+    "takeSec": 1,
+    "wavSec": 22.3,
+    "looped": true
+  },
+  "assets/audio/sfx/sparkle-soft.wav": {
+    "generation_id": "gOXCh6YWRjGkfO4fEAY6",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Warm gentle magical sparkle shimmer, soft glittering chimes rising",
+    "takes": [
+      {
+        "id": "gOXCh6YWRjGkfO4fEAY6",
+        "sec": 2
+      },
+      {
+        "id": "lYSrLvZAoQCD4UIrttyp",
+        "sec": 1
+      },
+      {
+        "id": "qH3rS4yVf6JUdyniYEIp",
+        "sec": 1
+      },
+      {
+        "id": "dFPtWNDmeKuhlSKuJjZI",
+        "sec": 1
+      }
+    ],
+    "takeSec": 2,
+    "wavSec": 2
+  },
+  "assets/audio/sfx/laugh-soft.wav": {
+    "generation_id": "MFZjXbbJsrPASykmuyfM",
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Short soft friendly giggle of cartoon characters, light and warm, not exaggerated",
+    "takes": [
+      {
+        "id": "MFZjXbbJsrPASykmuyfM",
+        "sec": 2
+      },
+      {
+        "id": "Tucn2KHu5vC8s6m2McYt",
+        "sec": 3
+      },
+      {
+        "id": "cvU9bVCx0E52AynVc8TT",
+        "sec": 2
+      },
+      {
+        "id": "DQDtV6jZITPBA9dCgLoy",
+        "sec": 1
+      }
+    ],
+    "takeSec": 2,
+    "wavSec": 2
+  }
+}

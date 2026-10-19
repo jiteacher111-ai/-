@@ -1,0 +1,492 @@
+{
+ "model_id": "eleven_v4",
+ "voices": {
+  "seongun": {
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "voice_name": "sena - Friendly, Cheerful",
+   "base_tags": "[childlike voice]",
+   "why": "밝고 귀여운 애니메이션용 음성 — 한국 애니메이션처럼 성인 성우가 남자아이 연기"
+  },
+  "tino": {
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "voice_name": "Deok su",
+   "base_tags": "",
+   "why": "\"Fat and cute character voice\" — 둥글고 통통 튀는 아기 공룡"
+  },
+  "ppulli": {
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "voice_name": "Yun - Warm, Clear",
+   "base_tags": "",
+   "why": "따뜻하고 차분하며 부드러운 음성 — 안전수칙을 안정감 있게"
+  },
+  "karo": {
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "voice_name": "Man Bo",
+   "base_tags": "",
+   "why": "\"cheerful and funny character voice\" — 호기심 많고 경쾌함"
+  }
+ },
+ "selection_rule": "4개 테이크 중 자막 구간(slotSec)-0.1초 안에 들어가는 가장 긴 테이크(또박또박·여유 있는 말투). 모두 넘치면 가장 짧은 테이크",
+ "lines": [
+  {
+   "line": "L01",
+   "character": "seongun",
+   "file": "assets/audio/voices/L01_seongun.wav",
+   "text": "티노, 뿔리, 카로야! 같이 놀자!",
+   "emotion": "반가움",
+   "slotSec": 3.5,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[happy] [childlike voice] 티노, 뿔리, 카로야! 같이 놀자!"
+  },
+  {
+   "line": "L02",
+   "character": "seongun",
+   "file": "assets/audio/voices/L02_seongun.wav",
+   "text": "좋아!",
+   "emotion": "함께 반갑게",
+   "slotSec": 1.0,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[happy] [excited] [childlike voice] 좋아!"
+  },
+  {
+   "line": "L02",
+   "character": "tino",
+   "file": "assets/audio/voices/L02_tino.wav",
+   "text": "좋아!",
+   "emotion": "함께 반갑게",
+   "slotSec": 1.0,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[happy] [excited] 좋아!"
+  },
+  {
+   "line": "L02",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L02_ppulli.wav",
+   "text": "좋아!",
+   "emotion": "함께 반갑게",
+   "slotSec": 1.0,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[happy] [excited] 좋아!"
+  },
+  {
+   "line": "L02",
+   "character": "karo",
+   "file": "assets/audio/voices/L02_karo.wav",
+   "text": "좋아!",
+   "emotion": "함께 반갑게",
+   "slotSec": 1.0,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[happy] [excited] 좋아!"
+  },
+  {
+   "line": "L03",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L03_ppulli.wav",
+   "text": "놀기 전에 약속이 세 개 있어.",
+   "emotion": "차분한 안내",
+   "slotSec": 3.3,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[warmly] [calm] 놀기 전에 약속이 세 개 있어."
+  },
+  {
+   "line": "L04",
+   "character": "seongun",
+   "file": "assets/audio/voices/L04_seongun.wav",
+   "text": "안전 약속?",
+   "emotion": "호기심",
+   "slotSec": 1.2,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[curious] [childlike voice] 안전 약속?"
+  },
+  {
+   "line": "L05",
+   "character": "seongun",
+   "file": "assets/audio/voices/L05_seongun.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "리듬감 있는 구호",
+   "slotSec": 3.0,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[cheerful] [excited] [childlike voice] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L05",
+   "character": "tino",
+   "file": "assets/audio/voices/L05_tino.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "리듬감 있는 구호",
+   "slotSec": 3.0,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L05",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L05_ppulli.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "리듬감 있는 구호",
+   "slotSec": 3.0,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L05",
+   "character": "karo",
+   "file": "assets/audio/voices/L05_karo.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "리듬감 있는 구호",
+   "slotSec": 3.0,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L06",
+   "character": "tino",
+   "file": "assets/audio/voices/L06_tino.wav",
+   "text": "내가 먼저! 빨리 타고 싶어!",
+   "emotion": "신남",
+   "slotSec": 3.2,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[excited] 내가 먼저! 빨리 타고 싶어!"
+  },
+  {
+   "line": "L07",
+   "character": "seongun",
+   "file": "assets/audio/voices/L07_seongun.wav",
+   "text": "티노야, 친구들도 기다리고 있어.",
+   "emotion": "부드러운 안내",
+   "slotSec": 3.2,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[softly] [warmly] [childlike voice] 티노야, 친구들도 기다리고 있어."
+  },
+  {
+   "line": "L08",
+   "character": "tino",
+   "file": "assets/audio/voices/L08_tino.wav",
+   "text": "아, 차례를 잊었네.",
+   "emotion": "가벼운 깨달음",
+   "slotSec": 2.1,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[surprised] [softly] 아, 차례를 잊었네."
+  },
+  {
+   "line": "L09",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L09_ppulli.wav",
+   "text": "발자국 뒤에 한 줄로 서자.",
+   "emotion": "친절한 제안",
+   "slotSec": 2.7,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[warmly] 발자국 뒤에 한 줄로 서자."
+  },
+  {
+   "line": "L10",
+   "character": "tino",
+   "file": "assets/audio/voices/L10_tino.wav",
+   "text": "좋아! 내 차례까지 기다릴게.",
+   "emotion": "밝은 동의",
+   "slotSec": 3.3,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[happy] 좋아! 내 차례까지 기다릴게."
+  },
+  {
+   "line": "L11",
+   "character": "seongun",
+   "file": "assets/audio/voices/L11_seongun.wav",
+   "text": "차례차례!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.2,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[cheerful] [childlike voice] 차례차례!"
+  },
+  {
+   "line": "L11",
+   "character": "tino",
+   "file": "assets/audio/voices/L11_tino.wav",
+   "text": "차례차례!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.2,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[cheerful] 차례차례!"
+  },
+  {
+   "line": "L11",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L11_ppulli.wav",
+   "text": "차례차례!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.2,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[cheerful] 차례차례!"
+  },
+  {
+   "line": "L11",
+   "character": "karo",
+   "file": "assets/audio/voices/L11_karo.wav",
+   "text": "차례차례!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.2,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[cheerful] 차례차례!"
+  },
+  {
+   "line": "L12",
+   "character": "karo",
+   "file": "assets/audio/voices/L12_karo.wav",
+   "text": "여기로 올라가면 더 빠르겠지?",
+   "emotion": "호기심",
+   "slotSec": 2.8,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[curious] 여기로 올라가면 더 빠르겠지?"
+  },
+  {
+   "line": "L13",
+   "character": "seongun",
+   "file": "assets/audio/voices/L13_seongun.wav",
+   "text": "잠깐! 여기는 내려오는 길이야.",
+   "emotion": "차분하고 분명하게",
+   "slotSec": 3.1,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[calm] [childlike voice] 잠깐! 여기는 내려오는 길이야."
+  },
+  {
+   "line": "L14",
+   "character": "karo",
+   "file": "assets/audio/voices/L14_karo.wav",
+   "text": "그럼 어디로 올라가?",
+   "emotion": "궁금함",
+   "slotSec": 1.7,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[curious] 그럼 어디로 올라가?"
+  },
+  {
+   "line": "L15",
+   "character": "seongun",
+   "file": "assets/audio/voices/L15_seongun.wav",
+   "text": "계단으로 올라가서, 앉아서 아래로 슝!",
+   "emotion": "즐거운 설명",
+   "slotSec": 3.8,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[happy] [childlike voice] 계단으로 올라가서, 앉아서 아래로 슝!"
+  },
+  {
+   "line": "L16",
+   "character": "karo",
+   "file": "assets/audio/voices/L16_karo.wav",
+   "text": "계단으로 올라가고, 아래로 슝!",
+   "emotion": "이해하고 따라 말함",
+   "slotSec": 3.5,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[happy] 계단으로 올라가고, 아래로 슝!"
+  },
+  {
+   "line": "L17",
+   "character": "seongun",
+   "file": "assets/audio/voices/L17_seongun.wav",
+   "text": "바르게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.1,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[cheerful] [childlike voice] 바르게!"
+  },
+  {
+   "line": "L17",
+   "character": "tino",
+   "file": "assets/audio/voices/L17_tino.wav",
+   "text": "바르게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.1,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[cheerful] 바르게!"
+  },
+  {
+   "line": "L17",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L17_ppulli.wav",
+   "text": "바르게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.1,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[cheerful] 바르게!"
+  },
+  {
+   "line": "L17",
+   "character": "karo",
+   "file": "assets/audio/voices/L17_karo.wav",
+   "text": "바르게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.1,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[cheerful] 바르게!"
+  },
+  {
+   "line": "L18",
+   "character": "karo",
+   "file": "assets/audio/voices/L18_karo.wav",
+   "text": "저쪽으로 지나가자!",
+   "emotion": "경쾌함",
+   "slotSec": 2.1,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[cheerful] 저쪽으로 지나가자!"
+  },
+  {
+   "line": "L19",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L19_ppulli.wav",
+   "text": "멈춰! 그네가 움직이고 있어.",
+   "emotion": "부드럽지만 분명하게",
+   "slotSec": 3.2,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[gently] [firmly] 멈춰! 그네가 움직이고 있어."
+  },
+  {
+   "line": "L20",
+   "character": "seongun",
+   "file": "assets/audio/voices/L20_seongun.wav",
+   "text": "그네의 앞과 뒤에서는 멀리 기다려야 해.",
+   "emotion": "차분한 설명",
+   "slotSec": 3.7,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[calm] [childlike voice] 그네의 앞과 뒤에서는 멀리 기다려야 해."
+  },
+  {
+   "line": "L21",
+   "character": "karo",
+   "file": "assets/audio/voices/L21_karo.wav",
+   "text": "안전선 밖에서 기다리면 되지?",
+   "emotion": "확인",
+   "slotSec": 2.8,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[curious] 안전선 밖에서 기다리면 되지?"
+  },
+  {
+   "line": "L22",
+   "character": "seongun",
+   "file": "assets/audio/voices/L22_seongun.wav",
+   "text": "맞아! 멈춘 뒤에도 바깥쪽으로 돌아가자.",
+   "emotion": "칭찬과 안내",
+   "slotSec": 4.1,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[warmly] [happy] [childlike voice] 맞아! 멈춘 뒤에도 바깥쪽으로 돌아가자."
+  },
+  {
+   "line": "L23",
+   "character": "seongun",
+   "file": "assets/audio/voices/L23_seongun.wav",
+   "text": "안전하게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.3,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[cheerful] [childlike voice] 안전하게!"
+  },
+  {
+   "line": "L23",
+   "character": "tino",
+   "file": "assets/audio/voices/L23_tino.wav",
+   "text": "안전하게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.3,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[cheerful] 안전하게!"
+  },
+  {
+   "line": "L23",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L23_ppulli.wav",
+   "text": "안전하게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.3,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[cheerful] 안전하게!"
+  },
+  {
+   "line": "L23",
+   "character": "karo",
+   "file": "assets/audio/voices/L23_karo.wav",
+   "text": "안전하게!",
+   "emotion": "짧은 구호",
+   "slotSec": 1.3,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[cheerful] 안전하게!"
+  },
+  {
+   "line": "L24",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L24_ppulli.wav",
+   "text": "첫째, 차례를 지켜요!",
+   "emotion": "또박또박",
+   "slotSec": 2.5,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[clearly] [slowly] 첫째, 차례를 지켜요!"
+  },
+  {
+   "line": "L25",
+   "character": "karo",
+   "file": "assets/audio/voices/L25_karo.wav",
+   "text": "둘째, 계단으로 올라가 아래로 타요!",
+   "emotion": "밝고 분명하게",
+   "slotSec": 3.1,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[cheerful] [clearly] 둘째, 계단으로 올라가 아래로 타요!"
+  },
+  {
+   "line": "L26",
+   "character": "tino",
+   "file": "assets/audio/voices/L26_tino.wav",
+   "text": "셋째, 움직이는 그네와 멀리 떨어져요!",
+   "emotion": "씩씩하게",
+   "slotSec": 3.5,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[confident] [cheerful] 셋째, 움직이는 그네와 멀리 떨어져요!"
+  },
+  {
+   "line": "L27",
+   "character": "seongun",
+   "file": "assets/audio/voices/L27_seongun.wav",
+   "text": "우리 모두 약속!",
+   "emotion": "밝게",
+   "slotSec": 1.5,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[happy] [childlike voice] 우리 모두 약속!"
+  },
+  {
+   "line": "L28",
+   "character": "seongun",
+   "file": "assets/audio/voices/L28_seongun.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "천천히 따라 하기 좋은 구호",
+   "slotSec": 2.4,
+   "voice_id": "vJ170fCwESgE1tjW39So",
+   "prompt": "[slowly] [cheerful] [childlike voice] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L28",
+   "character": "tino",
+   "file": "assets/audio/voices/L28_tino.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "천천히 따라 하기 좋은 구호",
+   "slotSec": 2.4,
+   "voice_id": "IAETYMYM3nJvjnlkVTKI",
+   "prompt": "[slowly] [cheerful] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L28",
+   "character": "ppulli",
+   "file": "assets/audio/voices/L28_ppulli.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "천천히 따라 하기 좋은 구호",
+   "slotSec": 2.4,
+   "voice_id": "lFG74KW6EG0aRXg1kKfh",
+   "prompt": "[slowly] [cheerful] 차례차례, 바르게, 안전하게!"
+  },
+  {
+   "line": "L28",
+   "character": "karo",
+   "file": "assets/audio/voices/L28_karo.wav",
+   "text": "차례차례, 바르게, 안전하게!",
+   "emotion": "천천히 따라 하기 좋은 구호",
+   "slotSec": 2.4,
+   "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+   "prompt": "[slowly] [cheerful] 차례차례, 바르게, 안전하게!"
+  }
+ ]
+}

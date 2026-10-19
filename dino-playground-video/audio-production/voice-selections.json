@@ -1,0 +1,1385 @@
+{
+  "assets/audio/voices/L02_seongun.wav": {
+    "line": "L02",
+    "character": "seongun",
+    "text": "좋아!",
+    "prompt": "[happy] [childlike voice] 좋아!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "bQcFxHnOX3YyB0ZB312U",
+    "takes": [
+      {
+        "id": "bQcFxHnOX3YyB0ZB312U",
+        "sec": 0.88
+      },
+      {
+        "id": "7fGCJKTihqMi1NKE2Fsk",
+        "sec": 0.8
+      },
+      {
+        "id": "ORoBvj6ytjfEYchrZzto",
+        "sec": 0.88
+      },
+      {
+        "id": "WSY0m9JJLBRhV8iFi066",
+        "sec": 0.88
+      }
+    ],
+    "takeSec": 0.88,
+    "wavSec": 0.915,
+    "slotSec": 1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L02_tino.wav": {
+    "line": "L02",
+    "character": "tino",
+    "text": "좋아!",
+    "prompt": "[happy] [excited] 좋아!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "4QKedOkfgRMGVjSMEZ9W",
+    "takes": [
+      {
+        "id": "4QKedOkfgRMGVjSMEZ9W",
+        "sec": 0.88
+      },
+      {
+        "id": "9mFtrg0zXHzkuJa3hdGs",
+        "sec": 1.12
+      },
+      {
+        "id": "hLpnWpUbeyrDlF0dskBQ",
+        "sec": 1.12
+      },
+      {
+        "id": "070vJYxThuhSgeHM540o",
+        "sec": 0.96
+      }
+    ],
+    "takeSec": 0.88,
+    "wavSec": 0.769,
+    "slotSec": 1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L02_ppulli.wav": {
+    "line": "L02",
+    "character": "ppulli",
+    "text": "좋아!",
+    "prompt": "[happy] [warmly] 좋아!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "hRuZFJPllCbtzgq7Pqiz",
+    "takes": [
+      {
+        "id": "Lzoz6cZdva3reeTNpVZS",
+        "sec": 1.28
+      },
+      {
+        "id": "hRuZFJPllCbtzgq7Pqiz",
+        "sec": 1.2
+      },
+      {
+        "id": "TM7WmRg56tcezxmalZ0n",
+        "sec": 1.28
+      },
+      {
+        "id": "ejpGwlCQCbosqIkX18rA",
+        "sec": 1.2
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.05,
+    "slotSec": 1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L02_karo.wav": {
+    "line": "L02",
+    "character": "karo",
+    "text": "좋아!",
+    "prompt": "[happy] [cheerful] 좋아!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "pOZRhcpOe6pM5W0jQR9e",
+    "takes": [
+      {
+        "id": "PI08UtadkDFydc476adq",
+        "sec": 1.28
+      },
+      {
+        "id": "r6H6Ix0veaYb555hXO4p",
+        "sec": 1.2
+      },
+      {
+        "id": "pOZRhcpOe6pM5W0jQR9e",
+        "sec": 1.12
+      },
+      {
+        "id": "qu1K8evqK2xzgiFGXyuC",
+        "sec": 1.2
+      }
+    ],
+    "takeSec": 1.12,
+    "wavSec": 1.195,
+    "slotSec": 1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L03_ppulli.wav": {
+    "line": "L03",
+    "character": "ppulli",
+    "text": "놀기 전에 약속이 세 개 있어.",
+    "prompt": "[warmly] [calm] 놀기 전에 약속이 세 개 있어.",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "xMGCPZaGdLVeu9oGA0fJ",
+    "takes": [
+      {
+        "id": "xMGCPZaGdLVeu9oGA0fJ",
+        "sec": 2.72
+      },
+      {
+        "id": "uryXeYPzxV8Ye7SNcLGH",
+        "sec": 2.64
+      },
+      {
+        "id": "NJwNOObsfW0oZ1sCfyYH",
+        "sec": 2.72
+      }
+    ],
+    "takeSec": 2.72,
+    "wavSec": 2.591,
+    "slotSec": 3.3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L01_seongun.wav": {
+    "line": "L01",
+    "character": "seongun",
+    "text": "티노, 뿔리, 카로야! 같이 놀자!",
+    "prompt": "[happy] [childlike voice] 티노, 뿔리, 카로야! 같이 놀자!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "UuLbOkEILvB8iY0o2EZm",
+    "takes": [
+      {
+        "id": "UuLbOkEILvB8iY0o2EZm",
+        "sec": 3.28
+      },
+      {
+        "id": "w2ARyZRt11jqfZ7TsWHV",
+        "sec": 2.88
+      },
+      {
+        "id": "U5faV41xp1b65iCpMRAU",
+        "sec": 2.96
+      },
+      {
+        "id": "8LIrH0UC3nBZ5yWvIva0",
+        "sec": 2.64
+      }
+    ],
+    "takeSec": 3.28,
+    "wavSec": 3.249,
+    "slotSec": 3.5,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L04_seongun.wav": {
+    "line": "L04",
+    "character": "seongun",
+    "text": "안전 약속?",
+    "prompt": "[curious] [childlike voice] 안전 약속?",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "cfpyDV0b4a6D5FP7Vv4s",
+    "takes": [
+      {
+        "id": "cfpyDV0b4a6D5FP7Vv4s",
+        "sec": 1.2
+      },
+      {
+        "id": "ftGapYiiP11EL4VhWR4u",
+        "sec": 1.28
+      },
+      {
+        "id": "X5E3ZLsaeLuoT714xYfU",
+        "sec": 1.36
+      },
+      {
+        "id": "1T1mTpLuWhBHiSDUfWqm",
+        "sec": 1.36
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.091,
+    "slotSec": 1.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L06_tino.wav": {
+    "line": "L06",
+    "character": "tino",
+    "text": "내가 먼저! 빨리 타고 싶어!",
+    "prompt": "[excited] 내가 먼저! 빨리 타고 싶어!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "ITwxp0dZ0YQ2Z0QpwXvg",
+    "takes": [
+      {
+        "id": "y7SYc66VZ018gWvWcn3Q",
+        "sec": 2.4
+      },
+      {
+        "id": "QUCf8CCxNitM1GmSemQr",
+        "sec": 2.4
+      },
+      {
+        "id": "alK7C4PfSq7Jb3SUirIs",
+        "sec": 2.48
+      },
+      {
+        "id": "ITwxp0dZ0YQ2Z0QpwXvg",
+        "sec": 2.56
+      }
+    ],
+    "takeSec": 2.56,
+    "wavSec": 2.665,
+    "slotSec": 3.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L07_seongun.wav": {
+    "line": "L07",
+    "character": "seongun",
+    "text": "티노야, 친구들도 기다리고 있어.",
+    "prompt": "[softly] [warmly] [childlike voice] 티노야, 친구들도 기다리고 있어.",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "Oz3GiTvaT1PqAdN9chLL",
+    "takes": [
+      {
+        "id": "ka7WwTJbXnxMrhNwSrl7",
+        "sec": 2.72
+      },
+      {
+        "id": "Oz3GiTvaT1PqAdN9chLL",
+        "sec": 2.8
+      },
+      {
+        "id": "ARYcXMmwvMCyBrJqbn1p",
+        "sec": 2.56
+      },
+      {
+        "id": "XUBDFgVQD33E58Dvw61x",
+        "sec": 2.56
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.697,
+    "slotSec": 3.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L08_tino.wav": {
+    "line": "L08",
+    "character": "tino",
+    "text": "아, 차례를 잊었네.",
+    "prompt": "[surprised] [softly] 아, 차례를 잊었네.",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "ePZ2TcKwC34Zxzfang6x",
+    "takes": [
+      {
+        "id": "ePZ2TcKwC34Zxzfang6x",
+        "sec": 2.08
+      },
+      {
+        "id": "PK2i99tFeZzXoEGnYIYV",
+        "sec": 2.32
+      },
+      {
+        "id": "hZC053PT8Evx7zt3QI28",
+        "sec": 2.24
+      },
+      {
+        "id": "dWliCpCOm4VUgxSFQ7Jl",
+        "sec": 2.24
+      }
+    ],
+    "takeSec": 2.08,
+    "wavSec": 2.031,
+    "slotSec": 2.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L09_ppulli.wav": {
+    "line": "L09",
+    "character": "ppulli",
+    "text": "발자국 뒤에 한 줄로 서자.",
+    "prompt": "[warmly] 발자국 뒤에 한 줄로 서자.",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "eVclmHOV5uyiPoLUoVUd",
+    "takes": [
+      {
+        "id": "eVclmHOV5uyiPoLUoVUd",
+        "sec": 2.4
+      },
+      {
+        "id": "3H6uwErYX0tyWHDOXL7d",
+        "sec": 2.4
+      },
+      {
+        "id": "AIDW0w4FXaCfwmsyS6BI",
+        "sec": 2.32
+      },
+      {
+        "id": "LCJ3RvaVII5ydZZnhJpz",
+        "sec": 2.32
+      }
+    ],
+    "takeSec": 2.4,
+    "wavSec": 2.267,
+    "slotSec": 2.7,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L10_tino.wav": {
+    "line": "L10",
+    "character": "tino",
+    "text": "좋아! 내 차례까지 기다릴게.",
+    "prompt": "[happy] 좋아! 내 차례까지 기다릴게.",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "nunEq0kYmRJkH6KcykXX",
+    "takes": [
+      {
+        "id": "nunEq0kYmRJkH6KcykXX",
+        "sec": 2.8
+      },
+      {
+        "id": "xBZvsTUiAM5jZvaqA1Ha",
+        "sec": 2.64
+      },
+      {
+        "id": "5uALUY6QkrYPAlOht3He",
+        "sec": 2.48
+      },
+      {
+        "id": "9jS2DEThYlfAZ7AdP7si",
+        "sec": 2.48
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.776,
+    "slotSec": 3.3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L05_seongun.wav": {
+    "line": "L05",
+    "character": "seongun",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] [childlike voice] 차례차례, 바르게, 안전하게!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "VxdRybLzaoagMJA1e51j",
+    "takes": [
+      {
+        "id": "VxdRybLzaoagMJA1e51j",
+        "sec": 2.8
+      },
+      {
+        "id": "Qt5g2YUTAUBu7nnxIWDj",
+        "sec": 2.64
+      },
+      {
+        "id": "9HALHsadI1jzaVwkAdva",
+        "sec": 2.72
+      },
+      {
+        "id": "JOVHIelOjb0Cu8UguYHa",
+        "sec": 2.72
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.815,
+    "slotSec": 3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L05_tino.wav": {
+    "line": "L05",
+    "character": "tino",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "98ef05rjAYIdkTIA0gCc",
+    "takes": [
+      {
+        "id": "98ef05rjAYIdkTIA0gCc",
+        "sec": 2.8
+      },
+      {
+        "id": "pReQPmfrKFCQ3gSay5KO",
+        "sec": 2.96
+      },
+      {
+        "id": "NAqdHrto5X2z25hbEHmO",
+        "sec": 2.8
+      },
+      {
+        "id": "K2q9D1tTE5hfGlKn75WQ",
+        "sec": 2.8
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.854,
+    "slotSec": 3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L05_ppulli.wav": {
+    "line": "L05",
+    "character": "ppulli",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "tGOhs2L7Ypd77XUpwgeP",
+    "takes": [
+      {
+        "id": "MLC8UPRIR4VbfJ9OnMfE",
+        "sec": 2.72
+      },
+      {
+        "id": "tGOhs2L7Ypd77XUpwgeP",
+        "sec": 2.8
+      },
+      {
+        "id": "rlOu8MFAcKl1G1SVn4Ye",
+        "sec": 2.72
+      },
+      {
+        "id": "jE3fkboLDniIjVNZLzAf",
+        "sec": 2.72
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.699,
+    "slotSec": 3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L05_karo.wav": {
+    "line": "L05",
+    "character": "karo",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "oL0OYTF8LAUokuLsEKHK",
+    "takes": [
+      {
+        "id": "oL0OYTF8LAUokuLsEKHK",
+        "sec": 2.88
+      },
+      {
+        "id": "jD0XqbADecnWZRZObxGZ",
+        "sec": 2.8
+      },
+      {
+        "id": "u39Dm84qBOKb4ruHdPIy",
+        "sec": 2.8
+      },
+      {
+        "id": "lXrE4q782HbE5iaaAJG2",
+        "sec": 2.88
+      }
+    ],
+    "takeSec": 2.88,
+    "wavSec": 2.732,
+    "slotSec": 3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L11_seongun.wav": {
+    "line": "L11",
+    "character": "seongun",
+    "text": "차례차례!",
+    "prompt": "[cheerful] [childlike voice] 차례차례!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "998muiWCLhQ3dtwx6FrR",
+    "takes": [
+      {
+        "id": "ORGoMxIMCtQ68V5L1VnV",
+        "sec": 1.12
+      },
+      {
+        "id": "mfqi7Ou6OKHreyL7sHS1",
+        "sec": 1.28
+      },
+      {
+        "id": "998muiWCLhQ3dtwx6FrR",
+        "sec": 1.04
+      },
+      {
+        "id": "DS5azbBJWK2fdveDnoJu",
+        "sec": 1.36
+      }
+    ],
+    "takeSec": 1.04,
+    "wavSec": 1.137,
+    "slotSec": 1.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L11_tino.wav": {
+    "line": "L11",
+    "character": "tino",
+    "text": "차례차례!",
+    "prompt": "[cheerful] 차례차례!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "RudoGzfQMMvR2uTCSdPi",
+    "takes": [
+      {
+        "id": "RudoGzfQMMvR2uTCSdPi",
+        "sec": 0.96
+      },
+      {
+        "id": "xo7Xp80HLOYAytq7sLvg",
+        "sec": 1.12
+      },
+      {
+        "id": "mPsATG60fEGqjEltyscd",
+        "sec": 1.2
+      },
+      {
+        "id": "34egj3O9HqmphOdXYEKQ",
+        "sec": 1.12
+      }
+    ],
+    "takeSec": 0.96,
+    "wavSec": 0.901,
+    "slotSec": 1.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L11_ppulli.wav": {
+    "line": "L11",
+    "character": "ppulli",
+    "text": "차례차례!",
+    "prompt": "[cheerful] 차례차례!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "6oUuHxpKEm1Nmb8CaxdS",
+    "takes": [
+      {
+        "id": "v3EjOZRRN1O4Gjyhv2mK",
+        "sec": 1.2
+      },
+      {
+        "id": "aBQAJmS9DgfX95esTNMA",
+        "sec": 1.2
+      },
+      {
+        "id": "96gx46n98tOlUXtT5G25",
+        "sec": 1.2
+      },
+      {
+        "id": "6oUuHxpKEm1Nmb8CaxdS",
+        "sec": 1.12
+      }
+    ],
+    "takeSec": 1.12,
+    "wavSec": 1.012,
+    "slotSec": 1.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L11_karo.wav": {
+    "line": "L11",
+    "character": "karo",
+    "text": "차례차례!",
+    "prompt": "[cheerful] 차례차례!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "Q0Lu4AZusTYSMUGaBwaQ",
+    "takes": [
+      {
+        "id": "Q0Lu4AZusTYSMUGaBwaQ",
+        "sec": 1.2
+      },
+      {
+        "id": "8pcnWOzqmzM6u7hNoxbo",
+        "sec": 1.2
+      },
+      {
+        "id": "u3lHRlqmqxmarFzN7lrT",
+        "sec": 1.2
+      },
+      {
+        "id": "bJClZF0Er4Z6YMXeZGDJ",
+        "sec": 1.28
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.345,
+    "slotSec": 1.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L12_karo.wav": {
+    "line": "L12",
+    "character": "karo",
+    "text": "여기로 올라가면 더 빠르겠지?",
+    "prompt": "[curious] 여기로 올라가면 더 빠르겠지?",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "CikRQMR3u2O0ZjWueO5f",
+    "takes": [
+      {
+        "id": "CikRQMR3u2O0ZjWueO5f",
+        "sec": 2.4
+      },
+      {
+        "id": "MgFaGUgBmf6nxn7B0t44",
+        "sec": 2.32
+      },
+      {
+        "id": "kwtGjYgA0bmDPT5jEEB3",
+        "sec": 2.32
+      },
+      {
+        "id": "tvyQ2KzkHoOA6ZNnLmP1",
+        "sec": 2.32
+      }
+    ],
+    "takeSec": 2.4,
+    "wavSec": 2.278,
+    "slotSec": 2.8,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L13_seongun.wav": {
+    "line": "L13",
+    "character": "seongun",
+    "text": "잠깐! 여기는 내려오는 길이야.",
+    "prompt": "[calm] [childlike voice] 잠깐! 여기는 내려오는 길이야.",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "0zf5ibfj3T7be8PlVZIF",
+    "takes": [
+      {
+        "id": "0zf5ibfj3T7be8PlVZIF",
+        "sec": 2.64
+      },
+      {
+        "id": "lBtY6LoQFOfQTVozCYCl",
+        "sec": 2.56
+      },
+      {
+        "id": "IR4hMPigzWUH3NBTxwa4",
+        "sec": 2.56
+      },
+      {
+        "id": "LsONvX4LQcNKT7hPlwc6",
+        "sec": 2.64
+      }
+    ],
+    "takeSec": 2.64,
+    "wavSec": 2.623,
+    "slotSec": 3.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L14_karo.wav": {
+    "line": "L14",
+    "character": "karo",
+    "text": "그럼 어디로 올라가?",
+    "prompt": "[curious] 그럼 어디로 올라가?",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "jD2dIPMfNuWRkYqnFUFF",
+    "takes": [
+      {
+        "id": "yUtwEDy0lo9GCxUzAMRn",
+        "sec": 1.92
+      },
+      {
+        "id": "H6Lv6ov55BIDIOE1LJjK",
+        "sec": 1.92
+      },
+      {
+        "id": "aBASfcHTfKou5ivow2dN",
+        "sec": 1.92
+      },
+      {
+        "id": "jD2dIPMfNuWRkYqnFUFF",
+        "sec": 1.84
+      }
+    ],
+    "takeSec": 1.84,
+    "wavSec": 1.696,
+    "slotSec": 1.7,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L15_seongun.wav": {
+    "line": "L15",
+    "character": "seongun",
+    "text": "계단으로 올라가서, 앉아서 아래로 슝!",
+    "prompt": "[happy] [childlike voice] 계단으로 올라가서, 앉아서 아래로 슝!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "ZSZk7pg1ONgW342cW1hA",
+    "takes": [
+      {
+        "id": "ZSZk7pg1ONgW342cW1hA",
+        "sec": 3.28
+      },
+      {
+        "id": "FRZmRU6RSVsEi0wzJaEn",
+        "sec": 3.2
+      },
+      {
+        "id": "z4kSTPaQXvpzcE2USs4X",
+        "sec": 3.12
+      },
+      {
+        "id": "3LpfofFOuSjT0t6gFauI",
+        "sec": 3.12
+      }
+    ],
+    "takeSec": 3.28,
+    "wavSec": 3.417,
+    "slotSec": 3.8,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L16_karo.wav": {
+    "line": "L16",
+    "character": "karo",
+    "text": "계단으로 올라가고, 아래로 슝!",
+    "prompt": "[happy] 계단으로 올라가고, 아래로 슝!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "lpyC9orSYj3JBAryVesK",
+    "takes": [
+      {
+        "id": "yVpMTrHoHagpP0K4zGr8",
+        "sec": 2.8
+      },
+      {
+        "id": "42vI94LCxlZuUB4h983K",
+        "sec": 2.88
+      },
+      {
+        "id": "lpyC9orSYj3JBAryVesK",
+        "sec": 2.96
+      },
+      {
+        "id": "zlWYEdUvbyxupUEBhtPb",
+        "sec": 2.88
+      }
+    ],
+    "takeSec": 2.96,
+    "wavSec": 2.843,
+    "slotSec": 3.5,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L17_seongun.wav": {
+    "line": "L17",
+    "character": "seongun",
+    "text": "바르게!",
+    "prompt": "[cheerful] [childlike voice] 바르게!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "9A68YgdHVJYc5oIGtacV",
+    "takes": [
+      {
+        "id": "9A68YgdHVJYc5oIGtacV",
+        "sec": 0.96
+      },
+      {
+        "id": "olaf3spCxF9U2GjGS473",
+        "sec": 1.12
+      },
+      {
+        "id": "PFjNoMaWZaTnyZoQt20y",
+        "sec": 1.04
+      },
+      {
+        "id": "rO3kIv5e5bu8tdc0S9ZM",
+        "sec": 1.04
+      }
+    ],
+    "takeSec": 0.96,
+    "wavSec": 1.009,
+    "slotSec": 1.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L17_tino.wav": {
+    "line": "L17",
+    "character": "tino",
+    "text": "바르게!",
+    "prompt": "[cheerful] 바르게!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "mhIeH08N9JJbthsbgcTg",
+    "takes": [
+      {
+        "id": "msmVsPIHaWGmmRPz08eU",
+        "sec": 1.04
+      },
+      {
+        "id": "hr5f51iQkOWBnMVaZUoV",
+        "sec": 1.04
+      },
+      {
+        "id": "mhIeH08N9JJbthsbgcTg",
+        "sec": 0.96
+      },
+      {
+        "id": "tGEcSOFMQ8uGMK1jXNrq",
+        "sec": 0.96
+      }
+    ],
+    "takeSec": 0.96,
+    "wavSec": 1.055,
+    "slotSec": 1.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L17_ppulli.wav": {
+    "line": "L17",
+    "character": "ppulli",
+    "text": "바르게!",
+    "prompt": "[cheerful] 바르게!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "unxzMQjDpF8wdc6pHy0U",
+    "takes": [
+      {
+        "id": "4TrNO0EbdP3JAx1bqEQ4",
+        "sec": 1.2
+      },
+      {
+        "id": "unxzMQjDpF8wdc6pHy0U",
+        "sec": 1.12
+      },
+      {
+        "id": "cbZo5E9JLimX4imYEW9U",
+        "sec": 1.12
+      }
+    ],
+    "takeSec": 1.12,
+    "wavSec": 1.234,
+    "slotSec": 1.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L17_karo.wav": {
+    "line": "L17",
+    "character": "karo",
+    "text": "바르게!",
+    "prompt": "[cheerful] 바르게!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "FwWBR9M3yqZtt0U625MA",
+    "takes": [
+      {
+        "id": "iIHSzb1YHYyzJKqP1fX8",
+        "sec": 1.28
+      },
+      {
+        "id": "z9rm5cZ4B6p4OS8gEIWg",
+        "sec": 1.28
+      },
+      {
+        "id": "FwWBR9M3yqZtt0U625MA",
+        "sec": 1.2
+      },
+      {
+        "id": "6b3lLBLJZMvTlVRHK4LF",
+        "sec": 1.36
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.114,
+    "slotSec": 1.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L18_karo.wav": {
+    "line": "L18",
+    "character": "karo",
+    "text": "저쪽으로 지나가자!",
+    "prompt": "[cheerful] 저쪽으로 지나가자!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "rFe81kK1RJjiQT91S6Na",
+    "takes": [
+      {
+        "id": "tGiXG7zAWXCLVvrnayQ2",
+        "sec": 1.44
+      },
+      {
+        "id": "YDoZUdCBAJ0cBpAZ0wxu",
+        "sec": 1.52
+      },
+      {
+        "id": "iOOdaTTIYPtnwAjOjfF5",
+        "sec": 1.52
+      },
+      {
+        "id": "rFe81kK1RJjiQT91S6Na",
+        "sec": 1.6
+      }
+    ],
+    "takeSec": 1.6,
+    "wavSec": 1.481,
+    "slotSec": 2.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L19_ppulli.wav": {
+    "line": "L19",
+    "character": "ppulli",
+    "text": "멈춰! 그네가 움직이고 있어.",
+    "prompt": "[gently] [firmly] 멈춰! 그네가 움직이고 있어.",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "Drus1pkEnsvScqEgEk8Q",
+    "takes": [
+      {
+        "id": "Drus1pkEnsvScqEgEk8Q",
+        "sec": 2.8
+      },
+      {
+        "id": "QeQCqcQrBs6utAr7EH5a",
+        "sec": 2.8
+      },
+      {
+        "id": "A0F6YpRXz0zTmSQ0pXsH",
+        "sec": 2.8
+      },
+      {
+        "id": "hYzEJIaJjTrM3lZJlv1Y",
+        "sec": 2.8
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.666,
+    "slotSec": 3.2,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L20_seongun.wav": {
+    "line": "L20",
+    "character": "seongun",
+    "text": "그네의 앞과 뒤에서는 멀리 기다려야 해.",
+    "prompt": "[calm] [childlike voice] 그네의 앞과 뒤에서는 멀리 기다려야 해.",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "23LgO73zrqvUIOQJWFU1",
+    "takes": [
+      {
+        "id": "DOtRz5tMmY0mfdPwCE1M",
+        "sec": 2.72
+      },
+      {
+        "id": "23LgO73zrqvUIOQJWFU1",
+        "sec": 2.88
+      },
+      {
+        "id": "OloNGyvWnZmbyO2bzwq2",
+        "sec": 2.88
+      },
+      {
+        "id": "7NaC6lslBsMeENDnzryn",
+        "sec": 2.8
+      }
+    ],
+    "takeSec": 2.88,
+    "wavSec": 2.807,
+    "slotSec": 3.7,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L21_karo.wav": {
+    "line": "L21",
+    "character": "karo",
+    "text": "안전선 밖에서 기다리면 되지?",
+    "prompt": "[curious] 안전선 밖에서 기다리면 되지?",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "QEqNAEJcnrddZkrVEtuJ",
+    "takes": [
+      {
+        "id": "SrwUe6BCkezYrFptwxtd",
+        "sec": 2.32
+      },
+      {
+        "id": "QEqNAEJcnrddZkrVEtuJ",
+        "sec": 2.4
+      },
+      {
+        "id": "5ozHWRJS09DV2amY6vcQ",
+        "sec": 2.32
+      },
+      {
+        "id": "wYMVn1PQKZotw8MVU0E8",
+        "sec": 2.32
+      }
+    ],
+    "takeSec": 2.4,
+    "wavSec": 2.256,
+    "slotSec": 2.8,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L22_seongun.wav": {
+    "line": "L22",
+    "character": "seongun",
+    "text": "맞아! 멈춘 뒤에도 바깥쪽으로 돌아가자.",
+    "prompt": "[warmly] [happy] [childlike voice] 맞아! 멈춘 뒤에도 바깥쪽으로 돌아가자.",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "uNRXFtyK2v4mqwyMNfdH",
+    "takes": [
+      {
+        "id": "7i8rP9GuyVRBRGt9Ct97",
+        "sec": 3.28
+      },
+      {
+        "id": "uNRXFtyK2v4mqwyMNfdH",
+        "sec": 3.44
+      },
+      {
+        "id": "Ci3QqozQOUGUAvopLkQx",
+        "sec": 2.96
+      },
+      {
+        "id": "6XdIVqPN7JXGXehTciOl",
+        "sec": 3.2
+      }
+    ],
+    "takeSec": 3.44,
+    "wavSec": 3.354,
+    "slotSec": 4.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L23_seongun.wav": {
+    "line": "L23",
+    "character": "seongun",
+    "text": "안전하게!",
+    "prompt": "[cheerful] [childlike voice] 안전하게!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "EXHaNcBTFeupAziv2tUz",
+    "takes": [
+      {
+        "id": "1j0AR2hD4877L5JD2eWa",
+        "sec": 1.28
+      },
+      {
+        "id": "EXHaNcBTFeupAziv2tUz",
+        "sec": 1.2
+      },
+      {
+        "id": "SDwv7g8uye0MzIJMNwb7",
+        "sec": 1.36
+      },
+      {
+        "id": "gZ3860LN49fXj0RPDsRP",
+        "sec": 1.36
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.216,
+    "slotSec": 1.3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L23_tino.wav": {
+    "line": "L23",
+    "character": "tino",
+    "text": "안전하게!",
+    "prompt": "[cheerful] 안전하게!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "jwOLTLFQY1YzGlPxzeyx",
+    "takes": [
+      {
+        "id": "jwOLTLFQY1YzGlPxzeyx",
+        "sec": 1.2
+      },
+      {
+        "id": "hAaB6NQqT1HuIhsD1hBc",
+        "sec": 1.2
+      },
+      {
+        "id": "VIt8MdFxmtxgUVW7qJwJ",
+        "sec": 1.2
+      },
+      {
+        "id": "D3GknBlpzLshB6UvYFvd",
+        "sec": 1.2
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.252,
+    "slotSec": 1.3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L23_ppulli.wav": {
+    "line": "L23",
+    "character": "ppulli",
+    "text": "안전하게!",
+    "prompt": "[cheerful] 안전하게!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "cM7WUgdCJqo4QQlfqSIa",
+    "takes": [
+      {
+        "id": "cM7WUgdCJqo4QQlfqSIa",
+        "sec": 1.2
+      },
+      {
+        "id": "1qZTr2FaMa36wEIX5hm9",
+        "sec": 1.2
+      },
+      {
+        "id": "XXu4F7bKs9OU5GybXZwU",
+        "sec": 1.2
+      },
+      {
+        "id": "GF21QLYSR7XSXQQozSWG",
+        "sec": 1.2
+      }
+    ],
+    "takeSec": 1.2,
+    "wavSec": 1.06,
+    "slotSec": 1.3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L23_karo.wav": {
+    "line": "L23",
+    "character": "karo",
+    "text": "안전하게!",
+    "prompt": "[cheerful] 안전하게!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "vtAKaqNRSNniUnjpUIpV",
+    "takes": [
+      {
+        "id": "vtAKaqNRSNniUnjpUIpV",
+        "sec": 1.28
+      },
+      {
+        "id": "pndtyOS3B0fnJhd1UgEe",
+        "sec": 1.28
+      },
+      {
+        "id": "HW16O1aa4zG50KmNAuQj",
+        "sec": 1.28
+      },
+      {
+        "id": "WT7viGtcdHuwIwdHEXI2",
+        "sec": 1.28
+      }
+    ],
+    "takeSec": 1.28,
+    "wavSec": 1.108,
+    "slotSec": 1.3,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L24_ppulli.wav": {
+    "line": "L24",
+    "character": "ppulli",
+    "text": "첫째, 차례를 지켜요!",
+    "prompt": "[clearly] [slowly] 첫째, 차례를 지켜요!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "RV8c0SCuT45r6ACLxa4u",
+    "takes": [
+      {
+        "id": "6g5p2giglmgN6sny5R82",
+        "sec": 2.96
+      },
+      {
+        "id": "RV8c0SCuT45r6ACLxa4u",
+        "sec": 2.88
+      },
+      {
+        "id": "4i1zdrhi7JkaPSEshdwY",
+        "sec": 2.88
+      },
+      {
+        "id": "AdCrHrxPHpik1Af8EIsN",
+        "sec": 2.88
+      }
+    ],
+    "takeSec": 2.88,
+    "wavSec": 2.556,
+    "slotSec": 2.5,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L25_karo.wav": {
+    "line": "L25",
+    "character": "karo",
+    "text": "둘째, 계단으로 올라가 아래로 타요!",
+    "prompt": "[cheerful] [clearly] 둘째, 계단으로 올라가 아래로 타요!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "6GYLvCzerJVcVGqzbo4H",
+    "takes": [
+      {
+        "id": "6GYLvCzerJVcVGqzbo4H",
+        "sec": 3.28
+      },
+      {
+        "id": "leymofBYGmwzH3GBdWSm",
+        "sec": 3.28
+      },
+      {
+        "id": "IbdZhARGUYtYCtnOabnN",
+        "sec": 3.28
+      },
+      {
+        "id": "zGIKvVee4NAb0i5mlcYm",
+        "sec": 3.36
+      }
+    ],
+    "takeSec": 3.28,
+    "wavSec": 3.149,
+    "slotSec": 3.1,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L26_tino.wav": {
+    "line": "L26",
+    "character": "tino",
+    "text": "셋째, 움직이는 그네와 멀리 떨어져요!",
+    "prompt": "[confident] [cheerful] 셋째, 움직이는 그네와 멀리 떨어져요!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "va7W7Mjt7Es0PI3b1rkT",
+    "takes": [
+      {
+        "id": "va7W7Mjt7Es0PI3b1rkT",
+        "sec": 3.44
+      },
+      {
+        "id": "6RwgCx6x1yHgmUBl3C1c",
+        "sec": 3.52
+      },
+      {
+        "id": "GyGJ75HG8IY9e7WXWs0l",
+        "sec": 3.76
+      },
+      {
+        "id": "zgzEGjw2capsrQpawzsB",
+        "sec": 4
+      }
+    ],
+    "takeSec": 3.44,
+    "wavSec": 3.503,
+    "slotSec": 3.5,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L27_seongun.wav": {
+    "line": "L27",
+    "character": "seongun",
+    "text": "우리 모두 약속!",
+    "prompt": "[happy] [childlike voice] 우리 모두 약속!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "fqYvkhWD9g3gxN66j9hS",
+    "takes": [
+      {
+        "id": "2nK2C1dMmaEOCOwzGdAI",
+        "sec": 1.44
+      },
+      {
+        "id": "nSZrhqLIEmXDKHQ0Qic3",
+        "sec": 1.52
+      },
+      {
+        "id": "3qcF1PTeFIohAYHxzyts",
+        "sec": 1.44
+      },
+      {
+        "id": "fqYvkhWD9g3gxN66j9hS",
+        "sec": 1.36
+      }
+    ],
+    "takeSec": 1.36,
+    "wavSec": 1.374,
+    "slotSec": 1.5,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L28_seongun.wav": {
+    "line": "L28",
+    "character": "seongun",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[slowly] [cheerful] [childlike voice] 차례차례, 바르게, 안전하게!",
+    "voice_id": "vJ170fCwESgE1tjW39So",
+    "generation_id": "gSWFyrbwYePT9cqeBiw5",
+    "takes": [
+      {
+        "id": "gSWFyrbwYePT9cqeBiw5",
+        "sec": 2.56
+      },
+      {
+        "id": "dnW57BUBhEQEXiOLSjoj",
+        "sec": 2.88
+      },
+      {
+        "id": "NBUpZXg6D8tKJa4CYYmD",
+        "sec": 2.88
+      },
+      {
+        "id": "39eqQhbd44HtbXI4w1AC",
+        "sec": 2.8
+      }
+    ],
+    "takeSec": 2.56,
+    "wavSec": 2.515,
+    "slotSec": 2.4,
+    "fitsSlot": true
+  },
+  "assets/audio/voices/L28_tino.wav": {
+    "line": "L28",
+    "character": "tino",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!",
+    "voice_id": "IAETYMYM3nJvjnlkVTKI",
+    "generation_id": "98ef05rjAYIdkTIA0gCc",
+    "takes": [
+      {
+        "id": "yBXC38AVV22f9ThQhMAl",
+        "sec": 3.36
+      },
+      {
+        "id": "sWweDEjMOJ4CZ2jLZJZQ",
+        "sec": 3.2
+      },
+      {
+        "id": "S35zI23RYCCLauUJsy4r",
+        "sec": 3.36
+      },
+      {
+        "id": "qQGi8Dm7sWRouKvAq8qW",
+        "sec": 3.36
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.779,
+    "slotSec": 2.4,
+    "fitsSlot": false,
+    "reusedFrom": "L05_tino",
+    "note": "L28 자막 구간 2.4초에 [slowly] 테이크(3.2~3.4초)가 들어가지 않아, 같은 문구·같은 목소리인 L05 녹음을 재사용 (말 속도는 바꾸지 않음). 느린 테이크는 L28_tino.slow.wav",
+    "tightened": {
+      "pausesTo": 0.12,
+      "atempo": 1.009,
+      "fromSec": 2.854
+    }
+  },
+  "assets/audio/voices/L28_ppulli.wav": {
+    "line": "L28",
+    "character": "ppulli",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!",
+    "voice_id": "lFG74KW6EG0aRXg1kKfh",
+    "generation_id": "tGOhs2L7Ypd77XUpwgeP",
+    "takes": [
+      {
+        "id": "UOzLO5scgurnmQQsy4GW",
+        "sec": 3.2
+      },
+      {
+        "id": "0Qn10jQS1u7Jy6ZXtcOH",
+        "sec": 3.36
+      },
+      {
+        "id": "kJsnK3yRf67h4h9ZQMeA",
+        "sec": 3.28
+      },
+      {
+        "id": "rAAXStSZFw80RPkFF71a",
+        "sec": 3.36
+      }
+    ],
+    "takeSec": 2.8,
+    "wavSec": 2.699,
+    "slotSec": 2.4,
+    "fitsSlot": false,
+    "reusedFrom": "L05_ppulli",
+    "note": "L28 자막 구간 2.4초에 [slowly] 테이크(3.2~3.4초)가 들어가지 않아, 같은 문구·같은 목소리인 L05 녹음을 재사용 (말 속도는 바꾸지 않음). 느린 테이크는 L28_ppulli.slow.wav"
+  },
+  "assets/audio/voices/L28_karo.wav": {
+    "line": "L28",
+    "character": "karo",
+    "text": "차례차례, 바르게, 안전하게!",
+    "prompt": "[cheerful] [excited] 차례차례, 바르게, 안전하게!",
+    "voice_id": "ZZ4xhVcc83kZBfNIlIIz",
+    "generation_id": "oL0OYTF8LAUokuLsEKHK",
+    "takes": [
+      {
+        "id": "Ncxe2wLzRnWpG5we6Lk9",
+        "sec": 3.28
+      },
+      {
+        "id": "6Ntji4Qi7veFCcj3NcPK",
+        "sec": 3.36
+      },
+      {
+        "id": "EDgkg8Xp43nkrVIclC2J",
+        "sec": 3.28
+      },
+      {
+        "id": "zdqr5SMEqgpcxjYirmYy",
+        "sec": 3.28
+      }
+    ],
+    "takeSec": 2.88,
+    "wavSec": 2.732,
+    "slotSec": 2.4,
+    "fitsSlot": false,
+    "reusedFrom": "L05_karo",
+    "note": "L28 자막 구간 2.4초에 [slowly] 테이크(3.2~3.4초)가 들어가지 않아, 같은 문구·같은 목소리인 L05 녹음을 재사용 (말 속도는 바꾸지 않음). 느린 테이크는 L28_karo.slow.wav"
+  }
+}

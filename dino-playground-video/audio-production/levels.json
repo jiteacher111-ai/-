@@ -1,0 +1,434 @@
+{
+  "assets/audio/voices/L01_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3
+  },
+  "assets/audio/voices/L02_seongun.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -11.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -11.5
+  },
+  "assets/audio/voices/L02_tino.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -10.4,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -10.4
+  },
+  "assets/audio/voices/L02_ppulli.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -12,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -12
+  },
+  "assets/audio/voices/L02_karo.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -11.9,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -11.9
+  },
+  "assets/audio/voices/L03_ppulli.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -4.7,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -4.7
+  },
+  "assets/audio/voices/L04_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -7.4,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -7.4
+  },
+  "assets/audio/voices/L05_seongun.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -7.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -7.5
+  },
+  "assets/audio/voices/L05_tino.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -9.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -9.5
+  },
+  "assets/audio/voices/L05_ppulli.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -7.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -7.5
+  },
+  "assets/audio/voices/L05_karo.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -8.8,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -8.8
+  },
+  "assets/audio/voices/L06_tino.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -6.1,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -6.1
+  },
+  "assets/audio/voices/L07_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.7,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.7
+  },
+  "assets/audio/voices/L08_tino.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3.1,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3.1
+  },
+  "assets/audio/voices/L09_ppulli.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.1,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.1
+  },
+  "assets/audio/voices/L10_tino.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.5,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.5
+  },
+  "assets/audio/voices/L11_seongun.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -12.3,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -12.3
+  },
+  "assets/audio/voices/L11_tino.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -10.2,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -10.2
+  },
+  "assets/audio/voices/L11_ppulli.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -10.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -10.5
+  },
+  "assets/audio/voices/L11_karo.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -9.2,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -9.2
+  },
+  "assets/audio/voices/L12_karo.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3.1,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3.1
+  },
+  "assets/audio/voices/L13_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.2,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.2
+  },
+  "assets/audio/voices/L14_karo.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3.1,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3.1
+  },
+  "assets/audio/voices/L15_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -2.3,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -2.3
+  },
+  "assets/audio/voices/L16_karo.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.2,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.2
+  },
+  "assets/audio/voices/L17_seongun.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -9.1,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -9.1
+  },
+  "assets/audio/voices/L17_tino.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -10.9,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -10.9
+  },
+  "assets/audio/voices/L17_ppulli.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -11.1,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -11.1
+  },
+  "assets/audio/voices/L17_karo.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -8.9,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -8.9
+  },
+  "assets/audio/voices/L18_karo.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.9,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.9
+  },
+  "assets/audio/voices/L19_ppulli.wav": {
+    "target": -19,
+    "beforeLUFS": -18.9,
+    "beforePeak": -3.3,
+    "gainDb": -0.1,
+    "afterLUFS": -18.9,
+    "afterPeak": -3.3
+  },
+  "assets/audio/voices/L20_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -6.6,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -6.6
+  },
+  "assets/audio/voices/L21_karo.wav": {
+    "target": -19,
+    "beforeLUFS": -19.2,
+    "beforePeak": -3,
+    "gainDb": 0.2,
+    "afterLUFS": -19.2,
+    "afterPeak": -3
+  },
+  "assets/audio/voices/L22_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3
+  },
+  "assets/audio/voices/L23_seongun.wav": {
+    "target": -24,
+    "beforeLUFS": -23.9,
+    "beforePeak": -6.6,
+    "gainDb": -0.1,
+    "afterLUFS": -23.9,
+    "afterPeak": -6.6
+  },
+  "assets/audio/voices/L23_tino.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -7.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -7.5
+  },
+  "assets/audio/voices/L23_ppulli.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -8.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -8.5
+  },
+  "assets/audio/voices/L23_karo.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -10.1,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -10.1
+  },
+  "assets/audio/voices/L24_ppulli.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3.9,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3.9
+  },
+  "assets/audio/voices/L25_karo.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -3.9,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -3.9
+  },
+  "assets/audio/voices/L26_tino.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -4.4,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -4.4
+  },
+  "assets/audio/voices/L27_seongun.wav": {
+    "target": -19,
+    "beforeLUFS": -19,
+    "beforePeak": -5.1,
+    "gainDb": 0,
+    "afterLUFS": -19,
+    "afterPeak": -5.1
+  },
+  "assets/audio/voices/L28_seongun.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -8.7,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -8.7
+  },
+  "assets/audio/voices/L28_tino.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -9.4,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -9.4
+  },
+  "assets/audio/voices/L28_ppulli.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -7.5,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -7.5
+  },
+  "assets/audio/voices/L28_karo.wav": {
+    "target": -24,
+    "beforeLUFS": -24,
+    "beforePeak": -8.8,
+    "gainDb": 0,
+    "afterLUFS": -24,
+    "afterPeak": -8.8
+  },
+  "assets/audio/sfx/bell-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -22.5,
+    "beforePeak": -8.3,
+    "gainDb": 4.5,
+    "afterLUFS": -18,
+    "afterPeak": -3.8
+  },
+  "assets/audio/sfx/footsteps-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -32.6,
+    "beforePeak": -14.8,
+    "gainDb": 14.6,
+    "afterLUFS": -19.1,
+    "afterPeak": -2
+  },
+  "assets/audio/sfx/icon-chime.wav": {
+    "target": -18,
+    "beforeLUFS": -20.2,
+    "beforePeak": -5.9,
+    "gainDb": 2.2,
+    "afterLUFS": -18,
+    "afterPeak": -3.7
+  },
+  "assets/audio/sfx/laugh-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -15.6,
+    "beforePeak": -1.8,
+    "gainDb": -2.4,
+    "afterLUFS": -18,
+    "afterPeak": -4.2
+  },
+  "assets/audio/sfx/pop-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -18.1,
+    "beforePeak": -1.5,
+    "gainDb": 0.1,
+    "afterLUFS": -18.1,
+    "afterPeak": -1.5
+  },
+  "assets/audio/sfx/slide-whoosh-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -20.9,
+    "beforePeak": -11.1,
+    "gainDb": 2.9,
+    "afterLUFS": -18,
+    "afterPeak": -8.2
+  },
+  "assets/audio/sfx/sparkle-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -15,
+    "beforePeak": -6.8,
+    "gainDb": -3,
+    "afterLUFS": -18,
+    "afterPeak": -9.8
+  },
+  "assets/audio/sfx/swing-creak-soft.wav": {
+    "target": -18,
+    "beforeLUFS": -60.2,
+    "beforePeak": -34.8,
+    "gainDb": 42.2,
+    "afterLUFS": -22.2,
+    "afterPeak": -1.9
+  }
+}
