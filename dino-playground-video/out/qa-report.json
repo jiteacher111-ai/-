@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-10-19T07:47:41.582Z",
+  "generatedAt": "2026-10-19T10:46:20.578Z",
   "ok": true,
   "summary": {
     "pass": 18,
     "fail": 0,
     "warn": 4,
-    "skip": 1
+    "skip": 2
   },
   "checks": [
     {
@@ -700,6 +700,25 @@
       "integratedLUFS": -16,
       "truePeakDbfs": -1.4,
       "target": "-16 LUFS ±1, TP ≤ -1 dBFS"
+    },
+    {
+      "name": "higgsfield-clips",
+      "status": "skip",
+      "present": [],
+      "missing": [
+        "C01",
+        "C02",
+        "C03",
+        "C04",
+        "C05",
+        "C06",
+        "C07",
+        "C08",
+        "C09",
+        "C10",
+        "C11"
+      ],
+      "plan": "higgsfield/clips.json, higgsfield/PROMPTS.md"
     },
     {
       "name": "keyframes-8",

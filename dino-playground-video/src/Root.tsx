@@ -13,5 +13,5 @@ document.fonts
 
 export const RemotionRoot: React.FC = () => {
   const {meta} = projectData;
-  return <Composition id={meta.id} component={DinoPlaygroundSafety} durationInFrames={Math.max(1, meta.durationInFrames)} fps={meta.fps} width={meta.width} height={meta.height} />;
+  return <Composition id={meta.id} component={DinoPlaygroundSafety} durationInFrames={Math.max(1, meta.durationInFrames)} fps={meta.fps} width={meta.width} height={meta.height} defaultProps={{clean: false}} />;
 };

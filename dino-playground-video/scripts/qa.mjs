@@ -183,6 +183,9 @@ for (const [key, file, w, h] of [
     add(`loudness-${key}`, Math.abs(lufs + 16) <= 1 && peak <= -1 ? 'pass' : 'warn', {integratedLUFS: lufs, truePeakDbfs: peak, target: '-16 LUFS ±1, TP ≤ -1 dBFS'});
   }
 }
+// Higgsfield 생성 영상: 몇 개 클립이 들어갔는지, 속도 보정이 ±15% 안인지
+const gc = data.generatedClips ?? [];
+add('higgsfield-clips', gc.some((c) => c.exists) ? (gc.filter((c) => c.exists).every((c) => Math.abs(c.playbackRate - 1) <= 0.15) ? 'pass' : 'warn') : 'skip', {present: gc.filter((c) => c.exists).map((c) => ({id: c.id, sourceSec: c.sourceSec, slotSec: (c.to - c.from) / EXPECTED.fps, playbackRate: Number(c.playbackRate.toFixed(3))})), missing: gc.filter((c) => !c.exists).map((c) => c.id), plan: 'higgsfield/clips.json, higgsfield/PROMPTS.md'});
 const kf = exists(path.join(OUT_DIR, 'keyframes', 'stills.json')) ? readJson(path.join(OUT_DIR, 'keyframes', 'stills.json')) : null;
 add('keyframes-8', kf?.rendered?.length >= 8 ? 'pass' : 'fail', {files: kf?.rendered?.map((r) => r.file) ?? []});
 const srtSame = exists(path.join(OUT_DIR, 'subtitles.ko.srt')) && fs.readFileSync(path.join(OUT_DIR, 'subtitles.ko.srt')).equals(fs.readFileSync(sourcePath('data/subtitles.ko.srt')));

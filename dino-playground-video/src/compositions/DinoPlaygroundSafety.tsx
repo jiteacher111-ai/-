@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Sequence, interpolate, useCurrentFrame} from 'remotion';
+import {AbsoluteFill, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame} from 'remotion';
 import {AudioTimeline} from '../components/AudioTimeline';
 import {BackgroundLayer} from '../components/BackgroundLayer';
 import {CharacterSprite} from '../components/CharacterSprite';
@@ -9,7 +9,7 @@ import {SubtitleLayer} from '../components/SubtitleLayer';
 import {characterMotion} from '../animation/motion';
 import {projectData} from '../data';
 import {IVORY} from '../styles/subtitles';
-import type {Shot, VoiceLine} from '../types';
+import type {GeneratedClip, Shot, VoiceLine} from '../types';
 
 /**
  * 숏 하나(여러 컷). 레이어 순서(숏 리스트 기준): 배경 → 바닥 안전 표시 → 캐릭터·표지판(바닥 기준선 y 로 앞뒤 정렬) .
@@ -61,8 +61,20 @@ const EndFade: React.FC = () => {
   return o > 0 ? <AbsoluteFill style={{backgroundColor: projectData.config.endFade.color ?? IVORY, opacity: o}} /> : null;
 };
 
-export const DinoPlaygroundSafety: React.FC = () => {
-  const {shots, voiceLines, subtitles, audioCues, meta, available} = projectData;
+/** Higgsfield 생성 영상 구간. 앞뒤 경계는 6프레임 크로스페이드로 컷아웃 장면·다른 클립과 이어 붙인다 */
+const GeneratedClipLayer: React.FC<{clip: GeneratedClip; first: boolean}> = ({clip, first}) => {
+  const frame = useCurrentFrame();
+  const opacity = first ? 1 : interpolate(frame, [0, 6], [0, 1], {extrapolateRight: 'clamp'});
+  return (
+    <AbsoluteFill style={{opacity}}>
+      <OffthreadVideo src={staticFile(clip.file)} muted playbackRate={clip.playbackRate} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+    </AbsoluteFill>
+  );
+};
+
+/** clean: 자막·엔딩 페이드·오디오 없이 그림만 (Higgsfield 시작 프레임 추출용) */
+export const DinoPlaygroundSafety: React.FC<{clean?: boolean}> = ({clean = false}) => {
+  const {shots, voiceLines, subtitles, audioCues, meta, available, generatedClips = []} = projectData;
   if (!available) return <AbsoluteFill style={{backgroundColor: IVORY}} />;
   const T = meta.transitionFrames;
   return (
@@ -73,9 +85,17 @@ export const DinoPlaygroundSafety: React.FC = () => {
           <ShotScene shot={shot} voiceLines={voiceLines} fadeIn={shot.transitionIn === 'dissolve' ? T : 0} />
         </Sequence>
       ))}
-      <SubtitleLayer cues={subtitles} />
-      <EndFade />
-      <AudioTimeline voiceLines={voiceLines} cues={audioCues} durationInFrames={meta.durationInFrames} />
+      {!clean &&
+        generatedClips
+          .filter((c) => c.exists)
+          .map((c) => (
+            <Sequence key={c.id} from={c.from} durationInFrames={c.to - c.from} name={`Higgsfield ${c.id}`}>
+              <GeneratedClipLayer clip={c} first={c.from === 0} />
+            </Sequence>
+          ))}
+      {!clean && <SubtitleLayer cues={subtitles} />}
+      {!clean && <EndFade />}
+      {!clean && <AudioTimeline voiceLines={voiceLines} cues={audioCues} durationInFrames={meta.durationInFrames} />}
     </AbsoluteFill>
   );
 };

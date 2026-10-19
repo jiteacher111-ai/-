@@ -63,6 +63,15 @@
 - **마스터링** `render-final.mjs`: 렌더 후 2패스 loudnorm (-16 LUFS, true peak -1.5 dBTP), 영상은 복사
 - **BGM 은 아직 없습니다.** 연결된 ElevenLabs 커넥터는 제한판이라 음악을 만들 수 없고, Higgsfield 커넥터는 잔액·모델 조회만 되고 이미지·영상·음악을 생성하지 못합니다. 그래서 BGM 없이 `npm run render:mix-preview` 로 믹스 미리보기만 만들었습니다. 음악 파일을 `assets/audio/music/playground-theme-120s.wav` 에 넣으면 `npm run render:final` 이 최종본을 만듭니다 (대사 중 BGM −4dB 덕킹은 이미 적용되어 있음).
 
+## v4 — Higgsfield 생성 영상 연동 준비 (2026-10-19)
+
+연결된 Higgsfield 커넥터는 잔액·모델·생성 기록 조회만 되고 영상을 생성할 수 없습니다. 그래서 Higgsfield 웹에서 바로 쓸 수 있는 생성 패키지를 만들고, 결과 영상을 넣으면 자동으로 합쳐지게 했습니다.
+
+- `higgsfield/clips.json`: 28숏을 장소·동작 단위로 묶은 11개 클립 (4~15초, 총 120초). 클립마다 영어 프롬프트, 등장 캐릭터, 시작 프레임
+- `higgsfield/start-frames/C01~C11.png`: 자막 없는 1920×1080 시작 프레임 (`npm run higgsfield:pack`, 컴포지션 `clean` 모드)
+- `higgsfield/PROMPTS.md`: 클립별 붙여 넣을 프롬프트, 권장 모델(Seedance 2.0 Mini, 16:9, 720p, 오디오 끔), 캐릭터 일관성용 참조 이미지(turnaround 시트 4장)
+- 생성한 영상을 작업공간 루트 `assets/video/higgsfield/<클립 ID>.mp4` 로 넣고 `npm run sync` 후 렌더하면 그 구간이 생성 영상으로 바뀝니다. 자막·대사·효과음 타이밍은 그대로이고, 길이가 ±15% 안에서 다르면 재생 속도로 맞춥니다. 없는 클립 구간은 기존 컷아웃 장면을 씁니다. QA 의 `higgsfield-clips` 가 들어간 클립을 보고합니다.
+
 ## 1. 설치
 
 ```bash

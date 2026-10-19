@@ -1,0 +1,47 @@
+{
+  "note": "Higgsfield 영상 생성용 클립 계획. 시간(fromSec~toSec)은 timeline/voice-lines 를 그대로 따른다. 생성한 영상을 작업공간 루트 assets/video/higgsfield/<id>.mp4 로 넣으면 그 구간은 컷아웃 장면 대신 생성 영상으로 렌더된다 (자막·대사·효과음은 그대로).",
+  "recommended": {
+    "model": "seedance_2_0_mini (Seedance 2.0 Mini) — starter 플랜에서 사용 가능, start_image + image_references 로 캐릭터 일관성 유지",
+    "alternative": "grok_video_v15_lite (start_image 만, 저렴)",
+    "aspect_ratio": "16:9",
+    "resolution": "720p",
+    "generate_audio": false,
+    "image_references": [
+      "assets/characters/seongun/seongun-turnaround-v1.png",
+      "assets/characters/tino/tino-turnaround-v1.png",
+      "assets/characters/ppulli/ppulli-turnaround-v1.png",
+      "assets/characters/karo/karo-turnaround-v1.png"
+    ]
+  },
+  "style": "Soft 3D children's picture-book animation in exactly the style of the start image and the character reference sheets. Warm pastel daylight, gentle and calm pacing for 3-6 year olds. Keep every character's design, colors and proportions identical to the references. No text, no letters, no new characters, no other people. Characters never touch, bump, push or fall; nobody gets hurt.",
+  "characters": {
+    "seongun": "Seongun, a 3-year-old toddler boy with short brown hair, yellow T-shirt, blue denim overalls and green shoes",
+    "tino": "Tino, a mint-green baby dinosaur with a cream belly and rosy cheeks",
+    "ppulli": "Ppulli, a lavender baby triceratops with a peach-spotted frill and cream horns",
+    "karo": "Karo, an orange baby dinosaur with small red horns, a cream belly and orange back spots"
+  },
+  "clips": [
+    {"id": "C01", "shots": ["S01", "S02", "S03", "S04"], "fromSec": 0, "toSec": 12, "duration": 12, "startFrame": 0, "characters": ["seongun", "tino", "ppulli", "karo"],
+     "prompt": "Wide establishing shot of a calm, empty dinosaur-themed playground; all equipment is still. The camera slowly glides forward. Seongun walks in from the left side and waves happily. Then Tino, Ppulli and Karo pop out one after another from behind the playground equipment and hop over to greet him. The camera gently moves to a friendly group shot as the four friends gather together, smiling."},
+    {"id": "C02", "shots": ["S05", "S06", "S07"], "fromSec": 12, "toSec": 24, "duration": 12, "startFrame": 300, "characters": ["seongun", "tino", "ppulli", "karo"],
+     "prompt": "Medium shot. Ppulli calmly points with one paw toward the playground promise sign on the right while the others listen. Seongun tilts his head curiously, then looks at the sign. Camera slowly pushes in on the sign, then pulls back to all four friends cheering together with little happy hops, arms up."},
+    {"id": "C03", "shots": ["S08", "S09"], "fromSec": 24, "toSec": 34, "duration": 10, "startFrame": 600, "characters": ["seongun", "tino", "ppulli", "karo"],
+     "prompt": "At the bottom of the slide stairs, Karo and Ppulli wait in a neat line on painted footprint markers. Tino, excited, takes just one small step forward and stops, not touching anyone. Seongun walks in and kindly points at the footprints on the ground and then at the waiting friends. Low-angle side view, gentle camera drift."},
+    {"id": "C04", "shots": ["S10", "S11"], "fromSec": 34, "toSec": 44, "duration": 10, "startFrame": 840, "characters": ["tino", "ppulli", "karo"],
+     "prompt": "Close-up of Tino realizing his mistake with a small sheepish smile, scratching his head, not sad. Cut to a wider shot: Tino steps back onto his footprint marker in the line behind Karo; Ppulli gently gestures at the footprints. Everyone stands calmly in line, smiling."},
+    {"id": "C05", "shots": ["S12", "S13", "S14"], "fromSec": 44, "toSec": 59, "duration": 15, "startFrame": 1070, "characters": ["tino", "ppulli", "karo"],
+     "prompt": "Karo, first in line, walks toward the slide while Tino and Ppulli wait on their footprints. Karo stops near the bottom end of the slide and looks up the slide surface curiously, leaning forward, lifting one foot slightly and putting it back down. Karo does not climb onto the slide. Over-the-shoulder view from behind Karo looking up the slide, then a side view."},
+    {"id": "C06", "shots": ["S15", "S16"], "fromSec": 59, "toSec": 69, "duration": 10, "startFrame": 1430, "characters": ["seongun", "karo"],
+     "prompt": "Seongun gently raises one open palm in a kind, helpful 'wait a moment' gesture, not scolding. Karo looks a little surprised, then listens. Seongun points to the stairs (the way up) and then to the slide surface (the way down) while gentle green upward and coral downward arrows glow on the ground. Two-shot, slow camera move."},
+    {"id": "C07", "shots": ["S17", "S18"], "fromSec": 69, "toSec": 76, "duration": 7, "startFrame": 1670, "characters": ["karo"],
+     "prompt": "Karo happily walks to the stairs and climbs the slide steps carefully, holding the rail. Then Karo sits down at the top and slides down slowly feet-first in a seated position, laughing, and slows down gently before reaching the bottom. Camera follows Karo smoothly."},
+    {"id": "C08", "shots": ["S19", "S20", "S21"], "fromSec": 76, "toSec": 89, "duration": 13, "startFrame": 1840, "characters": ["ppulli", "karo"],
+     "prompt": "The swing area: an empty swing sways very slowly back and forth inside a dotted safety boundary on the ground. Karo walks toward the swings and stops well outside the dotted line. Ppulli, standing far from the swing, softly raises a paw to say stop; Karo looks surprised and stays put. Wide shot then a calm medium shot. Nobody goes near the moving swing."},
+    {"id": "C09", "shots": ["S22", "S23", "S24"], "fromSec": 89, "toSec": 103, "duration": 14, "startFrame": 2150, "characters": ["seongun", "tino", "ppulli", "karo"],
+     "prompt": "Seongun points to the dotted boundary that surrounds the front and back of the slowly moving swing. All four friends stand outside the dotted line and nod. Then they walk together in a line around the outside of the boundary toward the left side of the frame, happy and careful. High angle wide shot, then a tracking side shot."},
+    {"id": "C10", "shots": ["S25", "S26", "S27"], "fromSec": 103, "toSec": 115, "duration": 12, "startFrame": 2500, "characters": ["ppulli", "karo", "tino"],
+     "prompt": "Back at the playground entrance in front of the three-panel promise sign. Ppulli presents the footprint panel, which softly glows; then Karo presents the slide panel, which glows; then Tino presents the swing panel, which glows. Gentle push-in on each panel in turn, warm light."},
+    {"id": "C11", "shots": ["S28"], "fromSec": 115, "toSec": 120, "duration": 5, "startFrame": 2770, "characters": ["seongun", "tino", "ppulli", "karo"],
+     "prompt": "All four friends stand together in front of the playground and wave goodbye to the viewer, smiling warmly. The camera slowly pulls back. Calm, cozy ending."}
+  ]
+}

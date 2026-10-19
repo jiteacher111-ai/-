@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {EXPECTED, PROJECT_DATA_FILE, PROJECT_DIR, PUBLIC_DIR, REQUIRED_FILES, exists, readJson, sourcePath, writeJson} from './paths.mjs';
 import {directShot} from './director.mjs';
+import {probe} from './probe.mjs';
 import {cropFallbacks, extractCrops, normalizeTimeline, normalizeVoiceLines, parseSrt, voiceProfiles} from './normalize.mjs';
 
 export const CUTOUT_INDEX = path.join(PUBLIC_DIR, 'assets', 'characters', 'cutouts', 'index.json');
@@ -176,6 +177,18 @@ export const generateProjectData = () => {
     s.cuts = directShot(s, voiceLines, {spriteMeta: cutouts.meta ?? {}, propMeta, config, W: meta.width, H: meta.height});
   });
 
+  // Higgsfield 생성 영상 (higgsfield/clips.json). 파일이 있는 클립 구간만 컷아웃 장면 대신 영상으로 그린다
+  const clipPlan = exists(path.join(PROJECT_DIR, 'higgsfield', 'clips.json')) ? readJson(path.join(PROJECT_DIR, 'higgsfield', 'clips.json')) : {clips: []};
+  const generatedClips = clipPlan.clips.map((c) => {
+    const file = `assets/video/higgsfield/${c.id}.mp4`;
+    const info = publicExists(file) ? probe(path.join(PUBLIC_DIR, file)) : null;
+    const from = Math.round(c.fromSec * meta.fps);
+    const to = Math.round(c.toSec * meta.fps);
+    // 길이가 다르면 재생 속도로 맞춘다 (±15% 를 넘으면 속도는 그대로 두고 앞부분만 쓰거나 마지막 프레임 유지)
+    const rate = info ? info.duration / ((to - from) / meta.fps) : 1;
+    return {id: c.id, file, from, to, exists: Boolean(info?.video), sourceSec: info?.duration ?? null, playbackRate: rate >= 0.85 && rate <= 1.15 ? rate : Math.max(1, Math.min(rate, 1))};
+  });
+
   const data = {
     available: shots.length > 0,
     missingRequired,
@@ -192,6 +205,7 @@ export const generateProjectData = () => {
     layoutFixesApplied,
     spriteIndex: cutouts.sprites ?? {},
     spriteFacing,
+    generatedClips,
   };
   writeJson(PROJECT_DATA_FILE, data);
   return data;

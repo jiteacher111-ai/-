@@ -97,4 +97,7 @@ export type ProjectData = {
   spriteFacing: Record<string, string>; // 경로 → 원본 방향
   propMeta: Record<string, {width: number; height: number}>;
   speakerLabels: Record<string, string>;
+  generatedClips: GeneratedClip[];
 };
+
+export type GeneratedClip = {id: string; file: string; from: number; to: number; exists: boolean; sourceSec: number | null; playbackRate: number};
