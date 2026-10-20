@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>송정초 아이스브레이킹 퀴즈</title>
+<style>
+@font-face{font-family:Noto;font-weight:400;src:url(noto-sans-kr-korean-400-normal.woff2)}
+@font-face{font-family:Noto;font-weight:700;src:url(noto-sans-kr-korean-700-normal.woff2)}
+@font-face{font-family:Noto;font-weight:900;src:url(noto-sans-kr-korean-900-normal.woff2)}
+@font-face{font-family:NotoL;font-weight:400;src:url(noto-sans-kr-latin-400-normal.woff2)}
+@font-face{font-family:NotoL;font-weight:700;src:url(noto-sans-kr-latin-700-normal.woff2)}
+@font-face{font-family:NotoL;font-weight:900;src:url(noto-sans-kr-latin-900-normal.woff2)}
+@font-face{font-family:BHS;src:url(black-han-sans-korean-400-normal.woff2)}
+@font-face{font-family:BHSL;src:url(black-han-sans-latin-400-normal.woff2)}
+:root{--navy:#1d3461;--yellow:#ffc93c;--coral:#ff6b5b;--green:#22a861;--cream:#fff8ec;--sky:#4aa3df;--ink:#22252b}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--cream)}
+body{font-family:NotoL,Noto,sans-serif;color:var(--ink)}
+.disp{font-family:BHSL,BHS,NotoL,Noto,sans-serif;font-weight:400}
+#stage{position:absolute;inset:0;overflow:hidden}
+.blob{position:absolute;border-radius:50%;opacity:.18}
+.scene{position:absolute;inset:0;opacity:0}
+.header{position:absolute;left:0;right:0;top:0;height:96px;background:var(--navy);color:#fff;display:flex;align-items:center;padding:0 64px;font-size:34px;font-weight:700;gap:20px}
+.header .tag{background:var(--yellow);color:var(--navy);border-radius:999px;padding:6px 22px;font-size:28px;font-weight:900}
+.header .prog{margin-left:auto;display:flex;gap:14px}
+.header .dot{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.25)}
+.header .dot.on{background:var(--yellow)}
+/* intro */
+#intro{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#intro .small{font-size:46px;font-weight:700;color:var(--navy);letter-spacing:2px}
+#intro .big{font-size:170px;color:var(--navy);line-height:1.1;margin:24px 0}
+#intro .big span{color:var(--coral)}
+#intro .sub{font-size:52px;font-weight:700;background:var(--yellow);color:var(--navy);padding:14px 48px;border-radius:999px}
+#intro .note{font-size:34px;color:#6b6f78;margin-top:40px;font-weight:700}
+/* question title card */
+.qcard{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0}
+.qcard .qn{font-size:300px;color:var(--navy);line-height:1}
+.qcard .qt{font-size:64px;font-weight:900;color:var(--coral);margin-top:10px}
+/* question body */
+.qbody{position:absolute;inset:96px 0 0 0;opacity:0}
+.qtext{position:absolute;left:96px;right:420px;top:56px;font-size:66px;font-weight:900;line-height:1.3;color:var(--navy)}
+.qtext .badge{display:inline-block;background:var(--coral);color:#fff;border-radius:18px;padding:0 22px;margin-right:22px;font-family:BHSL,BHS;font-weight:400}
+.grid{position:absolute;left:96px;right:96px;top:330px;display:grid;grid-template-columns:1fr 1fr;gap:36px}
+.opt{position:relative;background:#fff;border:5px solid #e4dccb;border-radius:32px;height:205px;display:flex;align-items:center;padding:0 44px;font-size:56px;font-weight:700;box-shadow:0 10px 0 #e4dccb;opacity:0}
+.opt .num{flex:none;width:96px;height:96px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:900;margin-right:36px}
+.opt.right{background:#e6f8ee;border-color:var(--green);box-shadow:0 10px 0 var(--green)}
+.opt.right .num{background:var(--green)}
+.opt .check{position:absolute;right:36px;top:50%;width:110px;height:110px;margin-top:-55px;border-radius:50%;background:var(--green);color:#fff;font-size:80px;display:flex;align-items:center;justify-content:center;font-weight:900;opacity:0}
+/* timer */
+.timer{position:absolute;right:96px;top:40px;width:250px;height:250px;opacity:0}
+.timer svg{position:absolute;inset:0}
+.timer .n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:120px;color:var(--navy)}
+.bar{position:absolute;left:0;bottom:0;height:22px;background:var(--yellow);width:0}
+.answer{position:absolute;left:96px;right:96px;bottom:44px;background:var(--navy);color:#fff;border-radius:28px;padding:26px 44px;font-size:44px;font-weight:700;opacity:0;display:flex;align-items:center;gap:28px}
+.answer b{color:var(--yellow);font-weight:900}
+.answer .ok{flex:none;background:var(--yellow);color:var(--navy);border-radius:16px;padding:6px 22px;font-weight:900}
+/* Q2 layout */
+#q2 .photo{position:absolute;left:96px;top:50px;width:900px;height:671px;border-radius:32px;overflow:hidden;border:10px solid #fff;box-shadow:0 18px 40px rgba(0,0,0,.18);opacity:0}
+#q2 .photo img{width:100%;height:100%;object-fit:cover;display:block}
+#q2 .qtext{left:1060px;right:96px;top:300px;font-size:58px}
+#q2 .timer{right:96px;top:40px}
+#q2 .days{position:absolute;left:1060px;right:96px;top:560px;display:grid;grid-template-columns:repeat(5,1fr);gap:22px}
+#q2 .opt{height:170px;flex-direction:column;justify-content:center;padding:0;font-size:60px;font-weight:900}
+#q2 .opt .num{width:58px;height:58px;font-size:34px;margin:0 0 8px 0}
+#q2 .opt .check{width:64px;height:64px;margin:0;top:-22px;right:-16px;font-size:44px}
+#q2 .answer{left:96px}
+/* outro */
+#outro{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#outro .big{font-size:130px;color:var(--navy);line-height:1.15}
+#outro .big span{color:var(--coral)}
+#outro .sub{margin-top:40px;font-size:56px;font-weight:700;color:var(--navy);background:var(--yellow);padding:16px 56px;border-radius:999px}
+.confetti{position:absolute;width:26px;height:14px;border-radius:4px}
+</style></head>
+<body><div id="stage">
+  <div id="blobs"></div>
+  <div id="confetti"></div>
+
+  <section class="scene" id="intro">
+    <div class="small">2026 구미송정초등학교 교원 연수</div>
+    <div class="big disp">아이스브레이킹 <span>퀴즈</span></div>
+    <div class="sub">우리 학교, 얼마나 알고 계신가요?</div>
+    <div class="note">총 3문제 · 문제당 10초</div>
+  </section>
+
+  <section class="scene" id="q1">
+    <div class="qcard"><div class="qn disp">Q1</div><div class="qt">우리 학교 주소</div></div>
+    <div class="qbody">
+      <div class="qtext"><span class="badge">Q1</span>송정초등학교의 <u>도로명 주소</u>는?<br><span style="font-size:42px;color:#6b6f78;font-weight:700">경상북도 구미시 ______</span></div>
+      <div class="timer"></div>
+      <div class="grid">
+        <div class="opt"><span class="num">1</span>송정대로 72-6</div>
+        <div class="opt" data-right><span class="num">2</span>송정대로6길 72-6</div>
+        <div class="opt"><span class="num">3</span>송정로6길 27-6</div>
+        <div class="opt"><span class="num">4</span>송원동로 72</div>
+      </div>
+      <div class="answer"><span class="ok">정답 ②</span><span>경상북도 구미시 <b>송정대로6길 72-6</b> (송정동)</span></div>
+    </div>
+  </section>
+
+  <section class="scene" id="q2">
+    <div class="qcard"><div class="qn disp">Q2</div><div class="qt">오늘의 급식 탐정</div></div>
+    <div class="qbody">
+      <div class="photo"><img src="lunch.webp" alt=""></div>
+      <div class="qtext"><span class="badge">Q2</span>이 급식은 지난주<br><u>무슨 요일</u>에 나왔을까요?</div>
+      <div class="timer"></div>
+      <div class="days">
+        <div class="opt"><span class="num">1</span>월</div>
+        <div class="opt"><span class="num">2</span>화</div>
+        <div class="opt"><span class="num">3</span>수</div>
+        <div class="opt"><span class="num">4</span>목</div>
+        <div class="opt" data-right><span class="num">5</span>금</div>
+      </div>
+      <div class="answer"><span class="ok">정답 ⑤</span><span>지난주 <b>금요일(10월 16일)</b> 급식이었습니다! 맛있게 드셨나요?</span></div>
+    </div>
+  </section>
+
+  <section class="scene" id="q3">
+    <div class="qcard"><div class="qn disp">Q3</div><div class="qt">우리 학교의 시작</div></div>
+    <div class="qbody">
+      <div class="qtext"><span class="badge">Q3</span>송정초등학교가 <u>개교(설립)한 해</u>는?</div>
+      <div class="timer"></div>
+      <div class="grid">
+        <div class="opt"><span class="num">1</span>1957년</div>
+        <div class="opt"><span class="num">2</span>1997년</div>
+        <div class="opt"><span class="num">3</span>1977년</div>
+        <div class="opt" data-right><span class="num">4</span>1987년</div>
+      </div>
+      <div class="answer"><span class="ok">정답 ④</span><span><b>1987년 3월 2일</b> 송정국민학교로 개교 (1986년 설립인가)</span></div>
+    </div>
+  </section>
+
+  <section class="scene" id="outro">
+    <div class="big disp">모두 <span>참여</span>해 주셔서<br>감사합니다!</div>
+    <div class="sub">이제 연수를 시작하겠습니다 😊</div>
+  </section>
+
+  <div class="header" id="header"><span class="tag">QUIZ</span>구미송정초등학교 교원 연수 · 아이스브레이킹
+    <div class="prog"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>
+  <div class="bar" id="bar"></div>
+</div>
+<script>
+// ---- timeline (seconds) ----
+const INTRO=[0,6];
+const Q=[ // title card, body shown, countdown start, reveal start, end
+  {id:'q1', s:6,  show:8,  count:11, reveal:21, e:26},
+  {id:'q2', s:26, show:28, count:33, reveal:43, e:49},
+  {id:'q3', s:49, show:51, count:54, reveal:64, e:69},
+];
+const OUTRO=[69,75];
+const DURATION=75, COUNT=10;
+window.TIMELINE={Q,INTRO,OUTRO,DURATION,COUNT};
+
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return 1-Math.pow(1-x,3)};
+const back=x=>{x=clamp(x);const c=1.70158,c3=c+1;return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const prog=(t,a,d)=>clamp((t-a)/d);
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+
+// background blobs
+const colors=['#ffc93c','#ff6b5b','#4aa3df','#22a861'];
+const blobs=[];
+for(let i=0;i<9;i++){const d=document.createElement('div');d.className='blob';
+  const size=160+((i*137)%260);d.style.width=d.style.height=size+'px';d.style.background=colors[i%4];
+  $('#blobs').appendChild(d);blobs.push({d,x:(i*313)%1920,y:(i*211)%1080,ph:i*0.9,sp:0.15+0.05*(i%3)});}
+
+// timers
+$$('.timer').forEach(el=>{el.innerHTML=`<svg viewBox="0 0 250 250"><circle cx="125" cy="125" r="108" fill="#fff" stroke="#e4dccb" stroke-width="18"/>
+<circle class="ring" cx="125" cy="125" r="108" fill="none" stroke="#ff6b5b" stroke-width="18" stroke-linecap="round" transform="rotate(-90 125 125)" stroke-dasharray="678.6" stroke-dashoffset="0"/></svg><div class="n disp">10</div>`});
+$$('.opt[data-right]').forEach(o=>{const c=document.createElement('div');c.className='check';c.textContent='✓';o.appendChild(c)});
+
+// confetti pieces (deterministic)
+const conf=[];let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+for(let i=0;i<120;i++){const d=document.createElement('div');d.className='confetti';d.style.background=colors[i%4];
+  $('#confetti').appendChild(d);conf.push({d,x:rnd()*1920,v:250+rnd()*350,r:rnd()*720,dr:(rnd()-.5)*900,sw:rnd()*6,dl:rnd()*0.8});}
+function confetti(t,start){conf.forEach(c=>{const k=t-start-c.dl;
+  if(k<0||k>3.2){c.d.style.opacity=0;return}
+  const y=-40+k*c.v, x=c.x+Math.sin(k*3+c.sw)*40;
+  c.d.style.opacity=k>2.6?(3.2-k)/0.6:1;c.d.style.transform=`translate(${x}px,${y}px) rotate(${c.r+k*c.dr}deg)`;});}
+
+function render(t){
+  blobs.forEach(b=>{b.d.style.transform=`translate(${b.x+Math.sin(t*b.sp+b.ph)*60}px,${b.y+Math.cos(t*b.sp*1.3+b.ph)*50}px)`});
+  // intro
+  const intro=$('#intro');
+  const io=Math.min(prog(t,0,0.8),1-prog(t,INTRO[1]-0.6,0.6));
+  intro.style.opacity=io;
+  const kids=[...intro.children];
+  kids.forEach((k,i)=>{const p=back(prog(t,0.2+i*0.35,0.7));k.style.opacity=clamp(p);k.style.transform=`translateY(${(1-p)*60}px) scale(${0.9+0.1*p})`});
+  // header
+  const inQ=t>=Q[0].s-0.3&&t<OUTRO[0];
+  $('#header').style.transform=`translateY(${inQ?0:-110}px)`;
+  $$('#header .dot').forEach((d,i)=>d.classList.toggle('on',t>=Q[i].s));
+  let barW=0;
+  Q.forEach((q,qi)=>{
+    const sc=$('#'+q.id);
+    const on=t>=q.s&&t<q.e;
+    sc.style.opacity=on?Math.min(prog(t,q.s,0.3),1-prog(t,q.e-0.4,0.4)):0;
+    if(!on)return;
+    const card=$('.qcard',sc), body=$('.qbody',sc);
+    const cp=back(prog(t,q.s,0.6));
+    card.style.opacity=Math.min(prog(t,q.s,0.3),1-prog(t,q.show-0.4,0.4));
+    card.style.transform=`scale(${0.6+0.4*cp})`;
+    body.style.opacity=prog(t,q.show-0.2,0.4);
+    const qt=$('.qtext',body), qp=ease(prog(t,q.show,0.6));
+    qt.style.opacity=qp;qt.style.transform=`translateX(${(1-qp)*-80}px)`;
+    const ph=$('.photo',body);
+    if(ph){const p=back(prog(t,q.show,0.8));ph.style.opacity=clamp(p*1.5);ph.style.transform=`scale(${0.85+0.15*p}) rotate(${(1-p)*-4}deg)`;}
+    const opts=$$('.opt',body);
+    const optStart=ph?q.show+1.6:q.show+0.6;
+    opts.forEach((o,i)=>{const p=back(prog(t,optStart+i*0.25,0.5));
+      const rev=t>=q.reveal, right=o.hasAttribute('data-right');
+      o.classList.toggle('right',rev&&right);
+      let op=clamp(p), sc2=0.85+0.15*p;
+      if(rev&&!right) op*=1-0.6*prog(t,q.reveal,0.4);
+      if(rev&&right){const rp=prog(t,q.reveal,0.5);sc2*=1+0.08*Math.sin(rp*Math.PI);}
+      o.style.opacity=op;o.style.transform=`translateY(${(1-p)*40}px) scale(${sc2})`;
+      const ck=$('.check',o);if(ck){const kp=back(prog(t,q.reveal+0.2,0.5));ck.style.opacity=clamp(kp);ck.style.transform=`scale(${kp})`;}
+    });
+    // timer
+    const tm=$('.timer',body), tp=back(prog(t,q.count-0.5,0.5));
+    tm.style.opacity=t>=q.reveal?1-prog(t,q.reveal,0.4):clamp(tp);
+    const el=clamp(t-q.count,0,COUNT), left=Math.ceil(COUNT-el);
+    $('.n',tm).textContent=t<q.count?COUNT:Math.max(left,0);
+    $('.n',tm).style.color=left<=3&&t>=q.count?'#ff6b5b':'';
+    const pulse=t>=q.count&&left<=3?1+0.12*Math.max(0,1-((t-q.count)%1)*3):1;
+    tm.style.transform=`scale(${clamp(tp)*pulse})`;
+    $('.ring',tm).setAttribute('stroke-dashoffset',(678.6*el/COUNT).toFixed(1));
+    if(t>=q.count&&t<q.reveal) barW=el/COUNT;
+    const an=$('.answer',body), ap=back(prog(t,q.reveal+0.4,0.6));
+    an.style.opacity=clamp(ap);an.style.transform=`translateY(${(1-ap)*80}px)`;
+    if(t>=q.reveal) confetti(t,q.reveal);
+  });
+  if(!Q.some(q=>t>=q.reveal&&t<q.e)&&!(t>=OUTRO[0])) confetti(-99,0);
+  $('#bar').style.width=(barW*100)+'%';
+  // outro
+  const out=$('#outro');
+  out.style.opacity=t>=OUTRO[0]?Math.min(prog(t,OUTRO[0],0.6),1-prog(t,OUTRO[1]-0.8,0.8)):0;
+  [...out.children].forEach((k,i)=>{const p=back(prog(t,OUTRO[0]+0.2+i*0.4,0.7));k.style.opacity=clamp(p);k.style.transform=`translateY(${(1-p)*60}px)`});
+  if(t>=OUTRO[0]) confetti(t,OUTRO[0]+0.3);
+}
+window.render=render;
+render(0);
+</script></body></html>
