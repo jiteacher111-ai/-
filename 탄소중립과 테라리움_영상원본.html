@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#000}
+#stage{width:1280px;height:720px;overflow:hidden;position:relative}
+svg{display:block}
+text{font-family:'Jua','Noto Color Emoji',sans-serif}
+.cap{font-family:'Gowun Dodum','Noto Color Emoji',sans-serif;font-weight:700}
+</style></head>
+<body><div id="stage"></div>
+<script>
+const W=1280,H=720,TOTAL=116;
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
+const P=(t,a,b)=>cl((t-a)/(b-a));
+const E=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+const back=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
+const EP=(t,a,b)=>E(P(t,a,b));
+const vis=(t,a,b,f=.6)=>Math.min(P(t,a,a+f),1-P(t,b-f,b));
+function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
+
+const C={co2:'#2563eb',o2:'#e11d48',h2o:'#16a34a',ink:'#1f2937',soil:'#7c4a2d',char:'#27272a',gravel:'#9ca3af'};
+
+const CAPS=[
+[0.8,7,'오늘은 유리병 속 작은 지구, 테라리움으로 탄소중립을 알아봐요.'],
+[7,12,'뚜껑을 꽉 닫은 유리병 속에서 식물이 살 수 있을까요?'],
+[12,17,'놀랍게도 50년 넘게 닫힌 병 속에서 자라는 식물도 있어요. 비밀은 바로 ‘순환’!'],
+[17,23,'식물은 햇빛을 받아 잎에서 스스로 양분을 만들어요.'],
+[23,28,'이때 공기 속 이산화탄소와 뿌리로 빨아올린 물을 이용하지요.'],
+[28,33,'그리고 산소를 내보내요. 이것이 바로 광합성이에요!'],
+[33,38,'공기 속에 이산화탄소가 너무 많아지면 지구가 점점 더워져요.'],
+[38,44,'자동차, 공장, 전기 낭비는 이산화탄소를 내보내요. 지금 지구의 저울은 배출 쪽으로 기울어 있어요.'],
+[44,51,'숲을 가꾸고 배출을 줄여 저울을 맞추면 결과적으로 0! 이것이 탄소중립이에요.'],
+[51,55,'다 쓴 병을 재활용해 작은 지구를 만들어요. 새 병을 만들지 않으니 탄소도 줄어요!'],
+[55,60,'① 자갈: 물이 고이지 않고 빠져나가게 해요. 땅속 지하수와 닮았어요.'],
+[60,65,'② 숯: 물과 공기를 깨끗하게 해요. 탄소를 오래 가둬 두는 창고예요.'],
+[65,70,'③ 흙: 식물이 뿌리내리고 양분을 얻어요. 흙도 많은 탄소를 저장해요.'],
+[70,75,'④ 이끼와 작은 식물: 지구의 숲처럼 이산화탄소를 흡수해요.'],
+[75,81,'⑤ 물을 뿌리고 뚜껑을 닫으면, 병 안에서 물과 공기가 돌고 돌아요.'],
+[81,88,'식물은 이산화탄소를 마시고 산소를 내보내요. 흙 속 작은 생물은 다시 이산화탄소를 내보내지요.'],
+[88,95,'물은 증발해 유리벽에 맺히고, 다시 흙으로 흘러내려요. 지구의 비와 똑같아요!'],
+[95,101,'하지만 테라리움 하나가 흡수하는 이산화탄소는 아주 적어요. 그래서 우리의 실천이 꼭 필요해요.'],
+[101,109,'불 끄기, 텀블러 쓰기, 급식 남기지 않기, 걷기, 분리배출! 나는 무엇을 실천할까요?'],
+[109,115.6,'꼭 지킬 약속 한 가지를 이름표에 적어 테라리움에 붙여 봐요!'],
+];
+
+function caption(t){
+  for(const [a,b,s] of CAPS){ if(t>=a&&t<b){ const o=vis(t,a,b,.35);
+    return `<g opacity="${o}"><rect x="90" y="628" width="1100" height="64" rx="32" fill="rgba(17,24,39,.78)"/>
+    <text class="cap" x="640" y="670" text-anchor="middle" font-size="${s.length>44?25:28}" fill="#fff">${s}</text></g>`;}}
+  return '';
+}
+function chip(x,y,label,color,r=30,o=1){
+  return `<g opacity="${o}"><circle cx="${x}" cy="${y}" r="${r}" fill="${color}" opacity=".92"/>
+  <text x="${x}" y="${y+r*0.3}" text-anchor="middle" font-size="${r*0.78}" fill="#fff">${label}</text></g>`;
+}
+function sun(x,y,r,t,o=1){
+  let rays='';for(let i=0;i<12;i++){const a=i*Math.PI/6+t*.4;
+    rays+=`<line x1="${x+Math.cos(a)*(r+10)}" y1="${y+Math.sin(a)*(r+10)}" x2="${x+Math.cos(a)*(r+30)}" y2="${y+Math.sin(a)*(r+30)}" stroke="#f59e0b" stroke-width="7" stroke-linecap="round"/>`;}
+  return `<g opacity="${o}">${rays}<circle cx="${x}" cy="${y}" r="${r}" fill="#fbbf24"/><circle cx="${x-r*.3}" cy="${y-r*.3}" r="${r*.35}" fill="#fde68a"/></g>`;
+}
+// plant: base at (x,y), size s, growth g 0..1, sway from t
+function plant(x,y,s,g,t){
+  if(g<=0) return '';
+  const h=150*s*g, sw=Math.sin(t*1.5)*4*s;
+  let leaves='';
+  const n=4;
+  for(let i=0;i<n;i++){
+    const lg=cl(g*n-i); if(lg<=0) continue;
+    const yy=y-h*(0.3+i*0.2), side=i%2?1:-1, L=48*s*lg*(1-i*0.12);
+    leaves+=`<path d="M${x+sw*(i/n)} ${yy} q ${side*L*0.5} ${-L*0.6} ${side*L} ${-L*0.15} q ${-side*L*0.5} ${L*0.45} ${-side*L} ${L*0.15}z" fill="${i%2?'#22c55e':'#16a34a'}"/>`;
+  }
+  return `<g><path d="M${x} ${y} Q ${x+sw*0.5} ${y-h*0.5} ${x+sw} ${y-h}" stroke="#15803d" stroke-width="${6*s}" fill="none" stroke-linecap="round"/>${leaves}
+  <circle cx="${x+sw}" cy="${y-h}" r="${12*s*g}" fill="#4ade80"/></g>`;
+}
+function bg(top,bot){return `<defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient></defs><rect width="${W}" height="${H}" fill="url(#bg)"/>`}
+
+// ---------- jar ----------
+// jar body: x0..x1, top yT, bottom yB
+let JID=0;
+function jar(J,t,st){ const jid='jc'+(JID++); // st: {gravel,char,soil,moss,water,lid,label}
+  const {x0,x1,yT,yB}=J, w=x1-x0;
+  let g='';
+  const clip=`<clipPath id="${jid}"><rect x="${x0+6}" y="${yT}" width="${w-12}" height="${yB-yT-6}" rx="26"/></clipPath>`;
+  let inner='';
+  const gh=60*J.k,ch=28*J.k,sh=100*J.k;
+  // layer drop helper: progress p, final top yf, height h
+  const drop=(p,yf,h,body)=>{ if(p<=0) return ''; const off=(1-back(cl(p)))*-(yf-yT+80); return `<g transform="translate(0,${off})" opacity="${cl(p*3)}">${body(yf,h)}</g>`; };
+  const yG=yB-6-gh, yC=yG-ch, yS=yC-sh;
+  inner+=drop(st.gravel,yG,gh,(y,h)=>{let s=`<rect x="${x0}" y="${y}" width="${w}" height="${h+6}" fill="#cbd5e1"/>`;const r=rng(7);for(let i=0;i<46;i++){s+=`<ellipse cx="${x0+r()*w}" cy="${y+8+r()*(h-6)}" rx="${(9+r()*9)*J.k}" ry="${(7+r()*6)*J.k}" fill="${['#9ca3af','#6b7280','#d1d5db','#a8a29e'][i%4]}"/>`;}return s;});
+  inner+=drop(st.char,yC,ch,(y,h)=>{let s=`<rect x="${x0}" y="${y}" width="${w}" height="${h}" fill="#3f3f46"/>`;const r=rng(13);for(let i=0;i<30;i++){s+=`<rect x="${x0+r()*w}" y="${y+r()*(h-8)}" width="${(10+r()*12)*J.k}" height="${(7+r()*6)*J.k}" rx="2" fill="${i%2?'#18181b':'#52525b'}" transform="rotate(${r()*60-30} ${x0+w/2} ${y})"/>`;}return s;});
+  inner+=drop(st.soil,yS,sh,(y,h)=>{let s=`<path d="M${x0} ${y+8} Q ${x0+w*.3} ${y-6} ${x0+w*.5} ${y+4} T ${x1} ${y+2} V ${y+h} H ${x0}z" fill="#7c4a2d"/>`;const r=rng(21);for(let i=0;i<40;i++){s+=`<circle cx="${x0+r()*w}" cy="${y+12+r()*(h-16)}" r="${(2+r()*3)*J.k}" fill="${i%2?'#5b3520':'#9a6440'}"/>`;}return s;});
+  // moss + plants
+  if(st.moss>0){
+    const m=cl(st.moss);
+    let s='';
+    for(let i=0;i<9;i++){const cx=x0+20*J.k+i*(w-40*J.k)/8;s+=`<ellipse cx="${cx}" cy="${yS+6}" rx="${30*J.k*m}" ry="${16*J.k*m}" fill="${i%2?'#65a30d':'#4d7c0f'}"/>`;}
+    s+=plant(x0+w*.35,yS+4,1.15*J.k,EP(m,0,1),t)+plant(x0+w*.68,yS+4,.85*J.k,EP(m,.25,1),t+1.3);
+    // tiny fern
+    s+=`<g opacity="${m}">${plant(x0+w*.52,yS+4,.55*J.k,m,t+2)}</g>`;
+    inner+=s;
+  }
+  // water drops falling
+  if(st.water>0&&st.water<1){
+    const r=rng(5);
+    for(let i=0;i<14;i++){const ph=(st.water*3+i/14)%1;const x=x0+30+r()*(w-60);const y=yT+ph*(yS-yT);
+      inner+=`<path d="M${x} ${y-12} q 7 12 0 16 q -7 -4 0 -16z" fill="#38bdf8" opacity=".85"/>`;}
+  }
+  if(st.extra) inner+=st.extra;
+  // glass
+  g+=`<defs>${clip}</defs><g clip-path="url(#${jid})">${inner}</g>`;
+  g+=`<rect x="${x0}" y="${yT}" width="${w}" height="${yB-yT}" rx="30" fill="rgba(186,230,253,.18)" stroke="#7dd3fc" stroke-width="6"/>`;
+  g+=`<rect x="${x0+18}" y="${yT+30}" width="12" height="${(yB-yT)*0.6}" rx="6" fill="#fff" opacity=".5"/>`;
+  // neck
+  g+=`<rect x="${x0+w*0.08}" y="${yT-26}" width="${w*0.84}" height="34" rx="10" fill="rgba(186,230,253,.25)" stroke="#7dd3fc" stroke-width="5"/>`;
+  if(st.lid>0){const off=(1-EP(st.lid,0,1))*-140;
+    g+=`<g transform="translate(0,${off})"><rect x="${x0+w*0.04}" y="${yT-58}" width="${w*0.92}" height="40" rx="12" fill="#f97316"/><rect x="${x0+w*0.04}" y="${yT-58}" width="${w*0.92}" height="12" rx="6" fill="#fb923c"/></g>`;}
+  if(st.label){g+=`<g opacity="${st.label}" transform="rotate(-4 ${x0+w/2} ${yT+80*J.k})"><rect x="${x0+w*0.2}" y="${yT+45*J.k}" width="${w*0.6}" height="${62*J.k}" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="3"/><text x="${x0+w/2}" y="${yT+85*J.k}" text-anchor="middle" font-size="${26*J.k}" fill="#92400e">${st.labelText||'♻ 잼병 재활용'}</text></g>`;}
+  return g;
+}
+
+// ---------- scenes ----------
+function s1(t){ // title 0-7
+  let s=bg('#bae6fd','#ecfccb');
+  const r=rng(3);
+  for(let i=0;i<18;i++){const x=r()*W,y=(r()*H-t*20*(0.5+r()))%H;s+=`<circle cx="${x}" cy="${(y+H)%H}" r="${4+r()*8}" fill="${[C.co2,C.o2,C.h2o][i%3]}" opacity=".18"/>`;}
+  const J={x0:540,x1:740,yT:285,yB:545,k:.62};
+  s+=`<g transform="translate(0,${(1-back(P(t,0,1.2)))*300})">${jar(J,t,{gravel:1,char:1,soil:1,moss:1,lid:1})}</g>`;
+  const a=EP(t,.6,1.6);
+  s+=`<g opacity="${a}"><text x="640" y="100" text-anchor="middle" font-size="64" fill="#14532d">작은 지구, 테라리움과</text>
+  <text x="640" y="178" text-anchor="middle" font-size="64" fill="#1d4ed8">탄소중립 🌏</text></g>`;
+  s+=`<g opacity="${EP(t,1.4,2.2)}"><text x="640" y="598" text-anchor="middle" font-size="28" fill="#365314">유리병 속 식물이 알려 주는 지구의 비밀</text></g>`;
+  return s;
+}
+function s2(t){ // 7-17 question
+  let s=bg('#e0f2fe','#f0fdf4');
+  const J={x0:500,x1:780,yT:220,yB:590,k:.85};
+  s+=jar(J,t,{gravel:1,char:1,soil:1,moss:1,lid:1});
+  // lock icon on lid
+  s+=`<text x="640" y="190" text-anchor="middle" font-size="40" opacity="${EP(t,7.4,8)}">🔒</text>`;
+  const q=EP(t,8,8.8);
+  s+=`<g opacity="${q}" transform="translate(${880},${300}) scale(${0.6+0.4*q})"><circle r="70" fill="#fde047"/><text y="30" text-anchor="middle" font-size="96" fill="#a16207">?</text></g>`;
+  s+=`<g opacity="${q}" transform="translate(${380},${320}) scale(${0.6+0.4*q})"><circle r="56" fill="#fecaca"/><text y="22" text-anchor="middle" font-size="58">🤔</text></g>`;
+  // years ticker
+  const yrs=['1년?','10년?','50년?'];
+  yrs.forEach((y,i)=>{const o=EP(t,9+i*.8,9.6+i*.8)*(1-EP(t,12,12.5));s+=`<text x="${200+i*0}" y="${430+i*60-60}" font-size="44" fill="#0f766e" opacity="${o}" text-anchor="middle" transform="translate(${i*0},0)">${y}</text>`;});
+  // answer
+  const a=EP(t,12.5,13.3);
+  s+=`<g opacity="${a}"><rect x="830" y="420" width="380" height="120" rx="24" fill="#dcfce7" stroke="#16a34a" stroke-width="4"/>
+  <text x="1020" y="470" text-anchor="middle" font-size="34" fill="#166534">1972년부터 닫힌 병</text>
+  <text x="1020" y="515" text-anchor="middle" font-size="34" fill="#166534">50년 넘게 쑥쑥! 🌿</text></g>`;
+  const b=EP(t,14.5,15.3);
+  s+=`<g opacity="${b}"><text x="200" y="460" text-anchor="middle" font-size="44" fill="#7c3aed">비밀은</text><text x="200" y="520" text-anchor="middle" font-size="56" fill="#7c3aed">‘순환’ 🔄</text></g>`;
+  return s;
+}
+function s3(t){ // 17-33 photosynthesis
+  let s=bg('#bfdbfe','#fef9c3');
+  s+=`<rect x="0" y="520" width="${W}" height="200" fill="#a16207"/><rect x="0" y="505" width="${W}" height="24" rx="10" fill="#65a30d"/>`;
+  s+=sun(170,130,62,t,EP(t,17,18));
+  // rays to leaf
+  const ro=EP(t,18,19)*(0.6+0.4*Math.sin(t*4));
+  s+=`<g opacity="${ro}">${[0,1,2].map(i=>`<line x1="${230+i*10}" y1="${170+i*22}" x2="${560+i*15}" y2="${300+i*20}" stroke="#facc15" stroke-width="6" stroke-dasharray="18 14" stroke-dashoffset="${-t*80}"/>`).join('')}</g>`;
+  // big plant
+  s+=plant(640,515,2.4,EP(t,17,19),t);
+  // roots
+  const rt=EP(t,22,23.5);
+  s+=`<g opacity="${rt}" stroke="#fde68a" stroke-width="5" fill="none" stroke-linecap="round"><path d="M640 520 q -20 50 -60 90"/><path d="M640 520 q 10 60 40 100"/><path d="M640 520 q 0 50 -5 120"/></g>`;
+  // water rising
+  if(t>23){for(let i=0;i<6;i++){const ph=((t-23)*0.5+i/6)%1;const y=640-ph*300;const o=P(t,23,24)*(1-P(t,32,33));
+    s+=`<g opacity="${o}">${chip(640+Math.sin(ph*6+i)*8,y,'물',C.h2o,20)}</g>`;}}
+  // CO2 coming in
+  if(t>23.5){for(let i=0;i<5;i++){const ph=((t-23.5)*0.35+i/5)%1;const x=1220-ph*520,y=200+i*45+Math.sin(ph*8+i)*12;const o=P(t,23.5,24.3)*(1-P(t,32,33))*(ph<.9?1:(1-ph)*10);
+    s+=`<g opacity="${o}">${chip(x,y,'CO₂',C.co2,30)}</g>`;}}
+  // O2 out
+  if(t>28){for(let i=0;i<5;i++){const ph=((t-28)*0.35+i/5)%1;const x=560-ph*420,y=280-ph*160+i*30;const o=P(t,28,28.7)*Math.min(1,(1-ph)*4)*(1-P(t,32.4,33));
+    s+=`<g opacity="${o}">${chip(x,y,'O₂',C.o2,28)}</g>`;}}
+  // labels
+  s+=`<g opacity="${EP(t,17.4,18.2)}"><rect x="900" y="40" width="300" height="70" rx="20" fill="#fff" opacity=".85"/><text x="1050" y="88" text-anchor="middle" font-size="44" fill="#15803d">광합성 🌿</text></g>`;
+  const eq=EP(t,29.5,30.3);
+  s+=`<g opacity="${eq}" transform="translate(640,585)"><rect x="-470" y="-36" width="940" height="62" rx="20" fill="#fff" opacity=".93"/>
+  <text y="8" text-anchor="middle" font-size="32" fill="${C.ink}">☀️ 햇빛 + <tspan fill="${C.h2o}">물</tspan> + <tspan fill="${C.co2}">이산화탄소</tspan> → 양분 + <tspan fill="${C.o2}">산소</tspan></text></g>`;
+  return s;
+}
+function s4(t){ // 33-51 carbon scale
+  let s=bg('#fef3c7','#fde68a');
+  // Earth heating intro
+  const e=vis(t,33,38.4,.5);
+  if(e>0){
+    const hot=EP(t,34,37.5);
+    s+=`<g opacity="${e}"><circle cx="640" cy="320" r="${150+Math.sin(t*3)*hot*6}" fill="rgba(239,68,68,${0.15+0.35*hot})"/>
+    <text x="640" y="380" text-anchor="middle" font-size="200">🌏</text>
+    <text x="${830}" y="${250}" font-size="${60+hot*20}" opacity="${hot}">🌡️</text>`;
+    for(let i=0;i<10;i++){const a=i*Math.PI/5+t*.3,R=240;s+=chip(640+Math.cos(a)*R,320+Math.sin(a)*R*0.75,'CO₂',C.co2,26,cl(P(t,33.4+i*.25,33.9+i*.25)));}
+    s+='</g>';
+  }
+  const sc=vis(t,38,51.4,.6);
+  if(sc>0){
+    // tilt: heavy left (left down = negative rotation? left down means rotate counterclockwise -> negative angle in svg means counterclockwise)
+    const tiltIn=EP(t,38.6,40.5), level=EP(t,46,49);
+    const ang=-14*tiltIn*(1-level);
+    let g=`<g opacity="${sc}">`;
+    g+=`<polygon points="640,330 590,520 690,520" fill="#78716c"/><rect x="540" y="510" width="200" height="22" rx="10" fill="#57534e"/>`;
+    const L=380, ca=Math.cos(ang*Math.PI/180), sa=Math.sin(ang*Math.PI/180);
+    const lx=640-L*ca, ly=330-L*sa, rx=640+L*ca, ry=330+L*sa;
+    g+=`<g transform="rotate(${ang} 640 330)"><rect x="${640-L-10}" y="322" width="${2*L+20}" height="16" rx="8" fill="#44403c"/></g><circle cx="640" cy="330" r="16" fill="#292524"/>`;
+    const pan=(x,y,col,title,items,o)=>{
+      let p=`<line x1="${x}" y1="${y}" x2="${x-90}" y2="${y+110}" stroke="#57534e" stroke-width="3"/><line x1="${x}" y1="${y}" x2="${x+90}" y2="${y+110}" stroke="#57534e" stroke-width="3"/>
+      <path d="M${x-130} ${y+110} h260 q -20 40 -130 40 q -110 0 -130 -40z" fill="${col}"/>`;
+      items.forEach((it,i)=>{const io=cl(P(t,it[1],it[1]+.4));const yy=y+90-(i%2)*48-(i>1?(Math.floor(i/2))*0:0);
+        p+=`<g opacity="${io}" transform="translate(${x-80+(i%3)*80},${y+92-Math.floor(i/3)*58-(1-back(io))*60})"><text text-anchor="middle" font-size="46">${it[0]}</text><text y="${i<3?-50:-50}" text-anchor="middle" font-size="0"></text></g>`;});
+      p+=`<text x="${x}" y="${y+185}" text-anchor="middle" font-size="34" fill="${C.ink}">${title}</text>`;
+      return p;
+    };
+    g+=pan(lx,ly,'#fca5a5','내보내는 쪽 (배출)',[['🚗',38.8],['🏭',39.4],['💡',40]]);
+    g+=pan(rx,ry,'#86efac','흡수하거나 줄이는 쪽',[['🌳',41.4],['🌊',42],['🚲',44.6],['♻️',45.1],['🌲',45.6]]);
+    g+=`<text x="640" y="110" text-anchor="middle" font-size="46" fill="#7c2d12">탄소 저울 ⚖️</text>`;
+    const z=EP(t,48.5,49.3);
+    g+=`<g opacity="${z}" transform="translate(640,225) scale(${0.7+0.3*back(cl(P(t,48.5,49.3)))})"><rect x="-260" y="-48" width="520" height="80" rx="30" fill="#1d4ed8"/><text y="8" text-anchor="middle" font-size="40" fill="#fff">결과적으로 0 = 탄소중립!</text></g>`;
+    g+='</g>';
+    s+=g;
+  }
+  return s;
+}
+const LAYERS=[
+ ['자갈','물이 빠져나가게 함','땅속 지하수','뿌리가 썩지 않게 지켜요'],
+ ['숯','물과 공기를 깨끗하게 함','땅속에 묻힌 석탄','탄소를 오래 가둬 두는 창고'],
+ ['흙','뿌리내리고 양분을 얻음','땅(토양)','뿌리·낙엽 속 탄소를 저장해요'],
+ ['이끼, 작은 식물','광합성을 함','숲','이산화탄소를 흡수해요'],
+ ['물 뿌리고 뚜껑 닫기','물과 공기가 돌고 돎','지구를 감싼 공기와 비','탄소가 병 안에서 순환해요'],
+];
+function s5(t){ // 51-81 build
+  let s=bg('#ecfeff','#f0fdf4');
+  const J={x0:150,x1:470,yT:170,yB:600,k:1};
+  const st={gravel:P(t,55.3,56.5),char:P(t,60.3,61.5),soil:P(t,65.3,66.5),moss:P(t,70.3,72.5),water:P(t,75.3,77.6),lid:P(t,78,79),label:EP(t,52,53)};
+  s+=`<g transform="translate(0,${(1-back(P(t,51,52)))*250})">${jar(J,t,st)}</g>`;
+  if(t<55){const o=vis(t,51.3,55.2,.4);
+    s+=`<g opacity="${o}"><text x="850" y="230" text-anchor="middle" font-size="50" fill="#0f766e">♻️ 다 쓴 병 다시 쓰기</text>
+    <text x="850" y="320" text-anchor="middle" font-size="34" fill="${C.ink}">새 병을 만들 때 나오는</text>
+    <text x="850" y="370" text-anchor="middle" font-size="34" fill="${C.ink}"><tspan fill="${C.co2}">이산화탄소</tspan>를 줄일 수 있어요!</text>
+    <text x="850" y="480" text-anchor="middle" font-size="80">🫙➡️🌱</text></g>`;}
+  const idx=Math.floor((t-55)/5);
+  if(t>=55){
+    const i=Math.min(4,idx), a=55+i*5, b=i===4?81:a+5;
+    const o=vis(t,a,b,.45);
+    const [name,job,earth,carbon]=LAYERS[i];
+    const row=(y,label,val,col,d)=>{const ro=EP(t,a+d,a+d+.5);return `<g opacity="${ro}" transform="translate(${(1-ro)*40},0)"><rect x="560" y="${y}" width="640" height="76" rx="18" fill="#fff" stroke="${col}" stroke-width="3"/><text x="590" y="${y+48}" font-size="26" fill="${col}">${label}</text><text x="770" y="${y+49}" font-size="${val.length>13?27:31}" fill="${C.ink}">${val}</text></g>`;};
+    s+=`<g opacity="${o}"><circle cx="610" cy="140" r="42" fill="#0d9488"/><text x="610" y="155" text-anchor="middle" font-size="44" fill="#fff">${i+1}</text>
+    <text x="670" y="158" font-size="54" fill="#134e4a">${name}</text>
+    ${row(210,'하는 일',job,'#0891b2',.6)}${row(305,'지구에서는?',earth,'#16a34a',1.5)}${row(400,'탄소와의 관계',carbon,'#2563eb',2.5)}</g>`;
+    // pointer to layer
+    const ys=[570,525,460,330,120][i];
+    s+=`<g opacity="${o*EP(t,a+.8,a+1.3)}"><line x1="480" y1="${ys}" x2="550" y2="${Math.min(ys,560)}" stroke="#0d9488" stroke-width="4" stroke-dasharray="8 6"/><circle cx="480" cy="${ys}" r="8" fill="#0d9488"/></g>`;
+  }
+  return s;
+}
+function s6(t){ // 81-95 cycle
+  let s=bg('#e0f2fe','#ecfccb');
+  const J={x0:360,x1:760,yT:150,yB:610,k:1.1};
+  // particles inside the jar
+  let ex='';
+  const yS=J.yB-6-(60+28+100)*J.k;
+  const px=J.x0+(J.x1-J.x0)*.35;
+  // CO2 from soil microbes -> plant ; O2 from plant -> air loop
+  const loop=(ph,cx,cy,rx,ry)=>[cx+Math.cos(ph*Math.PI*2)*rx,cy+Math.sin(ph*Math.PI*2)*ry];
+  const a1=P(t,81.5,82.5)*(1-P(t,94.4,95));
+  for(let i=0;i<4;i++){const ph=((t-81)*0.16+i/4)%1;const [x,y]=loop(ph,560,320,150,90);ex+=chip(x,y,'O₂',C.o2,24,a1);}
+  for(let i=0;i<4;i++){const ph=((t-81)*0.16+i/4+.125)%1;const [x,y]=loop(-ph,560,330,120,70);ex+=chip(x,y,'CO₂',C.co2,26,a1);}
+  // microbes
+  for(let i=0;i<3;i++){ex+=`<text x="${J.x0+90+i*110}" y="${yS+70+(i%2)*25}" font-size="28" opacity="${EP(t,82.5,83.5)}">🐛</text>`;}
+  // water: droplets on glass sliding down, vapor rising
+  const a2=P(t,88,89);
+  if(a2>0){
+    for(let i=0;i<7;i++){const ph=((t-88)*0.4+i/7)%1;const x=J.x0+60+i*45;const y=yS-ph*(yS-J.yT-20);ex+=`<g opacity="${a2*(1-ph)}"><circle cx="${x}" cy="${y}" r="7" fill="${C.h2o}" opacity=".55"/></g>`;}
+    for(let side of [0,1]){for(let i=0;i<5;i++){const ph=((t-88)*0.3+i/5)%1;const x=side?J.x1-22:J.x0+22;const y=J.yT+20+ph*(yS-J.yT);
+      ex+=`<path d="M${x} ${y-14} q 9 14 0 19 q -9 -5 0 -19z" fill="${C.h2o}" opacity="${a2*.9}"/>`;}}
+  }
+  s+=jar(J,t,{gravel:1,char:1,soil:1,moss:1,lid:1,extra:ex});
+  // legend
+  const lg=EP(t,81.5,82.3);
+  s+=`<g opacity="${lg}" transform="translate(810,170)"><rect width="430" height="210" rx="22" fill="#fff" opacity=".9"/>
+  <text x="24" y="48" font-size="28" fill="${C.ink}">화살표 색 약속</text>
+  ${chip(50,95,'CO₂',C.co2,22)}<text x="86" y="104" font-size="28" fill="${C.co2}">이산화탄소 = 파랑</text>
+  ${chip(50,140,'O₂',C.o2,22)}<text x="86" y="149" font-size="28" fill="${C.o2}">산소 = 빨강</text>
+  ${chip(50,185,'물',C.h2o,22)}<text x="86" y="194" font-size="28" fill="${C.h2o}">물 = 초록</text></g>`;
+  const cmp=EP(t,91,92);
+  s+=`<g opacity="${cmp}" transform="translate(810,420)"><rect width="430" height="150" rx="22" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>
+  <text x="215" y="58" text-anchor="middle" font-size="30" fill="#166534">병 속 식물 🌿 = 지구의 숲 🌳</text>
+  <text x="215" y="112" text-anchor="middle" font-size="30" fill="#166534">유리벽 물방울 💧 = 비 🌧️</text></g>`;
+  s+=`<text x="60" y="90" font-size="48" fill="#0c4a6e" opacity="${lg}">🔄 병 속의 순환</text>`;
+  return s;
+}
+function s7(t){ // 95-109 practice
+  let s=bg('#fdf4ff','#ecfeff');
+  const a=vis(t,95,101.3,.5);
+  if(a>0){
+    const sh=EP(t,96,97.5);
+    s+=`<g opacity="${a}"><text x="${400}" y="${420}" text-anchor="middle" font-size="${260}">🌏</text>
+    <g transform="translate(${880},${360}) scale(${1-0.65*sh})">${jar({x0:-90,x1:90,yT:-120,yB:120,k:.42},t,{gravel:1,char:1,soil:1,moss:1,lid:1})}</g>
+    <text x="880" y="560" text-anchor="middle" font-size="34" fill="${C.ink}" opacity="${sh}">테라리움 하나로는 부족해요!</text>
+    <text x="640" y="120" text-anchor="middle" font-size="48" fill="#86198f" opacity="${EP(t,98,99)}">우리의 실천이 함께 필요해요 💪</text></g>`;
+  }
+  const b=vis(t,101,109.4,.5);
+  if(b>0){
+    const items=[['💡','빈 교실과 방의 불 끄기'],['🥤','텀블러와 장바구니 쓰기'],['🍱','급식 남기지 않기'],['🚶','가까운 거리는 걷거나 자전거 타기'],['♻️','분리배출 잘하기']];
+    let g=`<g opacity="${b}"><text x="640" y="95" text-anchor="middle" font-size="50" fill="#86198f">나의 탄소중립 실천 ✅</text>`;
+    items.forEach(([ic,txt],i)=>{const st=101.6+i*1.1;const o=EP(t,st,st+.5),ck=EP(t,st+.5,st+.9);const y=140+i*92;
+      g+=`<g opacity="${o}" transform="translate(${(1-o)*-60},0)"><rect x="250" y="${y}" width="780" height="76" rx="22" fill="#fff" stroke="#e9d5ff" stroke-width="3"/>
+      <rect x="276" y="${y+16}" width="44" height="44" rx="10" fill="${ck>0?'#dcfce7':'#fff'}" stroke="#16a34a" stroke-width="4"/>
+      <path d="M284 ${y+38} l 10 12 l 20 -24" stroke="#16a34a" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="60" stroke-dashoffset="${60*(1-ck)}"/>
+      <text x="350" y="${y+52}" font-size="40">${ic}</text><text x="410" y="${y+51}" font-size="34" fill="${C.ink}">${txt}</text></g>`;});
+    g+='</g>';s+=g;
+  }
+  return s;
+}
+function s8(t){ // 109-116 end
+  let s=bg('#dcfce7','#bae6fd');
+  const J={x0:200,x1:480,yT:200,yB:580,k:.85};
+  s+=jar(J,t,{gravel:1,char:1,soil:1,moss:1,lid:1,label:EP(t,110.5,111.5),labelText:'나의 약속 ✍️'});
+  const o=EP(t,109.3,110.2);
+  s+=`<g opacity="${o}"><text x="850" y="240" text-anchor="middle" font-size="58" fill="#14532d">작은 지구를 지키는</text>
+  <text x="850" y="320" text-anchor="middle" font-size="58" fill="#14532d">나의 약속 한 가지 🌱</text></g>`;
+  const o2=EP(t,111.5,112.5);
+  s+=`<g opacity="${o2}"><rect x="610" y="380" width="480" height="140" rx="22" fill="#fff" stroke="#d97706" stroke-width="4" stroke-dasharray="12 8"/>
+  <text x="850" y="438" text-anchor="middle" font-size="32" fill="#92400e">나의 약속: ______________</text>
+  <text x="850" y="490" text-anchor="middle" font-size="28" fill="#92400e">언제, 어디서? __________</text></g>`;
+  return s;
+}
+const SCENES=[[0,7,s1],[7,17,s2],[17,33,s3],[33,51,s4],[51,81,s5],[81,95,s6],[95,109,s7],[109,TOTAL,s8]];
+window.render=function(t){
+  let out='';
+  JID=0;
+  for(const [a,b,f] of SCENES){
+    if(t>=a&&t<b+0.5) out+=`<g opacity="${a===0?1:P(t,a,a+.5)}">${f(t)}</g>`;
+  }
+  const fade=Math.min(P(t,0,.5),1-P(t,TOTAL-.7,TOTAL));
+  out+=caption(t);
+  out+=`<rect width="${W}" height="${H}" fill="#000" opacity="${1-fade}"/>`;
+  document.getElementById('stage').innerHTML=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${out}</svg>`;
+};
+window.TOTAL=TOTAL;
+render(parseFloat(location.hash.slice(1))||2);
+</script></body></html>
