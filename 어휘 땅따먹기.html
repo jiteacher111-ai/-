@@ -101,8 +101,9 @@
   .zoom-ctrl button{width:42px;height:42px;border-radius:50%;background:var(--wood);color:var(--parchment);border:2px solid var(--gold);font-size:18px;cursor:pointer;}
 
   /* toast */
-  #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(-120%);background:var(--parchment);border:2.5px solid var(--wood);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;z-index:80;transition:transform .3s;max-width:92vw;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.35);}
-  #toast.show{transform:translateX(-50%) translateY(0);}
+  /* 숨김: top(14px)과 그림자까지 빼고 완전히 화면 위로 보내고, 투명·클릭 불가로 둔다. 알림 전용이라 보일 때도 클릭을 통과시킨다. */
+  #toast{position:fixed;top:14px;left:50%;transform:translateX(-50%) translateY(calc(-100% - 40px));opacity:0;visibility:hidden;pointer-events:none;background:var(--parchment);border:2.5px solid var(--wood);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;z-index:80;transition:transform .3s,opacity .3s,visibility 0s linear .3s;max-width:92vw;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.35);}
+  #toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible;transition:transform .3s,opacity .3s;}
   #toast.bad{border-color:var(--danger);color:#8a1f1f;}
 
   /* modal */
@@ -459,7 +460,6 @@ const QUESTION_TIME_SEC = 15;
 const COMBO_EVERY = 3;          // 3연속 정답마다 보너스 +1
 const FAST_RATIO = 0.5;         // 제한시간이 절반 넘게 남았을 때 맞히면 번개 정답
 // 내 땅이 at칸이 되면 등장. 격파 기록은 achieved에 'boss:<at>' 키로 저장한다.
-// 이름은 받침으로 끝나야 한다(화면 문구가 '이/을/과' 조사를 쓴다).
 const BOSSES = [
   { at: 15,  name: '그림자 대장', icon: '👹', hp: 5 },
   { at: 50,  name: '그림자 장군', icon: '👺', hp: 7 },
@@ -669,6 +669,29 @@ function timeAgo(iso){
   return `${Math.floor(h/24)}일 전`;
 }
 
+/* ---------- 조사 ---------- */
+// 앞말의 마지막 글자 받침으로 조사를 고른다. pair는 '받침 있을 때/없을 때' 순서로 쓴다.
+// 예: pp('교실 뒤 바닥', '을/를') → '을', josa('복도 쪽 통로', '을/를') → '복도 쪽 통로를'
+// 지원: '을/를' '이/가' '은/는' '과/와' '아/야' '이에요/예요' '으로/로'(ㄹ받침은 '로')
+const DIGIT_SOUND = ['영','일','이','삼','사','오','육','칠','팔','구'];
+function lastSound(word){
+  const s = String(word ?? '').replace(/[\s'"’”」』\]]+$/u, '');
+  const ch = s.slice(-1);
+  if (/[0-9]/.test(ch)) return lastSound(DIGIT_SOUND[+ch]);
+  if (/[a-z]/i.test(ch)) return { has: /[lmnr]/i.test(ch), rieul: /[lr]/i.test(ch) };   // 엘·엠·엔·알
+  const code = ch.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3){ const jong = (code - 0xAC00) % 28; return { has: jong !== 0, rieul: jong === 8 }; }
+  return null;
+}
+function pp(word, pair){
+  const [withB, withoutB] = pair.split('/');
+  const snd = lastSound(word);
+  if (!snd) return `${withB}(${withoutB})`;
+  if (withB === '으로') return snd.has && !snd.rieul ? withB : withoutB;
+  return snd.has ? withB : withoutB;
+}
+const josa = (word, pair) => `${word}${pp(word, pair)}`;
+
 /* ---------- 교실 지도 ---------- */
 // 칸 id는 'r<행>c<열>'. 예전 육각형 지도의 id('-1_0' 등)와 겹치지 않는다.
 const cellId = (r, c) => `r${r}c${c}`;
@@ -832,7 +855,7 @@ function showBossIntro(b){
   document.getElementById('bossIcon').textContent = b.icon;
   document.getElementById('bossTitle').textContent = `${b.name} 등장!`;
   document.getElementById('bossText').innerHTML =
-    `내 땅이 ${b.at}칸이 되자 <b>${b.name}</b>이 나타났어요!<br>문제를 <b>${hp}번</b> 맞히면 물리칠 수 있어요.<br>틀리면 내 땅이 공격받아요.<br><span style="color:var(--ok);font-weight:700;">물리치면 내 모든 땅 방어력 +${BOSS_HEAL}!</span>`;
+    `내 땅이 ${b.at}칸이 되자 <b>${b.name}</b>${pp(b.name, '이/가')} 나타났어요!<br>문제를 <b>${hp}번</b> 맞히면 물리칠 수 있어요.<br>틀리면 내 땅이 공격받아요.<br><span style="color:var(--ok);font-weight:700;">물리치면 내 모든 땅 방어력 +${BOSS_HEAL}!</span>`;
   document.getElementById('bossModal').classList.add('active');
   Sound.play('boss');
 }
@@ -842,12 +865,12 @@ function renderBossBanner(){
   if (!b){ el.style.display = 'none'; return; }
   const hp = bossHp[b.at] ?? b.hp;
   el.style.display = 'block';
-  el.textContent = `${b.icon} ${b.name}이 나타났어요! (HP ${hp}/${b.hp}) · 눌러서 도전하기`;
+  el.textContent = `${b.icon} ${josa(b.name, '이/가')} 나타났어요! (HP ${hp}/${b.hp}) · 눌러서 도전하기`;
 }
 function startBoss(b){
   bossHp[b.at] = bossHp[b.at] ?? b.hp;
   quiz = { mode: 'boss', boss: b, id: null };
-  document.getElementById('qTitle').textContent = `${b.icon} ${b.name}과의 대결`;
+  document.getElementById('qTitle').textContent = `${b.icon} ${josa(b.name, '과/와')}의 대결`;
   document.getElementById('quizModal').classList.add('active');
   nextQuestion();
 }
@@ -1496,7 +1519,7 @@ function answer(btn, chosen, reason){
         setTimeout(()=>{
           closeQuiz();
           Sound.play('capture'); popCell(id);
-          toast(`🚩 ${cellLabel(id)}을(를) 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
+          toast(`🚩 ${josa(cellLabel(id), '을/를')} 개척했어요! (내 땅 ${ownedCount(me)}칸)`);
           const pops = [];
           if (chestMsg) pops.push(() => showCelebrate('🎁', '보물 상자 발견!', chestMsg));
           newly.forEach(m => pops.push(() => celebrate(m)));
@@ -1530,12 +1553,12 @@ function answer(btn, chosen, reason){
         Object.values(me.owned).forEach(c => { c.hp = Math.min(MAX_HP, c.hp + BOSS_HEAL); });
         me.study.items.hint++; me.study.items.shield++;
         delete bossHp[b.at];
-        say(`💥 ${b.name}을 물리쳤어요!`);
+        say(`💥 ${josa(b.name, '을/를')} 물리쳤어요!`);
         afterAnswer();
         setTimeout(()=>{
           closeQuiz();
           queuePopups([() => showCelebrate('🏆', '보스 격파!',
-            `<b>${escapeHtml(b.name)}</b>을 물리쳤어요!<br>내 모든 땅의 방어력이 <b>+${BOSS_HEAL}</b> 올랐어요. 🛡<br>전리품: 💡 힌트 1개 · 🛡 방패 1개`)]);
+            `<b>${escapeHtml(b.name)}</b>${pp(b.name, '을/를')} 물리쳤어요!<br>내 모든 땅의 방어력이 <b>+${BOSS_HEAL}</b> 올랐어요. 🛡<br>전리품: 💡 힌트 1개 · 🛡 방패 1개`)]);
         }, 1200);
         return;
       }
@@ -1603,10 +1626,10 @@ function aiAttack(){
   const before = me.owned[id].hp;
   if (before - 1 <= 0){
     delete me.owned[id];
-    return { id, msg: `그림자 군단이 ${cellLabel(id)}을(를) 빼앗았어요! 다시 개척해야 해요.` };
+    return { id, msg: `그림자 군단이 ${josa(cellLabel(id), '을/를')} 빼앗았어요! 다시 개척해야 해요.` };
   }
   me.owned[id].hp = before - 1;
-  return { id, msg: `그림자 군단이 ${cellLabel(id)}을(를) 공격했어요! (🛡 ${before}→${before-1})` };
+  return { id, msg: `그림자 군단이 ${josa(cellLabel(id), '을/를')} 공격했어요! (🛡 ${before}→${before-1})` };
 }
 function afterAnswer(){
   const newly = checkMissions();
