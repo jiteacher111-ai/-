@@ -4,6 +4,8 @@ HyperFrames(`/slideshow` 형식)로 만든 17장짜리 발표 슬라이드입니
 
 ## 여는 방법
 
+**가장 쉬운 방법: `바로보기.html`을 더블클릭**하면 브라우저에서 바로 열립니다(서버 필요 없음). → / ← 키, 스페이스, 화면 클릭으로 넘기고, '발표자 노트'와 '전체 화면' 버튼이 있습니다.
+
 **방법 1: 발표자 모드 (노트·타이머 포함, 권장)**
 
 ```bash
@@ -26,6 +28,7 @@ npx serve .
 ## 파일
 
 - `composition/index.html`: 슬라이드 본문 (HyperFrames 컴포지션 + 슬라이드쇼 JSON)
+- `바로보기.html`: 한 파일로 된 보기용 버전 (`composition/index.html`에서 만든 것)
 - `index.html`: 플레이어 래퍼. 안에 있는 슬라이드쇼 JSON은 `composition/index.html`의 것과 똑같아야 합니다.
 
 > 슬라이드 덱이므로 `hyperframes render`로 MP4를 만들면 첫 장만 나옵니다.
