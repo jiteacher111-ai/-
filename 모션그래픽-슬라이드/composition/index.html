@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1920, height=1080" />
-    <title>무료 모션그래픽 만들기</title>
+    <title>100% 무료 모션그래픽</title>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
     <style>
       :root {
@@ -17,6 +17,7 @@
         --gemini-2: #a58bff;
         --claude: #f0956a;
         --ok: #6fdcaa;
+        --warn: #ffd36e;
       }
       * {
         margin: 0;
@@ -79,7 +80,7 @@
         visibility: hidden;
         pointer-events: none;
         background: transparent;
-        padding: 110px 140px 150px;
+        padding: 100px 140px 150px;
         display: flex;
         flex-direction: column;
       }
@@ -91,24 +92,36 @@
         font-weight: 700;
         color: var(--gemini);
         letter-spacing: 0.02em;
-        margin-bottom: 26px;
+        margin-bottom: 22px;
       }
       .kicker .num {
         display: inline-grid;
         place-items: center;
-        width: 76px;
+        min-width: 76px;
         height: 76px;
+        padding: 0 18px;
         border-radius: 22px;
         background: linear-gradient(135deg, var(--gemini), var(--gemini-2));
         color: #0b1020;
-        font-size: 42px;
+        font-size: 40px;
         font-weight: 800;
+      }
+      .kicker .tool {
+        font-size: 40px;
+        font-weight: 600;
+        color: var(--muted);
       }
       .kicker.claude {
         color: var(--claude);
       }
       .kicker.claude .num {
         background: linear-gradient(135deg, #ffb48f, var(--claude));
+      }
+      .kicker.ok {
+        color: var(--ok);
+      }
+      .kicker.ok .num {
+        background: linear-gradient(135deg, #a5f0cf, var(--ok));
       }
       h1 {
         font-size: 112px;
@@ -117,11 +130,11 @@
         letter-spacing: -0.03em;
       }
       h2 {
-        font-size: 80px;
+        font-size: 76px;
         line-height: 1.2;
         font-weight: 800;
         letter-spacing: -0.025em;
-        margin-bottom: 48px;
+        margin-bottom: 40px;
       }
       p,
       li {
@@ -139,70 +152,91 @@
       .c {
         color: var(--claude);
       }
+      .y {
+        color: var(--warn);
+      }
       .grad {
         background: linear-gradient(90deg, var(--gemini), var(--gemini-2) 45%, var(--claude));
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
       }
-
-      /* terminal / code block */
-      .term {
-        background: #070b16;
+      kbd {
+        display: inline-block;
+        font-family: ui-monospace, Menlo, Consolas, monospace;
+        font-size: 40px;
+        line-height: 1.2;
+        padding: 2px 16px;
+        border-radius: 12px;
         border: 2px solid var(--line);
-        border-radius: 28px;
-        padding: 30px 44px 40px;
-        font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-        font-size: 42px;
-        line-height: 1.6;
+        background: var(--panel-2);
         color: var(--ink);
-        margin-bottom: 30px;
       }
-      .term .dots {
+
+      /* numbered how-to list */
+      .how {
+        list-style: none;
+        counter-reset: how;
         display: flex;
-        gap: 14px;
-        margin-bottom: 18px;
+        flex-direction: column;
+        gap: 18px;
       }
-      .term .dots i {
-        width: 20px;
-        height: 20px;
+      .how li {
+        counter-increment: how;
+        position: relative;
+        padding-left: 78px;
+        color: var(--ink);
+      }
+      .how li::before {
+        content: counter(how);
+        position: absolute;
+        left: 0;
+        top: 8px;
+        width: 56px;
+        height: 56px;
         border-radius: 50%;
-        background: #3a4566;
+        display: grid;
+        place-items: center;
+        font-size: 40px;
+        font-weight: 800;
+        background: var(--panel-2);
+        border: 2px solid var(--line);
+        color: var(--gemini);
       }
-      .term .pr {
+      .how.claude li::before {
+        color: var(--claude);
+      }
+      .how.ok li::before {
         color: var(--ok);
       }
-      .term .cm {
-        color: #7f89a6;
-      }
-      .term.small {
-        font-size: 40px;
+      .how li span {
+        color: var(--muted);
       }
 
       /* cards */
       .row {
         display: flex;
-        gap: 44px;
+        gap: 40px;
       }
       .card {
         flex: 1;
         background: var(--panel);
         border: 2px solid var(--line);
         border-radius: 34px;
-        padding: 44px 50px;
+        padding: 40px 46px;
       }
       .card h3 {
-        font-size: 56px;
+        font-size: 54px;
         font-weight: 800;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
       }
       .card .tag {
         display: inline-block;
         font-size: 40px;
         font-weight: 700;
-        padding: 6px 26px;
+        padding: 4px 24px;
         border-radius: 999px;
-        margin-bottom: 22px;
+        margin-bottom: 18px;
       }
       .card.claude {
         border-color: rgba(240, 149, 106, 0.55);
@@ -218,25 +252,25 @@
         background: rgba(122, 167, 255, 0.16);
         color: var(--gemini);
       }
-      .card ul {
-        list-style: none;
+      .card.warn {
+        border-color: rgba(255, 211, 110, 0.55);
       }
-      .card li::before {
-        content: "· ";
-        color: var(--ink);
+      .card.warn .tag {
+        background: rgba(255, 211, 110, 0.14);
+        color: var(--warn);
       }
 
       .checklist {
         list-style: none;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 34px 44px;
+        gap: 30px 40px;
       }
       .checklist li {
         background: var(--panel);
         border: 2px solid var(--line);
         border-radius: 28px;
-        padding: 34px 40px;
+        padding: 30px 38px;
         color: var(--ink);
         font-weight: 700;
       }
@@ -249,12 +283,10 @@
 
       .bubble {
         border-radius: 32px;
-        padding: 34px 44px;
+        padding: 30px 42px;
         font-size: 44px;
         line-height: 1.5;
-        margin-bottom: 30px;
-      }
-      .bubble.me {
+        margin-bottom: 28px;
         background: var(--panel-2);
         color: var(--ink);
         border: 2px solid var(--line);
@@ -263,14 +295,46 @@
         display: block;
         font-size: 40px;
         font-weight: 800;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
+      }
+      .bubble.claude {
+        border-color: rgba(240, 149, 106, 0.6);
+      }
+
+      /* pipeline */
+      .pipe {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 34px 40px;
+      }
+      .pipe .node {
+        background: var(--panel);
+        border: 2px solid var(--line);
+        border-radius: 30px;
+        padding: 30px 36px;
+      }
+      .pipe .node .big {
+        display: block;
+        font-size: 54px;
+        font-weight: 800;
+        color: var(--ink);
+      }
+      .pipe .node .n {
+        color: var(--muted);
+        font-weight: 700;
+        margin-right: 10px;
+      }
+      .pipe .node.gem {
+        border-color: rgba(122, 167, 255, 0.5);
+      }
+      .pipe .node.cla {
+        border-color: rgba(240, 149, 106, 0.6);
       }
 
       .flow {
         display: flex;
         align-items: center;
         gap: 30px;
-        margin-top: 20px;
       }
       .flow .node {
         flex: 1;
@@ -282,7 +346,7 @@
       }
       .flow .node .big {
         display: block;
-        font-size: 60px;
+        font-size: 58px;
         font-weight: 800;
         color: var(--ink);
         margin-bottom: 8px;
@@ -295,10 +359,10 @@
       .frag {
         opacity: 0;
       }
-      .note {
+      .foot {
+        margin-top: auto;
         font-size: 40px;
         color: var(--muted);
-        margin-top: auto;
       }
     </style>
   </head>
@@ -306,19 +370,23 @@
     <script type="application/hyperframes-slideshow+json">
       {
         "slides": [
-          { "sceneId": "cover", "notes": "오늘은 돈 한 푼 안 들이고 제미나이와 클로드로 모션그래픽 영상을 만드는 방법을 봅니다." },
-          { "sceneId": "idea", "notes": "핵심 개념: 영상을 '편집'하는 게 아니라 웹페이지(HTML)로 '작성'합니다. 그래서 AI가 대신 만들 수 있습니다." },
-          { "sceneId": "roles", "fragments": [12.1, 12.4, 12.8], "notes": "클로드는 기획자, 제미나이는 제작자. 다음(→)을 누를 때마다 카드가 하나씩 나타납니다." },
-          { "sceneId": "prep", "notes": "Node.js는 22 이상이어야 합니다. FFmpeg는 MP4로 내보낼 때 필요합니다." },
-          { "sceneId": "step1", "notes": "gemini를 처음 실행하면 로그인 방법을 고르라고 합니다. 구글 계정 로그인을 고르면 무료로 쓸 수 있습니다." },
-          { "sceneId": "step2", "notes": "확장을 설치한 뒤에는 Gemini CLI를 껐다 켜야 HyperFrames 스킬을 인식합니다." },
-          { "sceneId": "step3", "notes": "init 명령이 index.html 뼈대와 설정 파일을 만들어 줍니다." },
-          { "sceneId": "step4", "fragments": [42.1, 42.4], "notes": "클로드에게는 '장면표'를 받는 것이 목표입니다. 장면별 시간, 문구, 움직임, 색을 숫자로 받아 두면 제미나이가 정확히 따라 합니다." },
-          { "sceneId": "step5", "fragments": [48.1, 48.4], "notes": "클로드가 만든 장면표를 그대로 복사해 Gemini CLI에 붙여 넣습니다." },
-          { "sceneId": "step6", "fragments": [54.1, 54.4, 54.8], "notes": "preview로 눈으로 확인하고, check로 오류를 잡고, render로 MP4를 뽑습니다." },
-          { "sceneId": "loop", "notes": "한 번에 완벽하게 나오지 않습니다. 고칠 점을 구체적인 숫자로 말해 주는 것이 요령입니다." },
-          { "sceneId": "tips", "notes": "무료 사용량에는 한도가 있으니, 기획은 클로드 대화 한두 번으로 끝내고 제작 요청은 묶어서 보내세요." },
-          { "sceneId": "summary", "notes": "정리: 기획은 클로드, 제작은 제미나이, 영상화는 HyperFrames." }
+          { "sceneId": "cover", "notes": "오늘 예제는 완전히 무료입니다. 수업 자료, 회사 발표, 아내에게 줄 결혼 이야기까지 만들어 봅니다." },
+          { "sceneId": "why", "notes": "유료로 다 구독하면 한 달에 최소 10만 원. Claude 유료도 몇 번 만들면 토큰이 떨어져 5시간을 기다려야 합니다." },
+          { "sceneId": "tradeoff", "fragments": [12.1, 12.5], "notes": "무료로 하면 스타일을 세세하게 지정할수록 퀄리티가 떨어집니다. 스타일은 AI에게 맡기는 게 핵심입니다." },
+          { "sceneId": "tools", "fragments": [18.1, 18.4, 18.7], "notes": "링크를 눌러 회원 가입만 해 두면 준비 끝입니다." },
+          { "sceneId": "flow", "notes": "나레이션 없이 만드는 건 금방 합니다. 활용 범위가 넓은 '나레이션 있는 영상'을 기준으로 설명합니다." },
+          { "sceneId": "step1", "notes": "아르곤 같은 최신 모델은 유료 전용이라 선택해도 쓸 수 없습니다. 무료로 쓸 수 있는 Flash 모델을 고르세요." },
+          { "sceneId": "step2", "fragments": [36.1, 36.5], "notes": "기본 설정만으로는 조금 어색합니다. 감정·분위기 칸에 '밝은 나레이션 톤' 프롬프트를 넣으면 느낌이 확 달라집니다." },
+          { "sceneId": "step3", "notes": "Claude가 몇 초에 어떤 말이 나오는지 알아야 화면을 맞출 수 있습니다. 그래서 SRT 자막 파일이 꼭 필요합니다." },
+          { "sceneId": "step4", "notes": "예전엔 AI Studio에서도 음악을 만들 수 있었지만 지금은 유료 전용입니다. 음악은 Gemini 앱에서 무료로 만듭니다." },
+          { "sceneId": "step5", "notes": "이 설정을 켜야 Claude가 웹에서 외부 소스(폰트 등)를 받아 작업할 수 있습니다." },
+          { "sceneId": "step6", "notes": "준비한 프롬프트에서 주제만 바꾸세요. 무료 버전에서는 스타일을 지정하지 않고 AI에게 위임하는 것이 결과가 더 좋습니다." },
+          { "sceneId": "step7", "notes": "결과물은 영상이 아니라 웹페이지입니다. 카카오톡이나 구글 드라이브에 올려 두고 파워포인트처럼 쓰면 됩니다." },
+          { "sceneId": "step8", "notes": "녹화 전에 마우스 커서를 화면 밖으로 치워 두세요. Clipchamp는 구독 없이 기본 편집이 됩니다." },
+          { "sceneId": "ex2", "notes": "엑셀 범위를 그냥 붙여 넣으면 그림으로 들어갑니다. Ctrl+Shift+V로 값만 붙여 넣으세요." },
+          { "sceneId": "ex3", "notes": "무료 이미지 모델은 투명 배경을 잘 못 만듭니다. 그래서 크로마키 녹색 배경으로 만들고 Claude에게 지워 달라고 합니다." },
+          { "sceneId": "tips", "notes": "먼저 무료로 해 보고 자신감을 얻은 뒤, 더 높은 퀄리티가 필요하면 그때 유료를 고민하세요." },
+          { "sceneId": "summary", "notes": "소스는 구글 무료 도구, 모션은 Claude 무료 버전. 비용 0원." }
         ]
       }
     </script>
@@ -329,186 +397,243 @@
 
     <!-- 1. 표지 -->
     <div id="scene-cover" class="scene-frame clip" data-composition-id="cover" data-label="표지" data-start="0" data-duration="6" data-width="1920" data-height="1080" style="justify-content: center">
-      <div class="kicker" data-anim>HyperFrames · Gemini · Claude</div>
-      <h1 data-anim>제미나이 × 클로드로<br /><span class="grad">무료 모션그래픽</span> 만들기</h1>
-      <p data-anim style="margin-top: 40px">편집 프로그램 없이, 말로 주문하고 HTML로 영상을 뽑는 방법</p>
+      <div class="kicker" data-anim>Google AI Studio · Gemini · Claude</div>
+      <h1 data-anim><span class="grad">100% 무료</span>로 완성하는<br />클로드 모션그래픽</h1>
+      <p data-anim style="margin-top: 40px">대본 · 나레이션 · 자막 · 배경음악까지 무료 AI만으로 만들기</p>
     </div>
 
-    <!-- 2. 핵심 개념 -->
-    <div id="scene-idea" class="scene-frame clip" data-composition-id="idea" data-label="핵심 개념" data-start="6" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim>핵심 개념</div>
-      <h2 data-anim>HyperFrames = <span class="grad">HTML이 곧 영상</span></h2>
-      <div class="flow" data-anim>
-        <div class="node"><span class="big">HTML · CSS</span><p>화면 구성</p></div>
-        <div class="arrow">+</div>
-        <div class="node"><span class="big">GSAP</span><p>움직임(타임라인)</p></div>
-        <div class="arrow">→</div>
-        <div class="node"><span class="big">MP4</span><p>완성 영상</p></div>
+    <!-- 2. 왜 무료인가 -->
+    <div id="scene-why" class="scene-frame clip" data-composition-id="why" data-label="왜 무료로" data-start="6" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>왜 무료로?</div>
+      <h2 data-anim>다 구독하면 <span class="y">한 달 10만 원+</span></h2>
+      <div class="row" data-anim>
+        <div class="card warn">
+          <span class="tag">유료의 현실</span>
+          <p>ChatGPT · Gemini · Claude 각각 구독</p>
+          <p>Claude 유료도 몇 번 만들면 토큰 소진 → <b>5시간 대기</b></p>
+        </div>
+        <div class="card claude">
+          <span class="tag">Claude의 빈칸</span>
+          <p>모션은 잘 만들지만</p>
+          <p><b>이미지 · 음성은 직접 못 만듦</b> → 소스는 따로 준비</p>
+        </div>
       </div>
-      <p data-anim style="margin-top: 56px">HeyGen이 공개한 <b>무료 오픈소스</b> 영상 프레임워크 · AI 코딩 도구가 바로 쓸 수 있는 <b>스킬</b> 제공</p>
+      <p class="foot" data-anim>👉 소스는 <b class="g">구글 무료 도구</b>로, 모션은 <b class="c">Claude 무료 버전</b>으로!</p>
     </div>
 
-    <!-- 3. 역할 분담 -->
-    <div id="scene-roles" class="scene-frame clip" data-composition-id="roles" data-label="역할 분담" data-start="12" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim>역할 분담</div>
-      <h2 data-anim>두 AI에게 일을 나눠 맡깁니다</h2>
+    <!-- 3. 포기할 한 가지 -->
+    <div id="scene-tradeoff" class="scene-frame clip" data-composition-id="tradeoff" data-label="포기할 한 가지" data-start="12" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>무료의 조건</div>
+      <h2 data-anim>딱 한 가지만 포기하세요: <span class="grad">스타일 디테일</span></h2>
       <div class="row">
-        <div class="card claude frag" data-frag-time="12.4">
-          <span class="tag">기획자</span>
-          <h3>Claude <span class="c">(무료)</span></h3>
-          <ul>
-            <li>주제를 장면으로 쪼개기</li>
-            <li>화면 문구 · 색 · 움직임 정하기</li>
-            <li>제작용 <b>프롬프트(장면표)</b> 쓰기</li>
-          </ul>
+        <div class="card warn frag" data-frag-time="12.1">
+          <span class="tag">❌ 이렇게 하면</span>
+          <p>"칠판 스타일로, 3D로 멋지게…"</p>
+          <p>무료 모델에 스타일을 <b>세세하게 지정</b>할수록 <b>퀄리티가 떨어짐</b></p>
         </div>
-        <div class="card gemini frag" data-frag-time="12.8">
-          <span class="tag">제작자</span>
-          <h3>Gemini CLI <span class="g">(무료)</span></h3>
-          <ul>
-            <li>HyperFrames 스킬로 HTML 작성</li>
-            <li>미리보기 · 오류 검사</li>
-            <li><b>MP4 렌더링</b>까지 실행</li>
-          </ul>
+        <div class="card gemini frag" data-frag-time="12.5">
+          <span class="tag">⭕ 이렇게 하세요</span>
+          <p>"스타일은 네가 할 수 있는 걸로 잘 만들어 줘. <b>너한테 위임할게</b>"</p>
+          <p>수업용 · 개인용으로 <b>충분히 쓸 만한</b> 퀄리티</p>
         </div>
       </div>
     </div>
 
-    <!-- 4. 준비물 -->
-    <div id="scene-prep" class="scene-frame clip" data-composition-id="prep" data-label="준비물" data-start="18" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim>준비물</div>
-      <h2 data-anim>시작 전에 네 가지만 챙기세요</h2>
-      <ul class="checklist" data-anim>
-        <li>✅ Node.js 22 이상<span>nodejs.org에서 설치</span></li>
-        <li>✅ FFmpeg<span>MP4로 내보낼 때 필요</span></li>
-        <li>✅ 구글 계정<span>Gemini CLI 무료 로그인</span></li>
-        <li>✅ Claude 계정<span>claude.ai 무료 플랜</span></li>
+    <!-- 4. 무료 AI 3가지 -->
+    <div id="scene-tools" class="scene-frame clip" data-composition-id="tools" data-label="무료 AI 3가지" data-start="18" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>준비</div>
+      <h2 data-anim>무료 AI 3가지에 <b>회원 가입</b>만 하세요</h2>
+      <div class="row">
+        <div class="card gemini frag" data-frag-time="18.1">
+          <span class="tag">Google AI Studio</span>
+          <h3>대본 · 목소리</h3>
+          <p>대본 쓰기<br />나레이션(TTS)<br />SRT 자막 · 이미지</p>
+        </div>
+        <div class="card gemini frag" data-frag-time="18.4">
+          <span class="tag">Gemini 앱</span>
+          <h3>배경음악</h3>
+          <p>음악 만들기<br />보컬 없는 연주곡</p>
+        </div>
+        <div class="card claude frag" data-frag-time="18.7">
+          <span class="tag">Claude</span>
+          <h3>모션그래픽</h3>
+          <p>나레이션에 맞춘<br />움직이는 웹페이지</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 전체 흐름 -->
+    <div id="scene-flow" class="scene-frame clip" data-composition-id="flow" data-label="전체 흐름" data-start="24" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>전체 흐름</div>
+      <h2 data-anim>재료 3개를 만들어 Claude에게 던지면 끝</h2>
+      <div class="pipe" data-anim>
+        <div class="node gem"><span class="big"><span class="n">1</span>대본</span><p>AI Studio · Flash</p></div>
+        <div class="node gem"><span class="big"><span class="n">2</span>나레이션</span><p>AI Studio · TTS</p></div>
+        <div class="node gem"><span class="big"><span class="n">3</span>SRT 자막</span><p>AI Studio · Flash</p></div>
+        <div class="node gem"><span class="big"><span class="n">4</span>배경음악</span><p>Gemini 앱</p></div>
+        <div class="node cla"><span class="big"><span class="n">5</span>모션그래픽</span><p>Claude 무료</p></div>
+        <div class="node"><span class="big"><span class="n">6</span>HTML · MP4</span><p>내보내기 · 녹화</p></div>
+      </div>
+    </div>
+
+    <!-- 6. STEP 1 대본 -->
+    <div id="scene-step1" class="scene-frame clip" data-composition-id="step1" data-label="1 대본" data-start="30" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">1</span>대본 쓰기 <span class="tool">· Google AI Studio</span></div>
+      <h2 data-anim>Playground에서 <b>Flash 모델</b>로 30초 대본</h2>
+      <div class="bubble" data-anim>
+        <span class="who g">프롬프트 예시</span>
+        달 모양이 왜 바뀌는지 초등학생과 중학생에게 알려 주는 모션그래픽 영상을 만들려고 합니다. <b>30초 가량의 대본</b>을 작성해 주세요.
+      </div>
+      <ul class="how" data-anim>
+        <li>모델은 무료 <b>Flash</b> <span>(최신 유료 전용 모델은 선택 X)</span></li>
+        <li><kbd>Enter</kbd>는 줄 바꿈, 실행은 <kbd>Ctrl</kbd> + <kbd>Enter</kbd> <span>→ 나레이션 대사만 메모장에 복사</span></li>
       </ul>
     </div>
 
-    <!-- 5. 1단계 -->
-    <div id="scene-step1" class="scene-frame clip" data-composition-id="step1" data-label="1단계 Gemini CLI" data-start="24" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim><span class="num">1</span>Gemini CLI 설치</div>
-      <h2 data-anim>터미널에서 제미나이를 부릅니다</h2>
-      <div class="term" data-anim>
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div><span class="pr">$</span> npm install -g @google/gemini-cli</div>
-        <div><span class="pr">$</span> gemini</div>
-        <div class="cm"># 처음 실행 → "Google 계정으로 로그인" 선택</div>
-      </div>
-      <p data-anim>구글 계정으로 로그인하면 <b>무료 사용량</b> 안에서 바로 쓸 수 있습니다.</p>
-    </div>
-
-    <!-- 6. 2단계 -->
-    <div id="scene-step2" class="scene-frame clip" data-composition-id="step2" data-label="2단계 HyperFrames 확장" data-start="30" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim><span class="num">2</span>HyperFrames 확장 설치</div>
-      <h2 data-anim>제미나이에게 영상 만드는 법을 가르치기</h2>
-      <div class="term small" data-anim>
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div><span class="pr">$</span> gemini extensions install \</div>
-        <div>&nbsp;&nbsp;https://github.com/heygen-com/hyperframes \</div>
-        <div>&nbsp;&nbsp;--auto-update</div>
-        <div><span class="pr">$</span> gemini extensions list <span class="cm"># 설치 확인</span></div>
-      </div>
-      <p data-anim>설치 후 <b>Gemini CLI를 다시 시작</b>해야 스킬이 적용됩니다.</p>
-    </div>
-
-    <!-- 7. 3단계 -->
-    <div id="scene-step3" class="scene-frame clip" data-composition-id="step3" data-label="3단계 프로젝트" data-start="36" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim><span class="num">3</span>영상 프로젝트 만들기</div>
-      <h2 data-anim>영상 한 편 = 폴더 하나</h2>
-      <div class="term" data-anim>
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div><span class="pr">$</span> npx hyperframes init my-video</div>
-        <div><span class="pr">$</span> cd my-video</div>
-        <div><span class="pr">$</span> gemini</div>
-      </div>
-      <p data-anim><b>index.html</b>(영상 본체)과 설정 파일이 자동으로 생깁니다.</p>
-    </div>
-
-    <!-- 8. 4단계: Claude 기획 -->
-    <div id="scene-step4" class="scene-frame clip" data-composition-id="step4" data-label="4단계 Claude 기획" data-start="42" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker claude" data-anim><span class="num">4</span>Claude로 기획하기</div>
-      <h2 data-anim>장면표를 먼저 받아 둡니다</h2>
-      <div class="bubble me" data-anim>
-        <span class="who">나 → Claude</span>
-        "물의 순환"을 설명하는 <b>15초 모션그래픽</b> 장면표를 만들어 줘.<br />
-        장면마다 <b>시간 · 화면 문구 · 움직임 · 색</b>을 적고, HyperFrames 제작용 프롬프트로 정리해 줘.
-      </div>
-      <div class="bubble me frag" data-frag-time="42.4" style="border-color: rgba(240, 149, 106, 0.6)">
-        <span class="who c">Claude → 장면표</span>
-        0–3초 제목 페이드인 · 3–7초 증발 화살표 위로 · 7–11초 구름 모이기 · 11–15초 비 내리며 마무리 …
+    <!-- 7. STEP 2 나레이션 -->
+    <div id="scene-step2" class="scene-frame clip" data-composition-id="step2" data-label="2 나레이션" data-start="36" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">2</span>감정 담은 나레이션 <span class="tool">· AI Studio TTS</span></div>
+      <h2 data-anim>글자를 목소리로 바꾸기 (Text-to-Speech)</h2>
+      <ul class="how" data-anim>
+        <li>모델을 <b>Flash TTS</b>로 바꾸고 새 대화(Create new dialog)</li>
+        <li>대본을 붙여 넣고 <b>목소리(스피커)</b> 고르기</li>
+      </ul>
+      <div class="bubble frag" data-frag-time="36.5" style="margin-top: 28px">
+        <span class="who g">핵심: 감정 · 분위기 칸</span>
+        <b>"밝은 나레이션 톤"</b> 추천 프롬프트를 붙여 넣기 → 실행 → <b>다운로드</b>
       </div>
     </div>
 
-    <!-- 9. 5단계: Gemini 제작 -->
-    <div id="scene-step5" class="scene-frame clip" data-composition-id="step5" data-label="5단계 Gemini 제작" data-start="48" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim><span class="num">5</span>Gemini로 제작하기</div>
-      <h2 data-anim>장면표를 붙여 넣고 주문합니다</h2>
-      <div class="term small" data-anim>
-        <div class="dots"><i></i><i></i><i></i></div>
-        <div><span class="pr">&gt;</span> HyperFrames 스킬을 써서 아래 장면표대로</div>
-        <div>&nbsp;&nbsp;1920×1080, 15초 영상을 index.html에 만들어 줘.</div>
-        <div class="cm">&nbsp;&nbsp;(Claude가 만든 장면표 붙여 넣기)</div>
-      </div>
-      <p class="frag" data-frag-time="48.4">제미나이가 <b>HTML + GSAP 애니메이션</b>을 작성하고 스스로 검사까지 합니다.</p>
+    <!-- 8. STEP 3 SRT -->
+    <div id="scene-step3" class="scene-frame clip" data-composition-id="step3" data-label="3 SRT 자막" data-start="42" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">3</span>SRT 자막 파일 <span class="tool">· AI Studio Flash</span></div>
+      <h2 data-anim>몇 초에 무슨 말을 하는지 알려 주기</h2>
+      <ul class="how" data-anim>
+        <li>모델을 다시 <b>Flash</b>로</li>
+        <li>방금 받은 <b>나레이션 음성 파일</b>을 첨부</li>
+        <li><b>"SRT 파일로 만들어 줘"</b> → 실행 → 다운로드</li>
+      </ul>
+      <p class="foot" data-anim>무료 버전에서 <b>꼭 필요한 파일</b>: Claude가 자막 시간에 맞춰 화면을 바꿉니다.</p>
     </div>
 
-    <!-- 10. 6단계: 확인 · 렌더 -->
-    <div id="scene-step6" class="scene-frame clip" data-composition-id="step6" data-label="6단계 렌더" data-start="54" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim><span class="num">6</span>확인하고 MP4로 뽑기</div>
-      <h2 data-anim>미리보기 → 검사 → 렌더</h2>
-      <div class="flow">
-        <div class="node" data-anim><span class="big">preview</span><p>브라우저에서<br />바로 재생</p></div>
-        <div class="arrow frag" data-frag-time="54.4">→</div>
-        <div class="node frag" data-frag-time="54.4"><span class="big">check</span><p>깨진 곳 · 오류<br />자동 점검</p></div>
-        <div class="arrow frag" data-frag-time="54.8">→</div>
-        <div class="node frag" data-frag-time="54.8"><span class="big">render</span><p>MP4 파일로<br />저장</p></div>
+    <!-- 9. STEP 4 BGM -->
+    <div id="scene-step4" class="scene-frame clip" data-composition-id="step4" data-label="4 배경음악" data-start="48" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">4</span>배경음악 <span class="tool">· Gemini 앱</span></div>
+      <h2 data-anim><kbd>+</kbd> → <b>음악 만들기</b> (짧게 · 보컬 없음)</h2>
+      <div class="bubble" data-anim>
+        <span class="who g">프롬프트 예시</span>
+        '달의 모양은 왜 바뀔까?'라는 주제로 모션그래픽 영상에 사용할 배경 음악입니다.
       </div>
-      <p data-anim style="margin-top: 50px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 40px">npx hyperframes preview · check · render</p>
+      <p data-anim>완성되면 커버 이미지는 빼고 <b>음악(오디오)만</b> 다운로드</p>
+      <p class="foot" data-anim>AI Studio의 음악 만들기는 이제 유료 전용 → 음악은 <b>Gemini 앱</b>에서 무료로</p>
     </div>
 
-    <!-- 11. 수정 루프 -->
-    <div id="scene-loop" class="scene-frame clip" data-composition-id="loop" data-label="수정 반복" data-start="60" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim>다듬기</div>
-      <h2 data-anim>마음에 들 때까지 <span class="grad">말로 고칩니다</span></h2>
-      <div class="bubble me" data-anim>
-        <span class="who g">나 → Gemini</span>
-        2번 장면 제목을 <b>1.5배 크게</b>, 화살표는 <b>0.5초 빨리</b> 나오게, 배경은 <b>남색</b>으로 바꿔 줘.
-      </div>
-      <p data-anim>고칠 점이 애매하면 <b class="c">Claude</b>에게 "이 영상을 더 역동적으로 만들 수정 지시문"을 써 달라고 하세요.</p>
+    <!-- 10. STEP 5 Claude 설정 -->
+    <div id="scene-step5" class="scene-frame clip" data-composition-id="step5" data-label="5 Claude 설정" data-start="54" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker claude" data-anim><span class="num">5</span>실행 전 설정 <span class="tool">· Claude</span></div>
+      <h2 data-anim><span class="c">외부 네트워크 접속 허용</span>을 켜세요</h2>
+      <ul class="how claude" data-anim>
+        <li>사이드바 → <b>계정</b> 클릭 → <b>설정</b></li>
+        <li><b>기능</b> 메뉴 → <b>외부 네트워크 접속 허용</b> 켜기 <span>(기본은 꺼짐)</span></li>
+      </ul>
+      <p class="foot" data-anim>무료 사용자는 기본 모델 <b>Sonnet</b> 그대로 OK · 켜야 웹의 외부 소스(폰트 등)를 받아 작업</p>
     </div>
 
-    <!-- 12. 팁 -->
-    <div id="scene-tips" class="scene-frame clip" data-composition-id="tips" data-label="팁과 주의점" data-start="66" data-duration="6" data-width="1920" data-height="1080">
-      <div class="kicker" data-anim>팁 · 주의점</div>
-      <h2 data-anim>무료로 끝까지 가려면</h2>
-      <ul class="checklist" data-anim>
-        <li>⏱ 숫자로 지시하기<span>"빠르게" 대신 "0.5초"</span></li>
-        <li>✂️ 장면은 짧게 쪼개기<span>15–30초부터 시작</span></li>
-        <li>📦 요청은 묶어서<span>무료 사용량 아끼기</span></li>
-        <li>©️ 저작권 확인<span>남의 이미지·음악 주의</span></li>
+    <!-- 11. STEP 6 Claude 제작 -->
+    <div id="scene-step6" class="scene-frame clip" data-composition-id="step6" data-label="6 Claude 제작" data-start="60" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker claude" data-anim><span class="num">6</span>모션그래픽 만들기 <span class="tool">· Claude</span></div>
+      <h2 data-anim>파일 3개 + 프롬프트 = 끝</h2>
+      <ul class="how claude" data-anim>
+        <li>채팅창에 <b>나레이션 · SRT 자막 · 배경음악</b> 첨부</li>
+        <li>준비한 프롬프트를 붙여 넣고 <b>주제만 바꾸기</b></li>
+        <li><b>녹화 모드</b> 버튼도 만들어 달라고 요청</li>
+      </ul>
+      <div class="bubble claude" data-anim style="margin-top: 26px">
+        <span class="who c">스타일 칸</span>
+        "스타일은 네가 할 수 있는 걸로 잘 만들어 줘. 너한테 위임할게."
+      </div>
+    </div>
+
+    <!-- 12. STEP 7 HTML -->
+    <div id="scene-step7" class="scene-frame clip" data-composition-id="step7" data-label="7 HTML 내보내기" data-start="66" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker ok" data-anim><span class="num">7</span>HTML로 내보내기</div>
+      <h2 data-anim>결과물은 영상이 아니라 <span class="grad">웹페이지</span></h2>
+      <ul class="how ok" data-anim>
+        <li><b>공유</b> → <b>내보내기</b> → <b>HTML 페이지</b> 받기</li>
+        <li>카카오톡 · 구글 드라이브에 올려 두고 필요할 때 열기</li>
+        <li><kbd>F11</kbd> 전체 화면 → <b>녹화 모드</b>로 재생 <span>= 파워포인트처럼</span></li>
       </ul>
     </div>
 
-    <!-- 13. 정리 -->
-    <div id="scene-summary" class="scene-frame clip" data-composition-id="summary" data-label="정리" data-start="72" data-duration="6" data-width="1920" data-height="1080" style="justify-content: center">
+    <!-- 13. STEP 8 MP4 -->
+    <div id="scene-step8" class="scene-frame clip" data-composition-id="step8" data-label="8 MP4 만들기" data-start="72" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker ok" data-anim><span class="num">8</span>MP4로 만들기 <span class="tool">· 윈도우 기본 도구</span></div>
+      <h2 data-anim>화면 녹화 → Clipchamp로 다듬기</h2>
+      <ul class="how ok" data-anim>
+        <li><kbd>Win</kbd> + <kbd>Shift</kbd> + <kbd>R</kbd> 캡처 도구 녹화 → 화면 전체 드래그 → 시작</li>
+        <li>HTML을 <kbd>F11</kbd> 전체 화면 + 녹화 모드로 재생 → 중지</li>
+        <li>캡처 도구 오른쪽 위 <b>Clipchamp</b> → 앞뒤 자르기 → 내보내기</li>
+      </ul>
+      <p class="foot" data-anim>💡 녹화 전에 마우스 커서는 화면 밖으로 숨기기</p>
+    </div>
+
+    <!-- 14. 예제 2 -->
+    <div id="scene-ex2" class="scene-frame clip" data-composition-id="ex2" data-label="예제 매출 발표" data-start="78" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">예제 2</span>회사 매출 발표 영상</div>
+      <h2 data-anim>엑셀 데이터로 만드는 <span class="grad">9월 매출 보고</span></h2>
+      <ul class="how" data-anim>
+        <li>엑셀 범위 복사 → <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>V</kbd> <span>(값으로 붙여 넣기)</span></li>
+        <li>나레이션은 <b>"힘 있는 나레이션 톤"</b> · 음악은 <b>발표용 팝 연주곡</b></li>
+        <li>Claude 프롬프트의 <b>데이터 칸</b>에 매출 데이터 넣기</li>
+      </ul>
+      <div class="bubble claude" data-anim style="margin-top: 24px">
+        <span class="who c">스타일 칸</span>
+        "커피 매장 느낌의 <b>다크브라운 강조색</b>을 활용한 <b>기업 IR 프레젠테이션</b> 스타일"
+      </div>
+    </div>
+
+    <!-- 15. 예제 3 -->
+    <div id="scene-ex3" class="scene-frame clip" data-composition-id="ex3" data-label="예제 복스 스타일" data-start="84" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker claude" data-anim><span class="num">예제 3</span>복스(Vox) 스타일 커플 이야기</div>
+      <h2 data-anim>사진 스티커가 움직이는 <span class="grad">결혼 스토리</span></h2>
+      <ul class="how claude" data-anim>
+        <li>AI Studio 이미지 모델 <b>나노 바나나 무료(라이트)</b>로 장면 그림 만들기</li>
+        <li>무료는 투명 배경이 잘 안 됨 → <b>크로마키 녹색 배경</b>으로 생성 <span>(끊기면 "계속 생성")</span></li>
+        <li>Claude에게: <b>"초록 배경을 지우고 흰 테두리 스티커로 붙여 줘"</b></li>
+      </ul>
+      <p class="foot" data-anim>대본 → 밝은 톤 나레이션 → SRT → 음악 과정은 똑같습니다.</p>
+    </div>
+
+    <!-- 16. 팁 -->
+    <div id="scene-tips" class="scene-frame clip" data-composition-id="tips" data-label="팁" data-start="90" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>꿀팁 정리</div>
+      <h2 data-anim>무료로 잘 만드는 요령</h2>
+      <ul class="checklist" data-anim>
+        <li>🎨 스타일은 AI에 위임<span>원하는 스타일이 있으면 그때 추가</span></li>
+        <li>🆓 무료 모델 고르기<span>Flash · Flash TTS · 나노 바나나 라이트</span></li>
+        <li>🔤 폰트는 구글 무료 폰트<span>Noto Sans 등 상업 이용 가능</span></li>
+        <li>🎬 녹화 모드 요청하기<span>프롬프트에 넣어야 버튼이 생김</span></li>
+      </ul>
+    </div>
+
+    <!-- 17. 정리 -->
+    <div id="scene-summary" class="scene-frame clip" data-composition-id="summary" data-label="정리" data-start="96" data-duration="6" data-width="1920" data-height="1080" style="justify-content: center">
       <div class="kicker" data-anim>정리</div>
       <div class="flow" data-anim>
-        <div class="node" style="border-color: rgba(240, 149, 106, 0.6)"><span class="big c">Claude</span><p>기획 · 장면표</p></div>
+        <div class="node" style="border-color: rgba(122, 167, 255, 0.6)"><span class="big g">AI Studio</span><p>대본 · 목소리 · 자막</p></div>
+        <div class="arrow">+</div>
+        <div class="node" style="border-color: rgba(122, 167, 255, 0.6)"><span class="big g">Gemini</span><p>배경음악</p></div>
         <div class="arrow">→</div>
-        <div class="node" style="border-color: rgba(122, 167, 255, 0.6)"><span class="big g">Gemini CLI</span><p>코드 작성 · 실행</p></div>
-        <div class="arrow">→</div>
-        <div class="node"><span class="big">HyperFrames</span><p>MP4 영상</p></div>
+        <div class="node" style="border-color: rgba(240, 149, 106, 0.6)"><span class="big c">Claude</span><p>모션그래픽</p></div>
       </div>
-      <h2 data-anim style="margin-top: 70px; margin-bottom: 0">비용 <span class="grad">0원</span>, 필요한 건 아이디어뿐</h2>
+      <h2 data-anim style="margin-top: 70px; margin-bottom: 0">비용 <span class="grad">0원</span>, 먼저 해 보고 자신감부터!</h2>
     </div>
 
     <!-- Root timeline: establishes the seekable range and drives the ambient background -->
     <script>
       (function () {
         window.__timelines = window.__timelines || {};
-        var TOTAL = 78;
+        var TOTAL = 102;
         var tl = gsap.timeline({ paused: true });
         tl.to({}, { duration: TOTAL }, 0);
         tl.fromTo("#orb-a", { x: 0, y: 0 }, { x: 520, y: 260, duration: TOTAL / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
@@ -582,7 +707,7 @@
     <script>
       (function () {
         var FPS = 30;
-        var TOTAL = 78;
+        var TOTAL = 102;
         var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene-frame")).map(function (el) {
           return {
             id: el.getAttribute("data-composition-id"),

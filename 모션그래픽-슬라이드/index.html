@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>무료 모션그래픽 만들기</title>
+    <title>100% 무료 모션그래픽</title>
     <script src="https://cdn.jsdelivr.net/npm/@hyperframes/player@0.9.16/dist/hyperframes-player.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@hyperframes/player@0.9.16/dist/slideshow/hyperframes-slideshow.global.js"></script>
     <style>
@@ -18,19 +18,23 @@
       <script type="application/hyperframes-slideshow+json">
       {
         "slides": [
-          { "sceneId": "cover", "notes": "오늘은 돈 한 푼 안 들이고 제미나이와 클로드로 모션그래픽 영상을 만드는 방법을 봅니다." },
-          { "sceneId": "idea", "notes": "핵심 개념: 영상을 '편집'하는 게 아니라 웹페이지(HTML)로 '작성'합니다. 그래서 AI가 대신 만들 수 있습니다." },
-          { "sceneId": "roles", "fragments": [12.1, 12.4, 12.8], "notes": "클로드는 기획자, 제미나이는 제작자. 다음(→)을 누를 때마다 카드가 하나씩 나타납니다." },
-          { "sceneId": "prep", "notes": "Node.js는 22 이상이어야 합니다. FFmpeg는 MP4로 내보낼 때 필요합니다." },
-          { "sceneId": "step1", "notes": "gemini를 처음 실행하면 로그인 방법을 고르라고 합니다. 구글 계정 로그인을 고르면 무료로 쓸 수 있습니다." },
-          { "sceneId": "step2", "notes": "확장을 설치한 뒤에는 Gemini CLI를 껐다 켜야 HyperFrames 스킬을 인식합니다." },
-          { "sceneId": "step3", "notes": "init 명령이 index.html 뼈대와 설정 파일을 만들어 줍니다." },
-          { "sceneId": "step4", "fragments": [42.1, 42.4], "notes": "클로드에게는 '장면표'를 받는 것이 목표입니다. 장면별 시간, 문구, 움직임, 색을 숫자로 받아 두면 제미나이가 정확히 따라 합니다." },
-          { "sceneId": "step5", "fragments": [48.1, 48.4], "notes": "클로드가 만든 장면표를 그대로 복사해 Gemini CLI에 붙여 넣습니다." },
-          { "sceneId": "step6", "fragments": [54.1, 54.4, 54.8], "notes": "preview로 눈으로 확인하고, check로 오류를 잡고, render로 MP4를 뽑습니다." },
-          { "sceneId": "loop", "notes": "한 번에 완벽하게 나오지 않습니다. 고칠 점을 구체적인 숫자로 말해 주는 것이 요령입니다." },
-          { "sceneId": "tips", "notes": "무료 사용량에는 한도가 있으니, 기획은 클로드 대화 한두 번으로 끝내고 제작 요청은 묶어서 보내세요." },
-          { "sceneId": "summary", "notes": "정리: 기획은 클로드, 제작은 제미나이, 영상화는 HyperFrames." }
+          { "sceneId": "cover", "notes": "오늘 예제는 완전히 무료입니다. 수업 자료, 회사 발표, 아내에게 줄 결혼 이야기까지 만들어 봅니다." },
+          { "sceneId": "why", "notes": "유료로 다 구독하면 한 달에 최소 10만 원. Claude 유료도 몇 번 만들면 토큰이 떨어져 5시간을 기다려야 합니다." },
+          { "sceneId": "tradeoff", "fragments": [12.1, 12.5], "notes": "무료로 하면 스타일을 세세하게 지정할수록 퀄리티가 떨어집니다. 스타일은 AI에게 맡기는 게 핵심입니다." },
+          { "sceneId": "tools", "fragments": [18.1, 18.4, 18.7], "notes": "링크를 눌러 회원 가입만 해 두면 준비 끝입니다." },
+          { "sceneId": "flow", "notes": "나레이션 없이 만드는 건 금방 합니다. 활용 범위가 넓은 '나레이션 있는 영상'을 기준으로 설명합니다." },
+          { "sceneId": "step1", "notes": "아르곤 같은 최신 모델은 유료 전용이라 선택해도 쓸 수 없습니다. 무료로 쓸 수 있는 Flash 모델을 고르세요." },
+          { "sceneId": "step2", "fragments": [36.1, 36.5], "notes": "기본 설정만으로는 조금 어색합니다. 감정·분위기 칸에 '밝은 나레이션 톤' 프롬프트를 넣으면 느낌이 확 달라집니다." },
+          { "sceneId": "step3", "notes": "Claude가 몇 초에 어떤 말이 나오는지 알아야 화면을 맞출 수 있습니다. 그래서 SRT 자막 파일이 꼭 필요합니다." },
+          { "sceneId": "step4", "notes": "예전엔 AI Studio에서도 음악을 만들 수 있었지만 지금은 유료 전용입니다. 음악은 Gemini 앱에서 무료로 만듭니다." },
+          { "sceneId": "step5", "notes": "이 설정을 켜야 Claude가 웹에서 외부 소스(폰트 등)를 받아 작업할 수 있습니다." },
+          { "sceneId": "step6", "notes": "준비한 프롬프트에서 주제만 바꾸세요. 무료 버전에서는 스타일을 지정하지 않고 AI에게 위임하는 것이 결과가 더 좋습니다." },
+          { "sceneId": "step7", "notes": "결과물은 영상이 아니라 웹페이지입니다. 카카오톡이나 구글 드라이브에 올려 두고 파워포인트처럼 쓰면 됩니다." },
+          { "sceneId": "step8", "notes": "녹화 전에 마우스 커서를 화면 밖으로 치워 두세요. Clipchamp는 구독 없이 기본 편집이 됩니다." },
+          { "sceneId": "ex2", "notes": "엑셀 범위를 그냥 붙여 넣으면 그림으로 들어갑니다. Ctrl+Shift+V로 값만 붙여 넣으세요." },
+          { "sceneId": "ex3", "notes": "무료 이미지 모델은 투명 배경을 잘 못 만듭니다. 그래서 크로마키 녹색 배경으로 만들고 Claude에게 지워 달라고 합니다." },
+          { "sceneId": "tips", "notes": "먼저 무료로 해 보고 자신감을 얻은 뒤, 더 높은 퀄리티가 필요하면 그때 유료를 고민하세요." },
+          { "sceneId": "summary", "notes": "소스는 구글 무료 도구, 모션은 Claude 무료 버전. 비용 0원." }
         ]
       }
     </script>

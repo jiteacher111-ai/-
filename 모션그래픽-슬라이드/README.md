@@ -1,6 +1,6 @@
-# 제미나이 × 클로드로 무료 모션그래픽 만들기 (HyperFrames 슬라이드)
+# 100% 무료로 완성하는 클로드 모션그래픽 (HyperFrames 슬라이드)
 
-HyperFrames(`/slideshow` 형식)로 만든 13장짜리 발표 슬라이드입니다.
+HyperFrames(`/slideshow` 형식)로 만든 17장짜리 발표 슬라이드입니다. Google AI Studio(대본·나레이션·SRT·이미지), Gemini(배경음악), Claude 무료 버전(모션그래픽)으로 무료 모션그래픽을 만드는 과정을 정리했습니다.
 
 ## 여는 방법
 
