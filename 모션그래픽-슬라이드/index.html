@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>무료 모션그래픽 만들기</title>
+    <script src="https://cdn.jsdelivr.net/npm/@hyperframes/player@0.9.16/dist/hyperframes-player.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@hyperframes/player@0.9.16/dist/slideshow/hyperframes-slideshow.global.js"></script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 100%; height: 100%; overflow: hidden; background: #0b1020; }
+    </style>
+  </head>
+  <body>
+    <hyperframes-slideshow tabindex="0" style="display: block; position: relative; width: 100vw; height: 100vh">
+      <hyperframes-player interactive style="position: absolute; inset: 0" src="composition/index.html"></hyperframes-player>
+      <!-- composition/index.html 의 슬라이드쇼 아일랜드와 같은 내용이어야 합니다 -->
+      <script type="application/hyperframes-slideshow+json">
+      {
+        "slides": [
+          { "sceneId": "cover", "notes": "오늘은 돈 한 푼 안 들이고 제미나이와 클로드로 모션그래픽 영상을 만드는 방법을 봅니다." },
+          { "sceneId": "idea", "notes": "핵심 개념: 영상을 '편집'하는 게 아니라 웹페이지(HTML)로 '작성'합니다. 그래서 AI가 대신 만들 수 있습니다." },
+          { "sceneId": "roles", "fragments": [12.1, 12.4, 12.8], "notes": "클로드는 기획자, 제미나이는 제작자. 다음(→)을 누를 때마다 카드가 하나씩 나타납니다." },
+          { "sceneId": "prep", "notes": "Node.js는 22 이상이어야 합니다. FFmpeg는 MP4로 내보낼 때 필요합니다." },
+          { "sceneId": "step1", "notes": "gemini를 처음 실행하면 로그인 방법을 고르라고 합니다. 구글 계정 로그인을 고르면 무료로 쓸 수 있습니다." },
+          { "sceneId": "step2", "notes": "확장을 설치한 뒤에는 Gemini CLI를 껐다 켜야 HyperFrames 스킬을 인식합니다." },
+          { "sceneId": "step3", "notes": "init 명령이 index.html 뼈대와 설정 파일을 만들어 줍니다." },
+          { "sceneId": "step4", "fragments": [42.1, 42.4], "notes": "클로드에게는 '장면표'를 받는 것이 목표입니다. 장면별 시간, 문구, 움직임, 색을 숫자로 받아 두면 제미나이가 정확히 따라 합니다." },
+          { "sceneId": "step5", "fragments": [48.1, 48.4], "notes": "클로드가 만든 장면표를 그대로 복사해 Gemini CLI에 붙여 넣습니다." },
+          { "sceneId": "step6", "fragments": [54.1, 54.4, 54.8], "notes": "preview로 눈으로 확인하고, check로 오류를 잡고, render로 MP4를 뽑습니다." },
+          { "sceneId": "loop", "notes": "한 번에 완벽하게 나오지 않습니다. 고칠 점을 구체적인 숫자로 말해 주는 것이 요령입니다." },
+          { "sceneId": "tips", "notes": "무료 사용량에는 한도가 있으니, 기획은 클로드 대화 한두 번으로 끝내고 제작 요청은 묶어서 보내세요." },
+          { "sceneId": "summary", "notes": "정리: 기획은 클로드, 제작은 제미나이, 영상화는 HyperFrames." }
+        ]
+      }
+    </script>
+    </hyperframes-slideshow>
+    <script>
+      document.querySelector("hyperframes-slideshow").focus();
+    </script>
+  </body>
+</html>

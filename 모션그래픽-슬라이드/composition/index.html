@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>무료 모션그래픽 만들기</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --ground: #0b1020;
+        --panel: #141b31;
+        --panel-2: #1b2440;
+        --line: #2a3557;
+        --ink: #f4f6fb;
+        --muted: #aab3cc;
+        --gemini: #7aa7ff;
+        --gemini-2: #a58bff;
+        --claude: #f0956a;
+        --ok: #6fdcaa;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--ground);
+        color: var(--ink);
+        font-family: "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+        word-break: keep-all;
+      }
+
+      /* ---------- ambient background (driven by the root timeline) ---------- */
+      .orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(120px);
+        opacity: 0.35;
+        pointer-events: none;
+      }
+      #orb-a {
+        width: 760px;
+        height: 760px;
+        left: -200px;
+        top: -260px;
+        background: var(--gemini);
+      }
+      #orb-b {
+        width: 680px;
+        height: 680px;
+        right: -180px;
+        bottom: -260px;
+        background: var(--claude);
+        opacity: 0.28;
+      }
+      #grid {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        background-size: 80px 80px;
+        pointer-events: none;
+      }
+
+      /* ---------- scene frame ---------- */
+      .scene-frame {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        background: transparent;
+        padding: 110px 140px 150px;
+        display: flex;
+        flex-direction: column;
+      }
+      .kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--gemini);
+        letter-spacing: 0.02em;
+        margin-bottom: 26px;
+      }
+      .kicker .num {
+        display: inline-grid;
+        place-items: center;
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: linear-gradient(135deg, var(--gemini), var(--gemini-2));
+        color: #0b1020;
+        font-size: 42px;
+        font-weight: 800;
+      }
+      .kicker.claude {
+        color: var(--claude);
+      }
+      .kicker.claude .num {
+        background: linear-gradient(135deg, #ffb48f, var(--claude));
+      }
+      h1 {
+        font-size: 112px;
+        line-height: 1.15;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+      h2 {
+        font-size: 80px;
+        line-height: 1.2;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 48px;
+      }
+      p,
+      li {
+        font-size: 44px;
+        line-height: 1.5;
+        color: var(--muted);
+      }
+      b,
+      strong {
+        color: var(--ink);
+      }
+      .g {
+        color: var(--gemini);
+      }
+      .c {
+        color: var(--claude);
+      }
+      .grad {
+        background: linear-gradient(90deg, var(--gemini), var(--gemini-2) 45%, var(--claude));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      /* terminal / code block */
+      .term {
+        background: #070b16;
+        border: 2px solid var(--line);
+        border-radius: 28px;
+        padding: 30px 44px 40px;
+        font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+        font-size: 42px;
+        line-height: 1.6;
+        color: var(--ink);
+        margin-bottom: 30px;
+      }
+      .term .dots {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+      .term .dots i {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #3a4566;
+      }
+      .term .pr {
+        color: var(--ok);
+      }
+      .term .cm {
+        color: #7f89a6;
+      }
+      .term.small {
+        font-size: 40px;
+      }
+
+      /* cards */
+      .row {
+        display: flex;
+        gap: 44px;
+      }
+      .card {
+        flex: 1;
+        background: var(--panel);
+        border: 2px solid var(--line);
+        border-radius: 34px;
+        padding: 44px 50px;
+      }
+      .card h3 {
+        font-size: 56px;
+        font-weight: 800;
+        margin-bottom: 14px;
+      }
+      .card .tag {
+        display: inline-block;
+        font-size: 40px;
+        font-weight: 700;
+        padding: 6px 26px;
+        border-radius: 999px;
+        margin-bottom: 22px;
+      }
+      .card.claude {
+        border-color: rgba(240, 149, 106, 0.55);
+      }
+      .card.claude .tag {
+        background: rgba(240, 149, 106, 0.16);
+        color: var(--claude);
+      }
+      .card.gemini {
+        border-color: rgba(122, 167, 255, 0.55);
+      }
+      .card.gemini .tag {
+        background: rgba(122, 167, 255, 0.16);
+        color: var(--gemini);
+      }
+      .card ul {
+        list-style: none;
+      }
+      .card li::before {
+        content: "· ";
+        color: var(--ink);
+      }
+
+      .checklist {
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 34px 44px;
+      }
+      .checklist li {
+        background: var(--panel);
+        border: 2px solid var(--line);
+        border-radius: 28px;
+        padding: 34px 40px;
+        color: var(--ink);
+        font-weight: 700;
+      }
+      .checklist li span {
+        display: block;
+        font-weight: 400;
+        color: var(--muted);
+        font-size: 40px;
+      }
+
+      .bubble {
+        border-radius: 32px;
+        padding: 34px 44px;
+        font-size: 44px;
+        line-height: 1.5;
+        margin-bottom: 30px;
+      }
+      .bubble.me {
+        background: var(--panel-2);
+        color: var(--ink);
+        border: 2px solid var(--line);
+      }
+      .bubble .who {
+        display: block;
+        font-size: 40px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+
+      .flow {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin-top: 20px;
+      }
+      .flow .node {
+        flex: 1;
+        text-align: center;
+        background: var(--panel);
+        border: 2px solid var(--line);
+        border-radius: 32px;
+        padding: 40px 24px;
+      }
+      .flow .node .big {
+        display: block;
+        font-size: 60px;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+      .flow .arrow {
+        font-size: 72px;
+        color: var(--muted);
+      }
+
+      .frag {
+        opacity: 0;
+      }
+      .note {
+        font-size: 40px;
+        color: var(--muted);
+        margin-top: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="application/hyperframes-slideshow+json">
+      {
+        "slides": [
+          { "sceneId": "cover", "notes": "오늘은 돈 한 푼 안 들이고 제미나이와 클로드로 모션그래픽 영상을 만드는 방법을 봅니다." },
+          { "sceneId": "idea", "notes": "핵심 개념: 영상을 '편집'하는 게 아니라 웹페이지(HTML)로 '작성'합니다. 그래서 AI가 대신 만들 수 있습니다." },
+          { "sceneId": "roles", "fragments": [12.1, 12.4, 12.8], "notes": "클로드는 기획자, 제미나이는 제작자. 다음(→)을 누를 때마다 카드가 하나씩 나타납니다." },
+          { "sceneId": "prep", "notes": "Node.js는 22 이상이어야 합니다. FFmpeg는 MP4로 내보낼 때 필요합니다." },
+          { "sceneId": "step1", "notes": "gemini를 처음 실행하면 로그인 방법을 고르라고 합니다. 구글 계정 로그인을 고르면 무료로 쓸 수 있습니다." },
+          { "sceneId": "step2", "notes": "확장을 설치한 뒤에는 Gemini CLI를 껐다 켜야 HyperFrames 스킬을 인식합니다." },
+          { "sceneId": "step3", "notes": "init 명령이 index.html 뼈대와 설정 파일을 만들어 줍니다." },
+          { "sceneId": "step4", "fragments": [42.1, 42.4], "notes": "클로드에게는 '장면표'를 받는 것이 목표입니다. 장면별 시간, 문구, 움직임, 색을 숫자로 받아 두면 제미나이가 정확히 따라 합니다." },
+          { "sceneId": "step5", "fragments": [48.1, 48.4], "notes": "클로드가 만든 장면표를 그대로 복사해 Gemini CLI에 붙여 넣습니다." },
+          { "sceneId": "step6", "fragments": [54.1, 54.4, 54.8], "notes": "preview로 눈으로 확인하고, check로 오류를 잡고, render로 MP4를 뽑습니다." },
+          { "sceneId": "loop", "notes": "한 번에 완벽하게 나오지 않습니다. 고칠 점을 구체적인 숫자로 말해 주는 것이 요령입니다." },
+          { "sceneId": "tips", "notes": "무료 사용량에는 한도가 있으니, 기획은 클로드 대화 한두 번으로 끝내고 제작 요청은 묶어서 보내세요." },
+          { "sceneId": "summary", "notes": "정리: 기획은 클로드, 제작은 제미나이, 영상화는 HyperFrames." }
+        ]
+      }
+    </script>
+
+    <div id="grid"></div>
+    <div id="orb-a" class="orb"></div>
+    <div id="orb-b" class="orb"></div>
+
+    <!-- 1. 표지 -->
+    <div id="scene-cover" class="scene-frame clip" data-composition-id="cover" data-label="표지" data-start="0" data-duration="6" data-width="1920" data-height="1080" style="justify-content: center">
+      <div class="kicker" data-anim>HyperFrames · Gemini · Claude</div>
+      <h1 data-anim>제미나이 × 클로드로<br /><span class="grad">무료 모션그래픽</span> 만들기</h1>
+      <p data-anim style="margin-top: 40px">편집 프로그램 없이, 말로 주문하고 HTML로 영상을 뽑는 방법</p>
+    </div>
+
+    <!-- 2. 핵심 개념 -->
+    <div id="scene-idea" class="scene-frame clip" data-composition-id="idea" data-label="핵심 개념" data-start="6" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>핵심 개념</div>
+      <h2 data-anim>HyperFrames = <span class="grad">HTML이 곧 영상</span></h2>
+      <div class="flow" data-anim>
+        <div class="node"><span class="big">HTML · CSS</span><p>화면 구성</p></div>
+        <div class="arrow">+</div>
+        <div class="node"><span class="big">GSAP</span><p>움직임(타임라인)</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><span class="big">MP4</span><p>완성 영상</p></div>
+      </div>
+      <p data-anim style="margin-top: 56px">HeyGen이 공개한 <b>무료 오픈소스</b> 영상 프레임워크 · AI 코딩 도구가 바로 쓸 수 있는 <b>스킬</b> 제공</p>
+    </div>
+
+    <!-- 3. 역할 분담 -->
+    <div id="scene-roles" class="scene-frame clip" data-composition-id="roles" data-label="역할 분담" data-start="12" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>역할 분담</div>
+      <h2 data-anim>두 AI에게 일을 나눠 맡깁니다</h2>
+      <div class="row">
+        <div class="card claude frag" data-frag-time="12.4">
+          <span class="tag">기획자</span>
+          <h3>Claude <span class="c">(무료)</span></h3>
+          <ul>
+            <li>주제를 장면으로 쪼개기</li>
+            <li>화면 문구 · 색 · 움직임 정하기</li>
+            <li>제작용 <b>프롬프트(장면표)</b> 쓰기</li>
+          </ul>
+        </div>
+        <div class="card gemini frag" data-frag-time="12.8">
+          <span class="tag">제작자</span>
+          <h3>Gemini CLI <span class="g">(무료)</span></h3>
+          <ul>
+            <li>HyperFrames 스킬로 HTML 작성</li>
+            <li>미리보기 · 오류 검사</li>
+            <li><b>MP4 렌더링</b>까지 실행</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 준비물 -->
+    <div id="scene-prep" class="scene-frame clip" data-composition-id="prep" data-label="준비물" data-start="18" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>준비물</div>
+      <h2 data-anim>시작 전에 네 가지만 챙기세요</h2>
+      <ul class="checklist" data-anim>
+        <li>✅ Node.js 22 이상<span>nodejs.org에서 설치</span></li>
+        <li>✅ FFmpeg<span>MP4로 내보낼 때 필요</span></li>
+        <li>✅ 구글 계정<span>Gemini CLI 무료 로그인</span></li>
+        <li>✅ Claude 계정<span>claude.ai 무료 플랜</span></li>
+      </ul>
+    </div>
+
+    <!-- 5. 1단계 -->
+    <div id="scene-step1" class="scene-frame clip" data-composition-id="step1" data-label="1단계 Gemini CLI" data-start="24" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">1</span>Gemini CLI 설치</div>
+      <h2 data-anim>터미널에서 제미나이를 부릅니다</h2>
+      <div class="term" data-anim>
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div><span class="pr">$</span> npm install -g @google/gemini-cli</div>
+        <div><span class="pr">$</span> gemini</div>
+        <div class="cm"># 처음 실행 → "Google 계정으로 로그인" 선택</div>
+      </div>
+      <p data-anim>구글 계정으로 로그인하면 <b>무료 사용량</b> 안에서 바로 쓸 수 있습니다.</p>
+    </div>
+
+    <!-- 6. 2단계 -->
+    <div id="scene-step2" class="scene-frame clip" data-composition-id="step2" data-label="2단계 HyperFrames 확장" data-start="30" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">2</span>HyperFrames 확장 설치</div>
+      <h2 data-anim>제미나이에게 영상 만드는 법을 가르치기</h2>
+      <div class="term small" data-anim>
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div><span class="pr">$</span> gemini extensions install \</div>
+        <div>&nbsp;&nbsp;https://github.com/heygen-com/hyperframes \</div>
+        <div>&nbsp;&nbsp;--auto-update</div>
+        <div><span class="pr">$</span> gemini extensions list <span class="cm"># 설치 확인</span></div>
+      </div>
+      <p data-anim>설치 후 <b>Gemini CLI를 다시 시작</b>해야 스킬이 적용됩니다.</p>
+    </div>
+
+    <!-- 7. 3단계 -->
+    <div id="scene-step3" class="scene-frame clip" data-composition-id="step3" data-label="3단계 프로젝트" data-start="36" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">3</span>영상 프로젝트 만들기</div>
+      <h2 data-anim>영상 한 편 = 폴더 하나</h2>
+      <div class="term" data-anim>
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div><span class="pr">$</span> npx hyperframes init my-video</div>
+        <div><span class="pr">$</span> cd my-video</div>
+        <div><span class="pr">$</span> gemini</div>
+      </div>
+      <p data-anim><b>index.html</b>(영상 본체)과 설정 파일이 자동으로 생깁니다.</p>
+    </div>
+
+    <!-- 8. 4단계: Claude 기획 -->
+    <div id="scene-step4" class="scene-frame clip" data-composition-id="step4" data-label="4단계 Claude 기획" data-start="42" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker claude" data-anim><span class="num">4</span>Claude로 기획하기</div>
+      <h2 data-anim>장면표를 먼저 받아 둡니다</h2>
+      <div class="bubble me" data-anim>
+        <span class="who">나 → Claude</span>
+        "물의 순환"을 설명하는 <b>15초 모션그래픽</b> 장면표를 만들어 줘.<br />
+        장면마다 <b>시간 · 화면 문구 · 움직임 · 색</b>을 적고, HyperFrames 제작용 프롬프트로 정리해 줘.
+      </div>
+      <div class="bubble me frag" data-frag-time="42.4" style="border-color: rgba(240, 149, 106, 0.6)">
+        <span class="who c">Claude → 장면표</span>
+        0–3초 제목 페이드인 · 3–7초 증발 화살표 위로 · 7–11초 구름 모이기 · 11–15초 비 내리며 마무리 …
+      </div>
+    </div>
+
+    <!-- 9. 5단계: Gemini 제작 -->
+    <div id="scene-step5" class="scene-frame clip" data-composition-id="step5" data-label="5단계 Gemini 제작" data-start="48" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">5</span>Gemini로 제작하기</div>
+      <h2 data-anim>장면표를 붙여 넣고 주문합니다</h2>
+      <div class="term small" data-anim>
+        <div class="dots"><i></i><i></i><i></i></div>
+        <div><span class="pr">&gt;</span> HyperFrames 스킬을 써서 아래 장면표대로</div>
+        <div>&nbsp;&nbsp;1920×1080, 15초 영상을 index.html에 만들어 줘.</div>
+        <div class="cm">&nbsp;&nbsp;(Claude가 만든 장면표 붙여 넣기)</div>
+      </div>
+      <p class="frag" data-frag-time="48.4">제미나이가 <b>HTML + GSAP 애니메이션</b>을 작성하고 스스로 검사까지 합니다.</p>
+    </div>
+
+    <!-- 10. 6단계: 확인 · 렌더 -->
+    <div id="scene-step6" class="scene-frame clip" data-composition-id="step6" data-label="6단계 렌더" data-start="54" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim><span class="num">6</span>확인하고 MP4로 뽑기</div>
+      <h2 data-anim>미리보기 → 검사 → 렌더</h2>
+      <div class="flow">
+        <div class="node" data-anim><span class="big">preview</span><p>브라우저에서<br />바로 재생</p></div>
+        <div class="arrow frag" data-frag-time="54.4">→</div>
+        <div class="node frag" data-frag-time="54.4"><span class="big">check</span><p>깨진 곳 · 오류<br />자동 점검</p></div>
+        <div class="arrow frag" data-frag-time="54.8">→</div>
+        <div class="node frag" data-frag-time="54.8"><span class="big">render</span><p>MP4 파일로<br />저장</p></div>
+      </div>
+      <p data-anim style="margin-top: 50px; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 40px">npx hyperframes preview · check · render</p>
+    </div>
+
+    <!-- 11. 수정 루프 -->
+    <div id="scene-loop" class="scene-frame clip" data-composition-id="loop" data-label="수정 반복" data-start="60" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>다듬기</div>
+      <h2 data-anim>마음에 들 때까지 <span class="grad">말로 고칩니다</span></h2>
+      <div class="bubble me" data-anim>
+        <span class="who g">나 → Gemini</span>
+        2번 장면 제목을 <b>1.5배 크게</b>, 화살표는 <b>0.5초 빨리</b> 나오게, 배경은 <b>남색</b>으로 바꿔 줘.
+      </div>
+      <p data-anim>고칠 점이 애매하면 <b class="c">Claude</b>에게 "이 영상을 더 역동적으로 만들 수정 지시문"을 써 달라고 하세요.</p>
+    </div>
+
+    <!-- 12. 팁 -->
+    <div id="scene-tips" class="scene-frame clip" data-composition-id="tips" data-label="팁과 주의점" data-start="66" data-duration="6" data-width="1920" data-height="1080">
+      <div class="kicker" data-anim>팁 · 주의점</div>
+      <h2 data-anim>무료로 끝까지 가려면</h2>
+      <ul class="checklist" data-anim>
+        <li>⏱ 숫자로 지시하기<span>"빠르게" 대신 "0.5초"</span></li>
+        <li>✂️ 장면은 짧게 쪼개기<span>15–30초부터 시작</span></li>
+        <li>📦 요청은 묶어서<span>무료 사용량 아끼기</span></li>
+        <li>©️ 저작권 확인<span>남의 이미지·음악 주의</span></li>
+      </ul>
+    </div>
+
+    <!-- 13. 정리 -->
+    <div id="scene-summary" class="scene-frame clip" data-composition-id="summary" data-label="정리" data-start="72" data-duration="6" data-width="1920" data-height="1080" style="justify-content: center">
+      <div class="kicker" data-anim>정리</div>
+      <div class="flow" data-anim>
+        <div class="node" style="border-color: rgba(240, 149, 106, 0.6)"><span class="big c">Claude</span><p>기획 · 장면표</p></div>
+        <div class="arrow">→</div>
+        <div class="node" style="border-color: rgba(122, 167, 255, 0.6)"><span class="big g">Gemini CLI</span><p>코드 작성 · 실행</p></div>
+        <div class="arrow">→</div>
+        <div class="node"><span class="big">HyperFrames</span><p>MP4 영상</p></div>
+      </div>
+      <h2 data-anim style="margin-top: 70px; margin-bottom: 0">비용 <span class="grad">0원</span>, 필요한 건 아이디어뿐</h2>
+    </div>
+
+    <!-- Root timeline: establishes the seekable range and drives the ambient background -->
+    <script>
+      (function () {
+        window.__timelines = window.__timelines || {};
+        var TOTAL = 78;
+        var tl = gsap.timeline({ paused: true });
+        tl.to({}, { duration: TOTAL }, 0);
+        tl.fromTo("#orb-a", { x: 0, y: 0 }, { x: 520, y: 260, duration: TOTAL / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+        tl.fromTo("#orb-b", { x: 0, y: 0 }, { x: -480, y: -220, duration: TOTAL / 2, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+        window.__timelines["root"] = tl;
+      })();
+    </script>
+
+    <!-- Visibility controller: playhead drives which slide is shown and which fragments are revealed -->
+    <script>
+      (function () {
+        var sceneEls = Array.prototype.slice.call(document.querySelectorAll(".scene-frame"));
+        var scenes = sceneEls.map(function (el) {
+          var start = parseFloat(el.getAttribute("data-start"));
+          return { el: el, start: start, end: start + parseFloat(el.getAttribute("data-duration")) };
+        });
+        var frags = Array.prototype.slice.call(document.querySelectorAll("[data-frag-time]")).map(function (el) {
+          return { el: el, time: parseFloat(el.getAttribute("data-frag-time")), shown: false };
+        });
+        var lastActive = null;
+
+        function fireEntrance(sceneEl) {
+          var animEls = sceneEl.querySelectorAll("[data-anim]");
+          if (!animEls.length) return;
+          gsap.fromTo(
+            animEls,
+            { opacity: 0, y: 36 },
+            { opacity: 1, y: 0, duration: 0.5, stagger: 0.08, ease: "power3.out", overwrite: true },
+          );
+        }
+
+        function updateVisibility(t) {
+          for (var i = 0; i < scenes.length; i++) {
+            var s = scenes[i];
+            var active = t >= s.start && t < s.end;
+            if (i === scenes.length - 1 && t >= s.end) active = true;
+            s.el.style.opacity = active ? "1" : "0";
+            s.el.style.visibility = active ? "visible" : "hidden";
+            s.el.style.pointerEvents = active ? "auto" : "none";
+            if (active && lastActive !== s.el) {
+              lastActive = s.el;
+              fireEntrance(s.el);
+            }
+          }
+          for (var j = 0; j < frags.length; j++) {
+            var f = frags[j];
+            var on = t >= f.time - 0.001;
+            if (on && !f.shown) {
+              f.shown = true;
+              gsap.fromTo(f.el, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out", overwrite: true });
+            } else if (!on && f.shown) {
+              f.shown = false;
+              gsap.set(f.el, { opacity: 0, y: 0, overwrite: true });
+            }
+          }
+        }
+
+        window.__hfSetTime = updateVisibility;
+        updateVisibility(0);
+
+        var root = window.__timelines && window.__timelines["root"];
+        if (root) {
+          root.eventCallback("onUpdate", function () {
+            updateVisibility(root.time());
+          });
+        }
+      })();
+    </script>
+
+    <!-- Scene manifest for <hyperframes-slideshow> when opened through the standalone player -->
+    <script>
+      (function () {
+        var FPS = 30;
+        var TOTAL = 78;
+        var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene-frame")).map(function (el) {
+          return {
+            id: el.getAttribute("data-composition-id"),
+            start: parseFloat(el.getAttribute("data-start")),
+            duration: parseFloat(el.getAttribute("data-duration")),
+          };
+        });
+        function postTimeline() {
+          if (window.parent === window) return;
+          window.parent.postMessage({ source: "hf-preview", type: "timeline", durationInFrames: TOTAL * FPS, scenes: scenes }, "*");
+        }
+        if (document.readyState === "complete") setTimeout(postTimeline, 300);
+        else window.addEventListener("load", function () { setTimeout(postTimeline, 300); });
+      })();
+    </script>
+  </body>
+</html>
