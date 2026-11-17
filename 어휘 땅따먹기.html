@@ -181,6 +181,13 @@
   @keyframes fall{to{transform:translateY(110vh) rotate(760deg);}}
   /* 학습 강화 · 아이템 */
   .q-word.long{font-family:'Noto Sans KR',sans-serif;font-weight:700;font-size:17px;line-height:1.5;}
+  .q-type.blank{background:#d8f0e6;color:#1d6b3a;}
+  .blank{display:inline-block;min-width:4.2em;padding:0 2px;margin:0;border-bottom:3px solid var(--teal);color:var(--teal);font-family:'Jua',sans-serif;text-align:center;}
+  .blank.filled,.blank.missed{min-width:0;}
+  .blank.filled{border-bottom-color:var(--ok);color:var(--ok);}
+  .blank.missed{border-bottom-color:var(--danger);color:var(--danger);}
+  .learn-card .lc-ex{font-size:12.5px;margin-top:6px;line-height:1.6;}
+  .learn-card .lc-ex b{color:var(--ok);}
   .q-type{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--parchment2);color:var(--ink);margin-bottom:6px;}
   .q-type.rev{background:#dcd0f5;color:#4b2a8a;}
   .item-row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;}
@@ -410,6 +417,7 @@ const CONFIG = {
   SPREADSHEET_ID: '1s3Oc7TbPo6BmMhR2-NVKzSePpossJMUQjydLOdZisGs',
   SHEET_NAME: '낱말 집계',
   SUBJECTS: ['국어', '사회', '과학'],
+  EXAMPLE_SHEET: '예문',   // 빈칸 문제용 예문 탭(열: 과목·낱말·예문). 없으면 뜻 문제만 나와요.
 };
 // 위에서 내려다본 교실. 첫 줄이 칠판 쪽, 왼쪽 벽이 창문, 오른쪽 벽이 복도(앞문·뒷문).
 // . 바닥  D 학생 책상(두 개씩 붙은 4분단)  P 화분  B 학급문고  L 사물함  C 청소함
@@ -476,6 +484,8 @@ const MAX_BOX = SRS_MINUTES.length - 1;
 const MASTER_BOX = 3;           // 3번 상자 이상이면 '익힌 낱말'
 const RETRY_GAP = 2;            // 틀린 낱말은 다른 문제 2개 뒤에 다시
 const REVERSE_RATE = 0.45;      // 맞혀본 낱말을 거꾸로 물을 확률
+const BLANK_RATE = 0.4;         // 예문이 있는 낱말을 빈칸 문제로 낼 확률
+const BLANK_TIME_SEC = 20;      // 빈칸 문제는 문장을 읽어야 해서 시간을 더 준다
 const DUE_RATE = 0.4;           // 복습할 때가 된 낱말을 먼저 꺼낼 확률
 const REVIEW_LEN = 6;           // 낱말 노트 복습 한 판 문제 수
 const CHEST_COUNT = 9;          // 교실에 숨겨진 보물 상자 수
@@ -560,6 +570,63 @@ async function fetchVocab(){
   }
   return bySubject;
 }
+/* ---------- 빈칸 문제용 예문 ---------- */
+// 예문 속 정답 자리를 찾는다. {낱말}로 표시했으면 그 부분, 없으면 낱말을 찾고,
+// '-다'로 끝나는 낱말은 줄기(거느리-)로 찾아 그 어절 끝까지(거느리고) 빈칸으로 만든다.
+function parseExample(text, word){
+  text = String(text || '').trim();
+  if (!text) return null;
+  let before, ans, after;
+  const m = /\{([^{}]+)\}/.exec(text);
+  if (m){
+    before = text.slice(0, m.index); ans = m[1].trim(); after = text.slice(m.index + m[0].length);
+  } else {
+    let i = text.indexOf(word), len = word.length;
+    if (i < 0 && word.length >= 2 && word.endsWith('다')){
+      const stem = word.slice(0, -1);
+      i = text.indexOf(stem);
+      if (i >= 0){ let j = i + stem.length; while (j < text.length && !/[\s.,!?·"'”’)\]]/.test(text[j])) j++; len = j - i; }
+    }
+    if (i < 0) return null;
+    before = text.slice(0, i); ans = text.slice(i, i + len); after = text.slice(i + len);
+  }
+  before = before.replace(/[{}]/g, ''); after = after.replace(/[{}]/g, '');
+  if (!ans) return null;
+  // 빈칸 밖에 같은 낱말이 또 있으면 답이 드러나므로 쓰지 않는다.
+  const core = word.length >= 2 && word.endsWith('다') ? word.slice(0, -1) : word;
+  if ((before + ' ' + after).includes(core)) return null;
+  return { before, ans, after };
+}
+let EXAMPLE_STATS = { tab: false, rows: 0, used: 0, noWord: [], noMatch: [] };
+// 예문 탭은 없어도 된다. 없는 탭을 요청하면 gviz가 첫 탭을 돌려주므로 '예문' 열이 없으면 없는 것으로 본다.
+async function fetchExamples(){
+  EXAMPLE_STATS = { tab: false, rows: 0, used: 0, noWord: [], noMatch: [] };
+  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(CONFIG.EXAMPLE_SHEET)}`;
+  const res = await fetch(url);
+  if (!res.ok) return;
+  const text = await res.text();
+  if (/^<!DOCTYPE html/i.test(text.trim())) return;
+  const rows = parseCSV(text);
+  const header = (rows[0] || []).map(h => (h||'').trim());
+  const idx = { word: header.indexOf('낱말'), ex: header.indexOf('예문'), subject: header.indexOf('과목') };
+  if (idx.word === -1 || idx.ex === -1) return;
+  EXAMPLE_STATS.tab = true;
+  const byWord = {};
+  CONFIG.SUBJECTS.forEach(s => DB[s].all.forEach(w => { (byWord[w.word] = byWord[w.word] || []).push(w); }));
+  for (let i=1;i<rows.length;i++){
+    const r = rows[i]; if (!r) continue;
+    const word = (r[idx.word]||'').trim(), ex = (r[idx.ex]||'').trim();
+    if (!word || !ex) continue;
+    EXAMPLE_STATS.rows++;
+    const subject = idx.subject > -1 ? subjectOf(r[idx.subject]) : null;
+    const targets = (byWord[word] || []).filter(w => !subject || w.subject === subject);
+    if (!targets.length){ EXAMPLE_STATS.noWord.push(word); continue; }
+    const parsed = parseExample(ex, word);
+    if (!parsed){ EXAMPLE_STATS.noMatch.push(word); continue; }
+    targets.forEach(w => { (w.examples = w.examples || []).push(parsed); });
+    EXAMPLE_STATS.used++;
+  }
+}
 async function loadAllData(){
   const errBox = document.getElementById('loadErrBox');
   errBox.innerHTML = '';
@@ -569,6 +636,7 @@ async function loadAllData(){
     const bySubject = await fetchVocab();
     CONFIG.SUBJECTS.forEach(s => { DB[s].all = bySubject[s]; });
   } catch (e){ errMsg = e.message; }
+  try { await fetchExamples(); } catch (e){ console.warn('예문을 불러오지 못했어요', e); }
   if (CONFIG.SUBJECTS.every(s => DB[s].all.length === 0)){
     const firstErr = errMsg || `"${CONFIG.SHEET_NAME}" 시트에 과목이 국어/사회/과학인 낱말이 없어요.`;
     errBox.innerHTML = `<div class="load-err">⚠️ ${escapeHtml(firstErr)}<br><br>
@@ -937,6 +1005,15 @@ function renderSubjectInfo(){
   if (VOCAB_STATS.blank) notes.push(`과목 칸이 비어 있는 ${VOCAB_STATS.blank}행은 빠졌어요.`);
   const none = !CONFIG.SUBJECTS.some(s => DB[s].all.length >= MIN_WORDS);
   if (none) notes.unshift(`고를 수 있는 과목이 없어요. 과목마다 낱말이 ${MIN_WORDS}개 이상 있어야 해요. "${escapeHtml(CONFIG.SHEET_NAME)}" 시트의 과목 칸을 확인해주세요.`);
+  const ex = EXAMPLE_STATS;
+  if (!ex.tab) notes.push(`빈칸 문제: "${escapeHtml(CONFIG.EXAMPLE_SHEET)}" 탭이 없어 뜻 문제만 나와요.`);
+  else {
+    const withEx = CONFIG.SUBJECTS.map(s => `${s} ${DB[s].all.filter(w => w.examples && w.examples.length).length}개`).join(' · ');
+    notes.push(`빈칸 문제를 낼 수 있는 낱말: ${withEx}`);
+    const sampleOf = list => list.slice(0, 3).map(v => `'${escapeHtml(v)}'`).join(', ') + (list.length > 3 ? ' 등' : '');
+    if (ex.noMatch.length) notes.push(`예문 ${ex.noMatch.length}개는 문장 속에서 낱말을 찾지 못해 빠졌어요(${sampleOf(ex.noMatch)}). 낱말을 {중괄호}로 감싸 주세요.`);
+    if (ex.noWord.length) notes.push(`예문 ${ex.noWord.length}개는 "${escapeHtml(CONFIG.SHEET_NAME)}"에 없는 낱말이라 빠졌어요(${sampleOf(ex.noWord)}).`);
+  }
   el.className = 'subj-info' + (none ? ' bad' : '');
   el.innerHTML = `불러온 낱말: ${counts}` + notes.map(n => `<br>${n}`).join('');
 }
@@ -1382,6 +1459,22 @@ function buildOptions(w, reverse){
   for (const x of [...same, ...rest]){ if (texts.size >= 4) break; texts.add(textOf(x)); }
   return { answerText, options: shuffle([...texts]) };
 }
+// 빈칸 보기: 정답 낱말 + 같은 과목의 다른 낱말 3개. '-다'로 끝나는 낱말끼리, 아닌 낱말끼리 먼저 골라
+// 빈칸 앞뒤의 문법만 보고 맞히지 못하게 한다.
+function buildBlankOptions(w){
+  const all = DB[me.subject].all;
+  const isVerb = x => x.word.length >= 2 && x.word.endsWith('다');
+  const others = all.filter(x => x.word !== w.word && x.meaning !== w.meaning);
+  const texts = new Set([w.word]);
+  const tiers = [
+    others.filter(x => isVerb(x) === isVerb(w) && x.difficulty === w.difficulty),
+    others.filter(x => isVerb(x) === isVerb(w)),
+    others,
+  ];
+  for (const tier of tiers) for (const x of shuffle(tier)){ if (texts.size >= 4) break; texts.add(x.word); }
+  return { answerText: w.word, options: shuffle([...texts]) };
+}
+const exampleHtml = (ex, inner, cls) => `${escapeHtml(ex.before)}<span class="blank${cls ? ' ' + cls : ''}">${inner}</span>${escapeHtml(ex.after)}`;
 function nextQuestion(){
   if (!quiz) return;
   quiz.retry = false; quiz.hinted = false;
@@ -1393,17 +1486,22 @@ function nextQuestion(){
     w = pickWord(quiz.mode === 'boss' ? 'mixed' : TERRAIN[terrainMap[quiz.id]].diff);
   }
   const rec = wordRec(w);
-  // 한 번이라도 맞혀 본 낱말은 거꾸로(뜻 → 낱말)도 물어 본다.
-  const reverse = !!rec && rec.c > 0 && DB[me.subject].all.length >= 4 && Math.random() < REVERSE_RATE;
-  const { answerText, options } = buildOptions(w, reverse);
-  Object.assign(quiz, { word: w, reverse, answerText, answered: false });
+  // 예문이 있으면 빈칸 문제로, 한 번이라도 맞혀 본 낱말은 거꾸로(뜻 → 낱말)도 물어 본다.
+  const example = w.examples && w.examples.length && Math.random() < BLANK_RATE ? sample(w.examples, 1)[0] : null;
+  const reverse = !example && !!rec && rec.c > 0 && DB[me.subject].all.length >= 4 && Math.random() < REVERSE_RATE;
+  const { answerText, options } = example ? buildBlankOptions(w) : buildOptions(w, reverse);
+  Object.assign(quiz, { word: w, reverse, example, answerText, answered: false });
   renderQuizStatus();
   const prompt = document.getElementById('qPrompt');
-  prompt.textContent = reverse ? '🔄 거꾸로 문제 · 이 뜻을 가진 낱말은?' : '이 낱말의 뜻은?';
+  prompt.textContent = example
+    ? `✏️ 빈칸에 들어갈 알맞은 낱말은?${example.ans !== w.word ? ' (기본형으로 골라요)' : ''}`
+    : reverse ? '🔄 거꾸로 문제 · 이 뜻을 가진 낱말은?' : '이 낱말의 뜻은?';
   prompt.classList.toggle('rev', reverse);
+  prompt.classList.toggle('blank', !!example);
   const qw = document.getElementById('qWord');
-  qw.textContent = reverse ? w.meaning : w.word;
-  qw.classList.toggle('long', reverse);
+  if (example) qw.innerHTML = exampleHtml(example, '(　　　)');
+  else qw.textContent = reverse ? w.meaning : w.word;
+  qw.classList.toggle('long', reverse || !!example);
   document.getElementById('qFeedback').textContent = '';
   document.querySelector('#quizModal .modal').scrollTop = 0;
   const wrap = document.getElementById('qOptions');
@@ -1411,12 +1509,12 @@ function nextQuestion(){
   options.forEach(opt=>{
     const b = document.createElement('button');
     b.className = 'opt-btn'; b.textContent = opt;
-    if (reverse) b.style.cssText = 'font-family:Jua,sans-serif;font-size:17px;justify-content:center;';
+    if (reverse || example) b.style.cssText = 'font-family:Jua,sans-serif;font-size:17px;justify-content:center;';
     b.onclick = () => answer(b, opt);
     wrap.appendChild(b);
   });
   renderItemsUi();
-  startTimer();
+  startTimer(example ? BLANK_TIME_SEC : QUESTION_TIME_SEC);
 }
 /* ---------- 아이템 ---------- */
 function renderItemsUi(){
@@ -1456,11 +1554,11 @@ function weakestOwned(){
 }
 let quizTimer = null;
 function stopTimer(){ clearInterval(quizTimer); quizTimer = null; }
-function startTimer(){
+function startTimer(sec){
   stopTimer();
-  const total = QUESTION_TIME_SEC * 1000;
+  const total = sec * 1000;
   const end = Date.now() + total;
-  quiz.timeEnd = end;
+  quiz.timeEnd = end; quiz.timeTotal = total;
   const fill = document.getElementById('qTimerFill');
   const text = document.getElementById('qTimerText');
   let lastTickSec = null;
@@ -1489,12 +1587,16 @@ function answer(btn, chosen, reason){
   document.querySelectorAll('#qOptions .opt-btn').forEach(b=>b.disabled=true);
   renderItemsUi();
   const fb = document.getElementById('qFeedback');
+  if (quiz.example){
+    const ok = chosen === quiz.answerText;
+    document.getElementById('qWord').innerHTML = exampleHtml(quiz.example, escapeHtml(quiz.example.ans), ok ? 'filled' : 'missed');
+  }
   if (chosen === quiz.answerText){
     btn.classList.add('correct');
     me.correct++;
     retryQueue = retryQueue.filter(x => wordKey(x.w) !== wordKey(w));
     const { recovered, mastered } = recordWord(w, true);
-    const fast = leftMs >= QUESTION_TIME_SEC * 1000 * FAST_RATIO;
+    const fast = leftMs >= (quiz.timeTotal || QUESTION_TIME_SEC * 1000) * FAST_RATIO;
     let bonus = 0;
     if (mode !== 'review'){ combo++; bonus = combo % COMBO_EVERY === 0 ? 1 : 0; }
     const memBonus = recovered && mode !== 'review' ? 1 : 0;
@@ -1574,7 +1676,8 @@ function answer(btn, chosen, reason){
   me.wrong++;
   recordWord(w, false);
   // 정답을 바로 다시 보여 주고, 잠시 뒤 같은 낱말을 다시 물어 기억을 바로잡는다.
-  const card = `<div class="learn-card"><div class="lc-word">${escapeHtml(w.word)}</div><div class="lc-mean">${escapeHtml(w.meaning)}</div><div class="lc-sub">🧠 이 낱말은 곧 다시 나와요. 소리 내어 한 번 읽어 보세요!</div></div>`;
+  const exLine = quiz.example ? `<div class="lc-ex">${escapeHtml(quiz.example.before)}<b>${escapeHtml(quiz.example.ans)}</b>${escapeHtml(quiz.example.after)}</div>` : '';
+  const card = `<div class="learn-card"><div class="lc-word">${escapeHtml(w.word)}</div><div class="lc-mean">${escapeHtml(w.meaning)}</div>${exLine}<div class="lc-sub">🧠 이 낱말은 곧 다시 나와요. 소리 내어 한 번 읽어 보세요!</div></div>`;
   if (mode === 'review'){
     if (!quiz.again.has(wordKey(w))){ quiz.again.add(wordKey(w)); quiz.list.push(w); }
     afterAnswer();
